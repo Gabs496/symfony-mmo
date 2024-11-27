@@ -1,79 +1,26 @@
 <?php
 
-namespace App\Entity\Abstract;
+namespace App\Entity\Interface;
 
-interface Item
+interface ItemInterface
 {
-    private bool $equippable = false;
-    private bool $consumable = false;
-    private bool $stackable = false;
-    private float $maxDurability = 0.0;
-    public function __construct(
-        private readonly string $name,
-        private readonly string $description,
-        private readonly float  $weight,
-        private readonly float  $minExperience,
-    )
-    {
-    }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
 
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
+    public function getName(): string;
 
-    public function getWeight(): float
-    {
-        return $this->weight;
-    }
+    public function getDescription(): string;
 
-    public function getMinExperience(): float
-    {
-        return $this->minExperience;
-    }
+    public function getWeight(): float;
 
-    public function isEquippable(): bool
-    {
-        return $this->equippable;
-    }
+    public function getMinExperienceRequired(): float;
 
-    public function setEquippable(bool $equippable): void
-    {
-        $this->equippable = $equippable;
-    }
+    public function isEquippable(): bool;
 
-    public function isConsumable(): bool
-    {
-        return $this->consumable;
-    }
+    public function isConsumable(): bool;
 
-    public function setConsumable(bool $consumable): void
-    {
-        $this->consumable = $consumable;
-    }
+    public function isStackable(): bool;
 
-    public function isStackable(): bool
-    {
-        return $this->stackable;
-    }
+    public function getMaxDurability(): float;
 
-    public function setStackable(bool $stackable): void
-    {
-        $this->stackable = $stackable;
-    }
-
-    public function getMaxDurability(): float
-    {
-        return $this->maxDurability;
-    }
-
-    public function setMaxDurability(float $maxDurability): void
-    {
-        $this->maxDurability = $maxDurability;
-    }
+    public function getType(): ItemTypeInterface;
 }

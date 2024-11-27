@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\ItemInstanceBagCollection;
+use App\Entity\Data\ItemInstanceBagCollection;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

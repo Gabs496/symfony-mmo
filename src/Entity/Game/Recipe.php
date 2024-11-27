@@ -1,23 +1,19 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Game;
 
+use App\Entity\Skill;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
-#[ORM\Table(name: 'game_recipe')]
 class Recipe
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $id = null;
+    #[ORM\Column(type: 'string', length: 50)]
+    private ?string $id = null;
 
     /**
      * @var Collection<int, RecipeIngredient>
@@ -39,7 +35,7 @@ class Recipe
         $this->ingredients = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): ?string
     {
         return $this->id;
     }

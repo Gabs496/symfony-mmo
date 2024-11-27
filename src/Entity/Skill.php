@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-enum Skill
+enum Skill: string
 {
-
+    case WOODCUTTING = 'WOODCUTTING';
+    case MINING = 'MINING';
 }

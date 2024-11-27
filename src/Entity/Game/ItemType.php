@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Game;
 
 use App\Entity\Interface\ItemTypeInterface;
 use App\Repository\ItemTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemTypeRepository::class)]
-#[ORM\Table(name: 'game_item_type')]
 class ItemType implements ItemTypeInterface
 {
     #[ORM\Id]
@@ -25,7 +24,7 @@ class ItemType implements ItemTypeInterface
         $this->name = $name;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

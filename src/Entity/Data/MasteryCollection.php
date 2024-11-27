@@ -1,13 +1,23 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Data;
 
+use App\Repository\MasteryCollectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 
+#[ORM\Entity(repositoryClass: MasteryCollectionRepository::class)]
 class MasteryCollection
 {
+    #[ORM\Id]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
+
     /**
      * @var Collection<int, MasterySkill>
      */
@@ -38,6 +48,11 @@ class MasteryCollection
         $this->recipes = new ArrayCollection();
         $this->itemTypes = new ArrayCollection();
         $this->items = new ArrayCollection();
+    }
+
+    public function getId(): ?Uuid
+    {
+        return $this->id;
     }
 
     /**

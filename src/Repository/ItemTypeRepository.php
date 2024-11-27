@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\ItemType;
+use App\Entity\Game\ItemType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Game;
 
 use App\Entity\Interface\ItemInterface;
 use App\Repository\ItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
-#[ORM\Table(name: 'game_item')]
 class Item implements ItemInterface
 {
     #[ORM\Id]

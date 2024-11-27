@@ -2,14 +2,14 @@
 
 namespace App\Repository;
 
-use App\Entity\PlayerCharacter;
+use App\Entity\Data\PlayerCharacter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<PlayerCharacter>
  */
-class CharacterRepository extends ServiceEntityRepository
+class PlayerCharacterRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

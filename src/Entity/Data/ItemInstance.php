@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Data;
 
+use App\Entity\Game\Item;
 use App\Entity\Interface\ItemInterface;
 use App\Entity\Interface\ItemTypeInterface;
 use App\Repository\ItemInstanceRepository;

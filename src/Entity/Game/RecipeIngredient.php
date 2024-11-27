@@ -1,21 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Game;
 
 use App\Repository\RecipeIngredientRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: RecipeIngredientRepository::class)]
-#[ORM\Table(name: 'game_recipe_ingredient')]
 class RecipeIngredient
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $id = null;
+    #[ORM\Column(type: 'string', length: 50)]
+    private ?string $id = null;
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: Recipe::class, inversedBy: 'ingredients')]
@@ -30,7 +25,7 @@ class RecipeIngredient
     {
     }
 
-    public function getId(): ?Uuid
+    public function getId(): ?string
     {
         return $this->id;
     }

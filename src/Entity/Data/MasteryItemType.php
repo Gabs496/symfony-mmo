@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Data;
 
+use App\Entity\Game\ItemType;
 use App\Entity\Interface\MasteryInterface;
 use App\Repository\MasteryItemTypeRepository;
 use Doctrine\ORM\Mapping as ORM;

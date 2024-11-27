@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Data;
 
 use App\Entity\Interface\MasteryInterface;
+use App\Entity\Skill;
 use App\Repository\MasterySkillRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;

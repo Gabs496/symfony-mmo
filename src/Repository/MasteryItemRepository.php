@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\MasteryItem;
+use App\Entity\Data\MasteryItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

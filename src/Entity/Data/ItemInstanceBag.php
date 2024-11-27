@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Data;
 
 use App\Repository\ItemInstanceBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;

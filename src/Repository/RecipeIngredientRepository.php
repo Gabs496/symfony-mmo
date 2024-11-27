@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\RecipeIngredient;
+use App\Entity\Game\RecipeIngredient;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
