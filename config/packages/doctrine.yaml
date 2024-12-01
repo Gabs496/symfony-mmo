@@ -13,7 +13,7 @@ doctrine:
         enable_lazy_ghost_objects: true
         report_fields_where_declared: true
         validate_xml_mapping: true
-        naming_strategy: App\Doctrine\CustomNamingStrategy
+        naming_strategy: App\Doctrine\SubdirNamingStrategy
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true

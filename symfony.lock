@@ -270,7 +270,7 @@
         }
     },
     "symfony/ux-turbo": {
-        "version": "2.21",
+        "version": "2.22",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -314,6 +314,9 @@
         "files": [
             "config/packages/messenger.yaml"
         ]
+    },
+    "symfonycasts/sass-bundle": {
+        "version": "v0.8.2"
     },
     "twig/extra-bundle": {
         "version": "v3.15.0"

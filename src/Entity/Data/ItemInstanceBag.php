@@ -11,13 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
 class ItemInstanceBag
 {
     #[ORM\Id]
+    #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[ORM\Column(type: 'guid')]
     private ?string $id = null;
 
-    #[ORM\ManyToOne(targetEntity: ItemInstanceBagCollection::class, inversedBy: 'bags')]
-    private ItemInstanceBagCollection $collection;
+    #[ORM\ManyToOne(targetEntity: PlayerCharacter::class, inversedBy: 'bags')]
+    private PlayerCharacter $player;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $type;
@@ -25,9 +25,9 @@ class ItemInstanceBag
     #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag')]
     private Collection $items;
 
-    public function __construct(string $type, ItemInstanceBagCollection $collection)
+    public function __construct(string $type, PlayerCharacter $player)
     {
-        $this->collection = $collection;
+        $this->player = $player;
         $this->type = $type;
         $this->items = new ArrayCollection();
     }
@@ -37,14 +37,14 @@ class ItemInstanceBag
         return $this->id;
     }
 
-    public function getCollection(): ItemInstanceBagCollection
+    public function getPlayer(): PlayerCharacter
     {
-        return $this->collection;
+        return $this->player;
     }
 
-    public function setCollection(ItemInstanceBagCollection $collection): void
+    public function setPlayer(PlayerCharacter $player): void
     {
-        $this->collection = $collection;
+        $this->player = $player;
     }
 
     public function getType(): string

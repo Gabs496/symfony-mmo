@@ -12,7 +12,7 @@ interface ItemInterface
 
     public function getWeight(): float;
 
-    public function getMinExperienceRequired(): float;
+    public function getAdvisedExperience(): float;
 
     public function isEquippable(): bool;
 
@@ -20,7 +20,7 @@ interface ItemInterface
 
     public function isStackable(): bool;
 
-    public function getMaxDurability(): float;
+    public function getMaxCondition(): float;
 
     public function getType(): ItemTypeInterface;
 }

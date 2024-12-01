@@ -12,9 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 class ItemInstance implements ItemInterface
 {
     #[ORM\Id]
+    #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[ORM\Column(type: 'guid')]
     private ?string $id = null;
 
     #[ORM\ManyToOne(targetEntity: Item::class)]
@@ -75,9 +75,9 @@ class ItemInstance implements ItemInterface
         return $this->item->getWeight();
     }
 
-    public function getMinExperienceRequired(): float
+    public function getAdvisedExperience(): float
     {
-        return $this->item->getMinExperienceRequired();
+        return $this->item->getAdvisedExperience();
     }
 
     public function isEquippable(): bool
@@ -95,9 +95,9 @@ class ItemInstance implements ItemInterface
         return $this->item->isStackable();
     }
 
-    public function getMaxDurability(): float
+    public function getMaxCondition(): float
     {
-        return $this->item->getMaxDurability();
+        return $this->item->getMaxCondition();
     }
 
     public function getType(): ItemTypeInterface

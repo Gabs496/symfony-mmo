@@ -6,21 +6,20 @@ use App\Entity\Game\ItemType;
 use App\Entity\Interface\MasteryInterface;
 use App\Repository\MasteryItemTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Uid\Uuid;
+
 
 #[ORM\Entity(repositoryClass: MasteryItemTypeRepository::class)]
 class MasteryItemType implements MasteryInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $id = null;
+    private ?string $id = null;
 
-    #[ORM\ManyToOne(targetEntity: MasteryCollection::class, inversedBy: 'itemTypes')]
+    #[ORM\ManyToOne(targetEntity: Mastery::class, inversedBy: 'itemTypes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?MasteryCollection $masteryCollection = null;
+    private ?Mastery $masteryCollection = null;
 
     #[ORM\Column]
     private float $experience = 0.0;
@@ -29,17 +28,17 @@ class MasteryItemType implements MasteryInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?ItemType $itemType = null;
 
-    public function getId(): ?Uuid
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getMasteryCollection(): ?MasteryCollection
+    public function getMasteryCollection(): ?Mastery
     {
         return $this->masteryCollection;
     }
 
-    public function setMasteryCollection(?MasteryCollection $masteryCollection): static
+    public function setMasteryCollection(?Mastery $masteryCollection): static
     {
         $this->masteryCollection = $masteryCollection;
 

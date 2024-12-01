@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Data;
 
-use App\Entity\Data\Mastery;
+use App\Entity\Data\MapResourceSpot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Mastery>
+ * @extends ServiceEntityRepository<MapResourceSpot>
  */
-class MasteryCollectionRepository extends ServiceEntityRepository
+class MapResourceSpotRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Mastery::class);
+        parent::__construct($registry, MapResourceSpot::class);
     }
 
     //    /**
-    //     * @return MasterySkill[] Returns an array of MasterySkill objects
+    //     * @return MapResourceSpot[] Returns an array of MapResourceSpot objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class MasteryCollectionRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?MasterySkill
+    //    public function findOneBySomeField($value): ?MapResourceSpot
     //    {
     //        return $this->createQueryBuilder('m')
     //            ->andWhere('m.exampleField = :val')

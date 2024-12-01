@@ -20,5 +20,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    Symfony\UX\StimulusBundle\Helper\StimulusHelper:
+        alias: 'stimulus.helper'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Data\Mastery;
+use App\Entity\Game\Resource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Mastery>
+ * @extends ServiceEntityRepository<Resource>
  */
-class MasteryCollectionRepository extends ServiceEntityRepository
+class ResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Mastery::class);
+        parent::__construct($registry, Resource::class);
     }
 
     //    /**
-    //     * @return MasterySkill[] Returns an array of MasterySkill objects
+    //     * @return MapResource[] Returns an array of MapResource objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class MasteryCollectionRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?MasterySkill
+    //    public function findOneBySomeField($value): ?MapResource
     //    {
     //        return $this->createQueryBuilder('m')
     //            ->andWhere('m.exampleField = :val')

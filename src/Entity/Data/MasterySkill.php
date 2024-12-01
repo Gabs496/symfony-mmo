@@ -6,29 +6,28 @@ use App\Entity\Interface\MasteryInterface;
 use App\Entity\Skill;
 use App\Repository\MasterySkillRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Uid\Uuid;
+
 
 #[ORM\Entity(repositoryClass: MasterySkillRepository::class)]
 class MasterySkill implements MasteryInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $id = null;
+    private ?string $id = null;
 
     #[ORM\Column]
     private float $experience = 0.0;
 
     #[ORM\ManyToOne(inversedBy: 'skills')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?MasteryCollection $masteryCollection = null;
+    private ?Mastery $masteryCollection = null;
 
     #[ORM\Column(type: 'string', length: 50, enumType: Skill::class)]
     private Skill $skill;
 
-    public function getId(): ?Uuid
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -55,12 +54,12 @@ class MasterySkill implements MasteryInterface
         $this->skill = $skill;
     }
 
-    public function getMasteryCollection(): ?MasteryCollection
+    public function getMasteryCollection(): ?Mastery
     {
         return $this->masteryCollection;
     }
 
-    public function setMasteryCollection(?MasteryCollection $masteryCollection): static
+    public function setMasteryCollection(?Mastery $masteryCollection): static
     {
         $this->masteryCollection = $masteryCollection;
 

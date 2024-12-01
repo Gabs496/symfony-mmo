@@ -1,0 +1,33 @@
+$body-bg: #504b4b;
+$body-color: #b8b8b8;
+
+$primary: #1a1d20;
+$danger: #95332f;
+$dark: #353232;
+$info: #786c6c;
+
+$leftBarWidth: 6em;
+
+@import '../../vendor/twbs/bootstrap/scss/bootstrap';
+
+#sidebarLeft {
+  position: fixed;
+  width: $leftBarWidth;
+}
+
+*:has(> #sidebarLeft) {
+  width: $leftBarWidth;
+}
+
+#sidebarLeft .nav-link {
+  color: $light;
+}
+
+.nav.nav-leftline .nav-link {
+  border-left: $nav-underline-border-width solid transparent;
+  padding-left: .2em;
+}
+
+.nav.nav-leftline .nav-link:hover {
+  border-left: $nav-underline-border-width solid currentColor;
+}

@@ -1,0 +1,22 @@
+{# Learn how to use Turbo Streams: https://github.com/symfony/ux-turbo#broadcast-doctrine-entities-update #}
+{% block create %}
+    <turbo-stream action="append" target="map_resource_spots">
+        <template>
+            <div id="{{ 'map_resource_spot_' ~ id }}">
+                {% include 'parts/map_source_spot.html.twig' %}
+            </div>
+        </template>
+    </turbo-stream>
+{% endblock %}
+
+{% block update %}
+    <turbo-stream action="update" target="map_resource_spot_{{ id }}">
+        <template>
+            {% include 'parts/map_source_spot.html.twig' %}
+        </template>
+    </turbo-stream>
+{% endblock %}
+
+{% block remove %}
+    <turbo-stream action="remove" target="map_resource_spot_{{ id }}"></turbo-stream>
+{% endblock %}

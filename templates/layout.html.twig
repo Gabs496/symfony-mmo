@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row h-100">
+        <div class="col-auto position-relative">
+            <div class="bg-dark h-100 px-1" id="sidebarLeft">
+                <ul class="nav nav-leftline flex-column h-100 align-items-center">
+                    <li class="nav-item w-100">{{ 'place'|trans|upper }}</li>
+                    <li class="nav-item mt-auto w-100">
+                        <a class="h3 nav-link" href="{{ path('app_logout') }}">LOGOUT</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="nav bg-dark">
+                <div class="nav--item">
+                    {{ 'player'|trans|upper }}: {{ player.name }}
+                </div>
+            </div>
+            <div class="p-2">
+                {% block main %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

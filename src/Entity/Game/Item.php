@@ -23,7 +23,7 @@ class Item implements ItemInterface
     private bool $stackable = false;
 
     #[ORM\Column(type: 'float')]
-    private float $maxDurability = 0.0;
+    private float $maxCondition = 0.0;
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: ItemType::class)]
@@ -35,7 +35,7 @@ class Item implements ItemInterface
         #[ORM\Column(type: 'float')]
         private readonly float    $weight,
         #[ORM\Column(type: 'float')]
-        private readonly float    $minExperienceRequired,
+        private readonly float    $advisedExperience,
     )
     {
     }
@@ -60,9 +60,9 @@ class Item implements ItemInterface
         return $this->weight;
     }
 
-    public function getMinExperienceRequired(): float
+    public function getAdvisedExperience(): float
     {
-        return $this->minExperienceRequired;
+        return $this->advisedExperience;
     }
 
     public function isEquippable(): bool
@@ -95,14 +95,14 @@ class Item implements ItemInterface
         $this->stackable = $stackable;
     }
 
-    public function getMaxDurability(): float
+    public function getMaxCondition(): float
     {
-        return $this->maxDurability;
+        return $this->maxCondition;
     }
 
-    public function setMaxDurability(float $maxDurability): void
+    public function setMaxCondition(float $maxCondition): void
     {
-        $this->maxDurability = $maxDurability;
+        $this->maxCondition = $maxCondition;
     }
 
     public function getType(): ItemType
