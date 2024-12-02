@@ -16,7 +16,7 @@ class ItemInstanceBag
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
-    #[ORM\ManyToOne(targetEntity: PlayerCharacter::class, inversedBy: 'bags')]
+    #[ORM\ManyToOne(targetEntity: PlayerCharacter::class, inversedBy: 'itemInstanceBags')]
     private PlayerCharacter $player;
 
     #[ORM\Column(type: 'string', length: 255)]

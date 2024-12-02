@@ -1,8 +1,8 @@
-<div class="bg-dark border-primary rounded my-1">
+<div class="bg-dark border-primary rounded my-1 fade-from-small">
     <div class="row align-items-center">
         <div class="col-auto">
             <div style="width: 3em; height: 3em;">
-                <img src="{{ asset('images/resources/ores/Icon1.png') }}" alt="{{ entity.resource.name }}" class="h-100">
+                <img src="{{ asset('images' ~ entity.resource.icon) }}" alt="{{ entity.resource.name }}" class="h-100">
             </div>
         </div>
         <div class="col">

@@ -9,11 +9,17 @@ security:
             entity:
                 class: App\Entity\Security\User
                 property: email
+        app_player_character_provider:
+            entity:
+                class: App\Entity\Data\PlayerCharacter
+                property: name
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
+        user:
+            pattern: ^/user
+            security: true
             lazy: true
             provider: app_user_provider
             form_login:
@@ -24,6 +30,14 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 target: app_login
+        main:
+            pattern: ^/
+            security: true
+            lazy: true
+            provider: app_player_character_provider
+            custom_authenticators:
+                - App\Security\Authenticator\PlayerCharacterAuthenticator
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -36,6 +50,10 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - {path: ^/user/login, roles: PUBLIC_ACCESS}
+        - {path: ^/user, roles: ROLE_USER}
+        - {path: ^/, roles: ROLE_USER}
 
 when@test:
     security:

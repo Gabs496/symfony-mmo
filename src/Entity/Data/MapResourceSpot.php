@@ -5,13 +5,15 @@ namespace App\Entity\Data;
 use App\Entity\Game\Map;
 use App\Entity\Game\MapResource;
 use App\Entity\Game\Resource;
+use App\Entity\Interface\SpawnableInterface;
 use App\Repository\Data\MapResourceSpotRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapResourceSpotRepository::class)]
 #[Broadcast(topics: ['@="mapResourceSpots_" ~ entity.getMap().getId()'], private: true)]
-class MapResourceSpot
+class MapResourceSpot implements SpawnableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -29,6 +31,9 @@ class MapResourceSpot
 
     #[ORM\Column]
     private int $resourceQuantity = 1;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    private ?DateTimeImmutable $spawnedAt = null;
 
     public function getId(): ?string
     {
@@ -74,5 +79,17 @@ class MapResourceSpot
     public function getResource(): ?Resource
     {
         return $this->mapResource->getResource();
+    }
+
+    public function getSpawnedAt(): ?DateTimeImmutable
+    {
+        return $this->spawnedAt;
+    }
+
+    public function setSpawnedAt(?DateTimeImmutable $spawnedAt): static
+    {
+        $this->spawnedAt = $spawnedAt;
+
+        return $this;
     }
 }

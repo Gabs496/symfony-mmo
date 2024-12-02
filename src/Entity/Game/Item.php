@@ -25,6 +25,9 @@ class Item implements ItemInterface
     #[ORM\Column(type: 'float')]
     private float $maxCondition = 0.0;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $icon;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: ItemType::class)]
         private readonly ItemType $type,
@@ -108,5 +111,15 @@ class Item implements ItemInterface
     public function getType(): ItemType
     {
         return $this->type;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): void
+    {
+        $this->icon = $icon;
     }
 }

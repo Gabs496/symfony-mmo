@@ -10,12 +10,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 #[ORM\Entity(repositoryClass: PlayerCharacterRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
-class PlayerCharacter extends Character
+class PlayerCharacter extends Character implements UserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -44,6 +45,10 @@ class PlayerCharacter extends Character
 
     #[ORM\ManyToOne(inversedBy: 'playerCharacters')]
     private ?Map $position = null;
+
+//    #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
+//    private ?Mastery $masteries = null;
+    private array $roles = [];
 
     public function __construct()
     {
@@ -110,4 +115,33 @@ class PlayerCharacter extends Character
 
         return $this;
     }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function eraseCredentials(): void
+    {
+        return;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getName();
+    }
+
+//    public function getMasteries(): ?Mastery
+//    {
+//        return $this->masteries;
+//    }
+//
+//    public function setMasteries(?Mastery $masteries): void
+//    {
+//        $this->masteries = $masteries;
+//    }
 }

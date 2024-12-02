@@ -66,4 +66,9 @@ class Resource
     {
         return $this->product->getName();
     }
+
+    public function getIcon(): string
+    {
+        return $this->product->getIcon();
+    }
 }

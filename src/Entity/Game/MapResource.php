@@ -4,6 +4,7 @@ namespace App\Entity\Game;
 
 use App\Entity\Data\MapResourceSpot;
 use App\Repository\MapResourceRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -164,7 +165,8 @@ class MapResource
         $instance = new MapResourceSpot();
         $instance
             ->setResourceQuantity($resourceQuantity)
-            ->setMap($this->getMap());
+            ->setMap($this->getMap())
+            ->setSpawnedAt(new DateTimeImmutable())
         ;
         $this->addSpot($instance);
     }
