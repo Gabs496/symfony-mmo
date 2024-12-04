@@ -162,10 +162,9 @@ class MapResource
             }
         }
 
-        $instance = new MapResourceSpot();
+        $instance = new MapResourceSpot($this->getMap());
         $instance
             ->setResourceQuantity($resourceQuantity)
-            ->setMap($this->getMap())
             ->setSpawnedAt(new DateTimeImmutable())
         ;
         $this->addSpot($instance);

@@ -23,7 +23,7 @@ class MapResourceSpot implements SpawnableInterface
 
     #[ORM\ManyToOne(inversedBy: 'mapResourceSpots')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Map $map = null;
+    private Map $map;
 
     #[ORM\ManyToOne(targetEntity: MapResource::class, inversedBy: 'spots')]
     #[ORM\JoinColumn(nullable: false)]
@@ -35,21 +35,19 @@ class MapResourceSpot implements SpawnableInterface
     #[ORM\Column(type: 'datetime_immutable', nullable: false)]
     private ?DateTimeImmutable $spawnedAt = null;
 
+    public function __construct(?Map $map)
+    {
+        $this->map = $map;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getMap(): ?Map
+    public function getMap(): Map
     {
         return $this->map;
-    }
-
-    public function setMap(?Map $map): static
-    {
-        $this->map = $map;
-
-        return $this;
     }
 
     public function getMapResource(): ?MapResource
