@@ -2,10 +2,13 @@
 
 namespace App\Entity\Data;
 
-use App\Entity\Abstract\Character;
+use App\Entity\AbstractCharacter;
 use App\Entity\Game\Map;
+use App\Entity\ItemBagType;
+use App\Entity\MasterySet;
+use App\Entity\MasteryType;
 use App\Entity\Security\User;
-use App\Repository\PlayerCharacterRepository;
+use App\Repository\Data\PlayerCharacterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: PlayerCharacterRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
-class PlayerCharacter extends Character implements UserInterface
+class PlayerCharacter extends AbstractCharacter implements UserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -33,11 +36,8 @@ class PlayerCharacter extends Character implements UserInterface
     #[ORM\OneToMany(targetEntity: ItemInstanceBag::class, mappedBy: 'player', cascade: ['persist', 'remove'])]
     protected Collection $itemInstanceBags;
 
-    protected ?Map $currentPlace = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Mastery $mastery = null;
+    #[ORM\Column(type: 'json_document', nullable: true, options: ['jsonb' => true])]
+    private MasterySet $masterySet;
 
     #[ORM\ManyToOne(inversedBy: 'playerCharacters')]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,14 +45,12 @@ class PlayerCharacter extends Character implements UserInterface
 
     #[ORM\ManyToOne(inversedBy: 'playerCharacters')]
     private ?Map $position = null;
-
-//    #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
-//    private ?Mastery $masteries = null;
     private array $roles = [];
 
     public function __construct()
     {
         $this->itemInstanceBags = new ArrayCollection();
+        $this->masterySet = new MasterySet();
     }
 
     public function getId(): ?string
@@ -70,24 +68,14 @@ class PlayerCharacter extends Character implements UserInterface
         $this->name = $name;
     }
 
-    public function getCurrentPlace(): ?Map
+    public function getMasteryExperience(MasteryType $masteryType): float
     {
-        return $this->currentPlace;
+        return $this->masterySet->getMastery($masteryType)->getExperience();
     }
 
-    public function setCurrentPlace(?Map $currentPlace): void
+    public function increaseMasteryExperience(MasteryType $masteryType, float $experience): static
     {
-        $this->currentPlace = $currentPlace;
-    }
-
-    public function getMastery(): ?Mastery
-    {
-        return $this->mastery;
-    }
-
-    public function setMastery(Mastery $mastery): static
-    {
-        $this->mastery = $mastery;
+        $this->masterySet->increaseMasteryExperience($masteryType, $experience);
 
         return $this;
     }
@@ -135,13 +123,36 @@ class PlayerCharacter extends Character implements UserInterface
         return $this->getName();
     }
 
-//    public function getMasteries(): ?Mastery
-//    {
-//        return $this->masteries;
-//    }
-//
-//    public function setMasteries(?Mastery $masteries): void
-//    {
-//        $this->masteries = $masteries;
-//    }
+    public function getItemBag(ItemBagType $itemBagType): ItemInstanceBag
+    {
+        foreach ($this->itemInstanceBags as $itemBag) {
+            if ($itemBag->is($itemBagType)) {
+                return $itemBag;
+            }
+        }
+        $itemBag = new ItemInstanceBag($itemBagType, $this);
+        $this->itemInstanceBags->add($itemBag);
+        return $itemBag;
+    }
+
+    public function addToItemBag(ItemBagType $itemBagType, ItemInstance $itemInstance): static
+    {
+        $this->getItemBag($itemBagType)->addItem($itemInstance);
+        return $this;
+    }
+
+    public function takeItem(ItemInstance $itemInstance): void
+    {
+        $this->addToItemBag(ItemBagType::BACKPACK, $itemInstance);
+    }
+
+    public function cloneMasterySet(): MasterySet
+    {
+        return $this->masterySet = clone $this->masterySet;
+    }
+
+    public function getMasterySet(): MasterySet
+    {
+        return ($this->masterySet ??= new MasterySet());
+    }
 }

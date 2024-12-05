@@ -2,9 +2,9 @@
 
 namespace App\Entity\Game;
 
-use App\Entity\Data\MapResourceSpot;
-use App\Repository\MapResourceRepository;
-use DateTimeImmutable;
+use App\Entity\ActivityType;
+use App\Entity\Data\MapAvailableActivity;
+use App\Repository\Game\MapResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,7 +22,7 @@ class MapResource
     #[ORM\JoinColumn(nullable: false)]
     private ?Resource $resource = null;
 
-    #[ORM\ManyToOne(inversedBy: 'spawnableResources')]
+    #[ORM\ManyToOne(targetEntity: Map::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Map $map = null;
 
@@ -36,9 +36,9 @@ class MapResource
     private int $spotSpawnFrequency = 300;
 
     /**
-     * @var Collection<int, MapResourceSpot>
+     * @var Collection<int, MapAvailableActivity>
      */
-    #[ORM\OneToMany(targetEntity: MapResourceSpot::class, mappedBy: 'mapResource', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: MapAvailableActivity::class, mappedBy: 'mapResource', cascade: ['persist'])]
     private Collection $spots;
 
     public function __construct()
@@ -109,14 +109,14 @@ class MapResource
     }
 
     /**
-     * @return Collection<int, MapResourceSpot>
+     * @return Collection<int, MapAvailableActivity>
      */
     public function getSpots(): Collection
     {
         return $this->spots;
     }
 
-    public function addSpot(MapResourceSpot $spot): static
+    public function addSpot(MapAvailableActivity $spot): static
     {
         if (!$this->spots->contains($spot)) {
             $this->spots->add($spot);
@@ -138,8 +138,8 @@ class MapResource
 
     public function getSpaceTaken(): int
     {
-        return $this->spots->reduce(function (int $carry, MapResourceSpot $spot) {
-            return $carry + $spot->getResourceQuantity();
+        return $this->spots->reduce(function (int $carry, MapAvailableActivity $spot) {
+            return $carry + $spot->getQuantity();
         }, 0);
     }
 
@@ -162,10 +162,13 @@ class MapResource
             }
         }
 
-        $instance = new MapResourceSpot($this->getMap());
-        $instance
-            ->setResourceQuantity($resourceQuantity)
-            ->setSpawnedAt(new DateTimeImmutable())
+        $instance = (new MapAvailableActivity(
+                $this->getMap(),
+                ActivityType::RESOURCE_GATHERING,
+                $resourceQuantity
+            ))
+            ->setIcon($this->resource->getIcon())
+            ->setName($this->resource->getName())
         ;
         $this->addSpot($instance);
     }

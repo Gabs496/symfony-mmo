@@ -2,8 +2,8 @@
 
 namespace App\Entity\Game;
 
-use App\Entity\Skill;
-use App\Repository\ResourceRepository;
+use App\Entity\MasteryType;
+use App\Repository\Game\ResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ResourceRepository::class)]
@@ -18,10 +18,13 @@ class Resource
     private ?Item $product = null;
 
     #[ORM\Column]
-    private float $difficulty = 0.0;
+    private float $difficulty = 999.0;
 
-    #[ORM\Column(enumType: Skill::class)]
-    private ?Skill $skillNeeded = null;
+    #[ORM\Column]
+    private float $gatheringTime = 3600.0;
+
+    #[ORM\Column(enumType: MasteryType::class)]
+    private ?MasteryType $masteryInvolved = null;
 
     public function getId(): ?string
     {
@@ -40,14 +43,14 @@ class Resource
         return $this;
     }
 
-    public function getSkillNeeded(): ?Skill
+    public function getMasteryInvolved(): ?MasteryType
     {
-        return $this->skillNeeded;
+        return $this->masteryInvolved;
     }
 
-    public function setSkillNeeded(Skill $skillNeeded): static
+    public function setMasteryInvolved(MasteryType $masteryInvolved): static
     {
-        $this->skillNeeded = $skillNeeded;
+        $this->masteryInvolved = $masteryInvolved;
 
         return $this;
     }
@@ -70,5 +73,15 @@ class Resource
     public function getIcon(): string
     {
         return $this->product->getIcon();
+    }
+
+    public function getGatheringTime(): float
+    {
+        return $this->gatheringTime;
+    }
+
+    public function setGatheringTime(float $gatheringTime): void
+    {
+        $this->gatheringTime = $gatheringTime;
     }
 }

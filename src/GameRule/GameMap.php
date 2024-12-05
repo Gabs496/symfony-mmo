@@ -3,7 +3,7 @@
 namespace App\GameRule;
 
 use App\Entity\Game\MapResource;
-use App\Repository\MapResourceRepository;
+use App\Repository\Game\MapResourceRepository;
 
 readonly class GameMap
 {

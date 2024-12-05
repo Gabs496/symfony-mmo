@@ -3,8 +3,8 @@
 namespace App\GameTask\Handler;
 
 use App\GameRule\GameMap;
-use App\Repository\MapResourceRepository;
 use App\GameTask\Message\MapResourceFullfill;
+use App\Repository\Game\MapResourceRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

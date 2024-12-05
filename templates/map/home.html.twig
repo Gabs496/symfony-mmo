@@ -1,0 +1,18 @@
+{% extends 'layout.html.twig' %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-info">{{ 'activities'|trans|capitalize }}</div>
+                <div class="card-body" id="map_available_activities" {{ custom_turbo_stream_listen('mapAvailableActivities_' ~ map.id) }}>
+                    {% for entity in map.availableActivities %}
+                        <div id="map_available_activity_{{ entity.id }}">
+                            {% include 'parts/map_available_activity.html.twig' %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

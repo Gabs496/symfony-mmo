@@ -3,15 +3,16 @@
 namespace App\GameTask;
 
 use App\Entity\Game\MapResource;
-use App\Repository\MapResourceRepository;
 use App\GameTask\Message\MapResourceFullfill;
+use App\Repository\Game\MapResourceRepository;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpKernel\KernelInterface;
-//use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
+
+//use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsSchedule('game_task')]
 class GameTaskScheduleProvider implements ScheduleProviderInterface

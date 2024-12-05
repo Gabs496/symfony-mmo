@@ -2,7 +2,7 @@
 
 namespace App\Entity\Game;
 
-use App\Entity\Data\MapResourceSpot;
+use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\Repository\Game\MapRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,10 +31,10 @@ class Map
     private Collection $spawnableResources;
 
     /**
-     * @var Collection<int, MapResourceSpot>
+     * @var Collection<int, MapAvailableActivity>
      */
-    #[ORM\OneToMany(targetEntity: MapResourceSpot::class, mappedBy: 'map', orphanRemoval: true)]
-    private Collection $mapResourceSpots;
+    #[ORM\OneToMany(targetEntity: MapAvailableActivity::class, mappedBy: 'map', orphanRemoval: true)]
+    private Collection $availableActivities;
 
     /**
      * @var Collection<int, PlayerCharacter>
@@ -45,7 +45,7 @@ class Map
     public function __construct()
     {
         $this->spawnableResources = new ArrayCollection();
-        $this->mapResourceSpots = new ArrayCollection();
+        $this->availableActivities = new ArrayCollection();
         $this->playerCharacters = new ArrayCollection();
     }
 
@@ -119,36 +119,6 @@ class Map
     }
 
     /**
-     * @return Collection<int, MapResourceSpot>
-     */
-    public function getMapResourceSpots(): Collection
-    {
-        return $this->mapResourceSpots;
-    }
-
-    public function addMapResourceSpot(MapResourceSpot $mapResourceSpot): static
-    {
-        if (!$this->mapResourceSpots->contains($mapResourceSpot)) {
-            $this->mapResourceSpots->add($mapResourceSpot);
-            $mapResourceSpot->setMap($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMapResourceSpot(MapResourceSpot $mapResourceSpot): static
-    {
-        if ($this->mapResourceSpots->removeElement($mapResourceSpot)) {
-            // set the owning side to null (unless already changed)
-            if ($mapResourceSpot->getMap() === $this) {
-                $mapResourceSpot->setMap(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, PlayerCharacter>
      */
     public function getPlayerCharacters(): Collection
@@ -176,5 +146,10 @@ class Map
         }
 
         return $this;
+    }
+
+    public function getAvailableActivities(): Collection
+    {
+        return $this->availableActivities;
     }
 }

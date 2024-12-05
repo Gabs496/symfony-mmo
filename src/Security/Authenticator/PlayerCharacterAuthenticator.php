@@ -3,7 +3,7 @@
 namespace App\Security\Authenticator;
 
 use App\Entity\Security\User;
-use App\Repository\PlayerCharacterRepository;
+use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +51,7 @@ class PlayerCharacterAuthenticator extends AbstractAuthenticator implements Auth
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return new RedirectResponse($this->urlGenerator->generate('app_home'));
+        return new RedirectResponse($this->urlGenerator->generate('app_map'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

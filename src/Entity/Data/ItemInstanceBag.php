@@ -2,7 +2,8 @@
 
 namespace App\Entity\Data;
 
-use App\Repository\ItemInstanceBagRepository;
+use App\Entity\ItemBagType;
+use App\Repository\Data\ItemInstanceBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,13 +20,14 @@ class ItemInstanceBag
     #[ORM\ManyToOne(targetEntity: PlayerCharacter::class, inversedBy: 'itemInstanceBags')]
     private PlayerCharacter $player;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $type;
+    #[ORM\Column(type: 'string', enumType: ItemBagType::class)]
+    private ItemBagType $type;
 
-    #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag')]
+    /** @var Collection<int, ItemInstance> */
+    #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag', cascade: ['persist', 'remove'])]
     private Collection $items;
 
-    public function __construct(string $type, PlayerCharacter $player)
+    public function __construct(ItemBagType $type, PlayerCharacter $player)
     {
         $this->player = $player;
         $this->type = $type;
@@ -47,7 +49,7 @@ class ItemInstanceBag
         $this->player = $player;
     }
 
-    public function getType(): string
+    public function getType(): ItemBagType
     {
         return $this->type;
     }
@@ -59,11 +61,23 @@ class ItemInstanceBag
 
     public function addItem(ItemInstance $item): self
     {
-        if (!$this->items->contains($item)) {
-            $this->items->add($item);
-            $item->setBag($this);
+        if ($item->isStackable()) {
+            foreach ($this->items as $existingItem) {
+                if ($existingItem->isInstanceOf($item->getItem())) {
+                    $existingItem->addQuantity($item->getQuantity());
+                    return $this;
+                }
+            }
         }
 
+        $this->items->add($item);
+        $item->setBag($this);
+
         return $this;
+    }
+
+    public function is(ItemBagType $itemBagType): bool
+    {
+        return $this->type === $itemBagType;
     }
 }

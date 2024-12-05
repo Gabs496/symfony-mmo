@@ -2,8 +2,8 @@
 
 namespace App\Entity\Game;
 
-use App\Entity\Skill;
-use App\Repository\RecipeRepository;
+use App\Entity\MasteryType;
+use App\Repository\Game\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,14 +22,14 @@ class Recipe
     private Collection $ingredients;
 
     public function __construct(
-        #[ORM\Column(type: 'string', length: 50, enumType: Skill::class)]
-        private readonly Skill $skill,
+        #[ORM\Column(type: 'string', length: 50, enumType: MasteryType::class)]
+        private readonly MasteryType $skill,
         #[ORM\Column(type: 'float')]
-        private readonly float $minExperienceRequired,
+        private readonly float       $minExperienceRequired,
         #[ORM\Column(type: 'float')]
-        private readonly float $experienceReward,
+        private readonly float       $experienceReward,
         #[ORM\OneToOne(targetEntity: Item::class)]
-        private readonly Item $producedItem
+        private readonly Item        $producedItem
     )
     {
         $this->ingredients = new ArrayCollection();
@@ -40,7 +40,7 @@ class Recipe
         return $this->id;
     }
 
-    public function getSkill(): Skill
+    public function getSkill(): MasteryType
     {
         return $this->skill;
     }

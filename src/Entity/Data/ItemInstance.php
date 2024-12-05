@@ -3,9 +3,9 @@
 namespace App\Entity\Data;
 
 use App\Entity\Game\Item;
-use App\Entity\Interface\ItemInterface;
-use App\Entity\Interface\ItemTypeInterface;
-use App\Repository\ItemInstanceRepository;
+use App\Interface\ItemInterface;
+use App\Interface\ItemTypeInterface;
+use App\Repository\Data\ItemInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
@@ -21,18 +21,17 @@ class ItemInstance implements ItemInterface
     private Item $item;
 
     #[ORM\ManyToOne(targetEntity: ItemInstanceBag::class, inversedBy: 'items')]
-    private ItemInstanceBag $bag;
+    private ?ItemInstanceBag $bag = null;
 
     #[ORM\Column(type: 'integer')]
     private int $quantity = 1;
 
     #[ORM\Column(type: 'float')]
-    private float $condition;
+    private float $wear;
 
-    public function __construct(Item $item,ItemInstanceBag $bag)
+    public function __construct(Item $item)
     {
         $this->item = $item;
-        $this->bag = $bag;
     }
 
     public function getId(): ?string
@@ -40,14 +39,20 @@ class ItemInstance implements ItemInterface
         return $this->id;
     }
 
-    public function getBag(): ItemInstanceBag
+    public function getItem(): Item
+    {
+        return $this->item;
+    }
+
+    public function getBag(): ?ItemInstanceBag
     {
         return $this->bag;
     }
 
-    public function setBag(ItemInstanceBag $bag): void
+    public function setBag(ItemInstanceBag $bag): static
     {
         $this->bag = $bag;
+        return $this;
     }
 
     public function getQuantity(): int
@@ -55,9 +60,21 @@ class ItemInstance implements ItemInterface
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): void
+    public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
+        return $this;
+    }
+
+    public function getWear(): float
+    {
+        return $this->wear;
+    }
+
+    public function setWear(float $wear): static
+    {
+        $this->wear = $wear;
+        return $this;
     }
 
     public function getName(): string
@@ -103,5 +120,25 @@ class ItemInstance implements ItemInterface
     public function getType(): ItemTypeInterface
     {
         return $this->item->getType();
+    }
+
+    public static function createFrom(Item $item, int $quantity = 1): ItemInstance
+    {
+        return (new self($item))
+            ->setQuantity($quantity)
+            ->setWear(1.0)
+        ;
+
+    }
+
+    public function isInstanceOf(Item $item): bool
+    {
+        return $this->item === $item;
+    }
+
+    public function addQuantity(int $quantity): static
+    {
+        $this->quantity += $quantity;
+        return $this;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Entity\Game;
 
-use App\Entity\Interface\ItemTypeInterface;
-use App\Repository\ItemTypeRepository;
+use App\Interface\ItemTypeInterface;
+use App\Repository\Game\ItemTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemTypeRepository::class)]
