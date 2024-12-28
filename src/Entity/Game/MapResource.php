@@ -22,7 +22,7 @@ class MapResource
     #[ORM\JoinColumn(nullable: false)]
     private ?Resource $resource = null;
 
-    #[ORM\ManyToOne(targetEntity: Map::class)]
+    #[ORM\ManyToOne(targetEntity: Map::class, inversedBy: 'spawnableResources')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Map $map = null;
 

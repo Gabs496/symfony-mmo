@@ -33,6 +33,8 @@ framework:
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 #            App\GameTask\Message\ActivityStepFinish: game_event
+            App\GameTask\Message\RewardItem: game_event
+            App\GameTask\Message\RewardMastery: game_event
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async

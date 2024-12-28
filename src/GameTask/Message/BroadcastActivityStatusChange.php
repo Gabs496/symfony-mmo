@@ -2,7 +2,7 @@
 
 namespace App\GameTask\Message;
 
-readonly class ActivityStepFinish
+readonly class BroadcastActivityStatusChange
 {
     public function __construct(
         private string $activityId,

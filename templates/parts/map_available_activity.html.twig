@@ -1,4 +1,4 @@
-<div class="bg-dark border-primary rounded my-1 fade-from-small">
+<div class="bg-dark border-primary rounded my-1">
     <div class="row align-items-center">
         <div class="col-auto">
             <div style="width: 3em; height: 3em;">
@@ -13,7 +13,13 @@
             <span class="fw-bold">{{ entity.quantity }}</span>
         </div>
         <div class="col ms-auto">
-            <a href="{{ path('app_map_activity_start', {id: entity.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>
+            {% if entity.involvingActivity %}
+                {% set entity = entity.involvingActivity %}
+                {% set id = entity.id %}
+                {% include 'parts/activity.html.twig' %}
+            {% else %}
+                <a href="{{ path('app_map_activity_start', {id: entity.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>
+            {% endif %}
         </div>
     </div>
 </div>

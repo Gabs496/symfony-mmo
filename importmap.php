@@ -41,4 +41,11 @@ return [
     'event-source-polyfill' => [
         'version' => '1.0.31',
     ],
+    'animate.css' => [
+        'version' => '4.1.1',
+    ],
+    'animate.css/animate.min.css' => [
+        'version' => '4.1.1',
+        'type' => 'css',
+    ],
 ];

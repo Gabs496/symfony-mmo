@@ -39,6 +39,9 @@ class MapAvailableActivity implements ConsumableInterface
     #[ORM\Column]
     private string $name;
 
+    #[ORM\ManyToOne(targetEntity: Activity::class, cascade: ['persist'], inversedBy: 'mapAvailableActivities')]
+    private ?Activity $involvingActivity = null;
+
     public function __construct(Map $map, ActivityType $type, float $quantity)
     {
         $this->map = $map;
@@ -114,5 +117,16 @@ class MapAvailableActivity implements ConsumableInterface
     public function isEmpty(): bool
     {
         return bccomp($this->quantity, 0.0, 2) === 0;
+    }
+
+    public function getInvolvingActivity(): ?Activity
+    {
+        return $this->involvingActivity;
+    }
+
+    public function setInvolvingActivity(?Activity $involvingActivity): void
+    {
+        $this->involvingActivity = $involvingActivity;
+        $involvingActivity->getMapAvailableActivities()->add($this);
     }
 }

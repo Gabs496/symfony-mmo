@@ -8,6 +8,8 @@ use App\Entity\Mastery;
 use App\Entity\MasterySet;
 use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
@@ -30,7 +32,12 @@ class Activity
     #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
     protected array $masteryInvolveds = [];
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     protected ?DateTimeImmutable $startedAt = null;
+
+    /** @var Collection<int, MapAvailableActivity> */
+    #[ORM\OneToMany(targetEntity: MapAvailableActivity::class, mappedBy: 'involvingActivity')]
+    protected Collection $mapAvailableActivities;
 
     /**
      * @param ActivityType $type
@@ -38,6 +45,7 @@ class Activity
     public function __construct(ActivityType $type)
     {
         $this->type = $type;
+        $this->mapAvailableActivities = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -98,5 +106,26 @@ class Activity
     public function progressStep(): void
     {
         array_shift($this->steps);
+    }
+
+    /** @return Collection<int, MapAvailableActivity> */
+    public function getMapAvailableActivities(): Collection
+    {
+        return $this->mapAvailableActivities;
+    }
+
+    public function setMapAvailableActivities(Collection $mapAvailableActivities): void
+    {
+        $this->mapAvailableActivities = $mapAvailableActivities;
+    }
+
+    public function addMapAvailableActivity(MapAvailableActivity $mapAvailableActivity): static
+    {
+        if (!$this->mapAvailableActivities->contains($mapAvailableActivity)) {
+            $this->mapAvailableActivities->add($mapAvailableActivity);
+            $mapAvailableActivity->setInvolvingActivity($this);
+        }
+
+        return $this;
     }
 }

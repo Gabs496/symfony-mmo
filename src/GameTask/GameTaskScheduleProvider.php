@@ -5,14 +5,10 @@ namespace App\GameTask;
 use App\Entity\Game\MapResource;
 use App\GameTask\Message\MapResourceFullfill;
 use App\Repository\Game\MapResourceRepository;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
-
-//use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsSchedule('game_task')]
 class GameTaskScheduleProvider implements ScheduleProviderInterface
@@ -21,8 +17,6 @@ class GameTaskScheduleProvider implements ScheduleProviderInterface
 
     public function __construct(
         private readonly MapResourceRepository $mapResourceRepository,
-//        private readonly MessageBusInterface $messageBus,
-        private readonly KernelInterface $kernel,
     )
     {
     }
@@ -34,7 +28,7 @@ class GameTaskScheduleProvider implements ScheduleProviderInterface
         }
 
         $schedule = new Schedule();
-        $schedule->stateful(new FilesystemAdapter('game_task_scheduler', 0, $this->kernel->getCacheDir() . "/game_environment_tasks"));
+//        $schedule->stateful(new FilesystemAdapter('game_task_scheduler', 0, $this->kernel->getCacheDir() . "/game_environment_tasks"));
 
         // Tasks
         $this->scheduleMapResourceFullfill($schedule);
@@ -51,9 +45,6 @@ class GameTaskScheduleProvider implements ScheduleProviderInterface
             $message = new MapResourceFullfill($mapResource->getId());
             $recurringMessage = RecurringMessage::every($mapResource->getSpotSpawnFrequency() . ' seconds', $message);
             $schedule->add($recurringMessage);
-
-            // dispatch event instantly
-//            $this->messageBus->dispatch(new MapResourceFullfill($mapResource));
         }
     }
 }

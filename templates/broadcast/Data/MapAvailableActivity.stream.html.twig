@@ -2,7 +2,7 @@
 {% block create %}
     <turbo-stream action="append" target="map_available_activities">
         <template>
-            <div id="map_available_activity_{{ id }}">
+            <div id="map_available_activity_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
                 {% include 'parts/map_available_activity.html.twig' %}
             </div>
         </template>
@@ -18,5 +18,11 @@
 {% endblock %}
 
 {% block remove %}
-    <turbo-stream action="remove" target="map_available_activity_{{ id }}"></turbo-stream>
+    <turbo-stream action="replace" target="map_available_activity_{{ id }}">
+        <template>
+            <div id="map_available_activity_{{ id }}">
+                {% include 'parts/map_available_activity.html.twig' %}
+            </div>
+        </template>
+    </turbo-stream>
 {% endblock %}

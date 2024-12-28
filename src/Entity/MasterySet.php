@@ -36,4 +36,16 @@ class MasterySet
     {
         $this->masteries[] = $mastery;
     }
+
+    /** @deprecated non utilizzare */
+    public function getMasteries(): array
+    {
+        return $this->masteries;
+    }
+
+    /** @deprecated non utilizzare */
+    public function setMasteries(array $masteries): void
+    {
+        $this->masteries = $masteries;
+    }
 }

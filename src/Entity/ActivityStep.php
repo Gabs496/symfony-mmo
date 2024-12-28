@@ -14,6 +14,8 @@ class ActivityStep
 
     private array $onFinish = [];
 
+    private ?float $scheduledAt = null;
+
     public function __construct(float $duration)
     {
         $this->duration = $duration;
@@ -48,5 +50,30 @@ class ActivityStep
     {
         $this->onFinish[] = $event;
         return $this;
+    }
+
+    public function getScheduledAt(): ?float
+    {
+        return $this->scheduledAt;
+    }
+
+    public function setScheduledAt(?float $scheduledAt): void
+    {
+        $this->scheduledAt = $scheduledAt;
+    }
+
+    public function getSecondsToFinish(): ?float
+    {
+        if (!$this->scheduledAt) {
+            return null;
+        }
+
+        $microseconds = bcsub(bcadd($this->scheduledAt, $this->getDurationMicrosecond(), 4), microtime(true), 4);
+        return (float)bcdiv($microseconds, 1000000, 4);
+    }
+
+    private function getDurationMicrosecond(): int
+    {
+        return (int)bcmul($this->duration, 1000000, 0);
     }
 }
