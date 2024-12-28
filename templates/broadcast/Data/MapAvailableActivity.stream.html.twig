@@ -18,11 +18,7 @@
 {% endblock %}
 
 {% block remove %}
-    <turbo-stream action="replace" target="map_available_activity_{{ id }}">
-        <template>
-            <div id="map_available_activity_{{ id }}">
-                {% include 'parts/map_available_activity.html.twig' %}
-            </div>
-        </template>
+    <turbo-stream action="remove" target="map_available_activity_{{ id }}">
+        <template></template>
     </turbo-stream>
 {% endblock %}
