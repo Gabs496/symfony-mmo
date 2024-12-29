@@ -27,6 +27,7 @@ readonly class GameActivity
         private ActivityRepository $repository,
         private HubInterface $hub,
         private Environment $twig,
+        private ResourceCollection $resourceCollection,
     )
     {
 
@@ -72,15 +73,15 @@ readonly class GameActivity
         $activity = null;
         if ($availableActivity->getType() === ActivityType::RESOURCE_GATHERING) {
 
-            $resource = $availableActivity->getMapResource()->getResource();
+            $resource = $this->resourceCollection->getResource($availableActivity->getMapResource()->getResourceId());
             $activity = (new Activity(ActivityType::RESOURCE_GATHERING))
-                ->setMasteryInvolveds([new Mastery($resource->getMasteryInvolved(), $resource->getDifficulty())])
+                ->setMasteryInvolveds([new Mastery($resource->getInvolvedMastery(), $resource->getDifficulty())])
             ;
 
             for ($i = 0; $availableActivity->getQuantity() > $i; $i++) {
                 $step = (new ActivityStep($resource->getGatheringTime()))
-                    ->addOnFinish(new RewardMastery($character->getId(), $resource->getMasteryInvolved(), 0.01))
-                    ->addOnFinish(new RewardItem($character->getId(), $resource->getProduct()->getId(), 1))
+                    ->addOnFinish(new RewardMastery($character->getId(), $resource->getInvolvedMastery(), 0.01))
+                    ->addOnFinish(new RewardItem($character->getId(), $resource->getRewardItemId(), 1))
                     ->addOnFinish(new ConsumeMapAvailableActivity($availableActivity->getId()))
                 ;
 

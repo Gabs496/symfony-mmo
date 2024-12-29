@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapAvailableActivityRepository::class)]
-#[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMap().getId()'], private: true)]
+#[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true)]
 class MapAvailableActivity implements ConsumableInterface
 {
     #[ORM\Id]
@@ -20,8 +20,8 @@ class MapAvailableActivity implements ConsumableInterface
     #[ORM\Column]
     private ?string $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Map::class, inversedBy: 'availableActivities')]
-    private Map $map;
+    #[ORM\Column(length: 50, nullable: false)]
+    private ?string $mapId;
 
     #[ORM\Column(enumType: ActivityType::class)]
     private ActivityType $type;
@@ -42,9 +42,9 @@ class MapAvailableActivity implements ConsumableInterface
     #[ORM\ManyToOne(targetEntity: Activity::class, cascade: ['persist'], inversedBy: 'mapAvailableActivities')]
     private ?Activity $involvingActivity = null;
 
-    public function __construct(Map $map, ActivityType $type, float $quantity)
+    public function __construct(string $mapId, ActivityType $type, float $quantity)
     {
-        $this->map = $map;
+        $this->mapId = $mapId;
         $this->type = $type;
         $this->quantity = $quantity;
     }
@@ -87,9 +87,9 @@ class MapAvailableActivity implements ConsumableInterface
         $this->mapResource = $mapResource;
     }
 
-    public function getMap(): Map
+    public function getMapId(): ?string
     {
-        return $this->map;
+        return $this->mapId;
     }
 
     public function getIcon(): string

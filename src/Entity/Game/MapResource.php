@@ -2,13 +2,11 @@
 
 namespace App\Entity\Game;
 
-use App\Entity\ActivityType;
 use App\Entity\Data\MapAvailableActivity;
 use App\Repository\Game\MapResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Random\RandomException;
 
 #[ORM\Entity(repositoryClass: MapResourceRepository::class)]
 #[ORM\UniqueConstraint(columns: ['resource_id', 'map_id'])]
@@ -18,13 +16,11 @@ class MapResource
     #[ORM\Column(type: 'string', length: 50)]
     private ?string $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Resource $resource = null;
+    #[ORM\Column(nullable: false)]
+    private ?string $resourceId = null;
 
-    #[ORM\ManyToOne(targetEntity: Map::class, inversedBy: 'spawnableResources')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Map $map = null;
+    #[ORM\Column(length: 50, nullable: false)]
+    private ?string $mapId = null;
 
     #[ORM\Column]
     private int $maxGlobalAvailability = 1;
@@ -51,26 +47,26 @@ class MapResource
         return $this->id;
     }
 
-    public function getResource(): ?Resource
+    public function getResourceId(): ?string
     {
-        return $this->resource;
+        return $this->resourceId;
     }
 
-    public function setResource(?Resource $resource): static
+    public function setResourceId(?string $resourceId): static
     {
-        $this->resource = $resource;
+        $this->resourceId = $resourceId;
 
         return $this;
     }
 
-    public function getMap(): ?Map
+    public function getMapId(): ?string
     {
-        return $this->map;
+        return $this->mapId;
     }
 
-    public function setMap(?Map $map): static
+    public function setMapId(?string $mapId): static
     {
-        $this->map = $map;
+        $this->mapId = $mapId;
 
         return $this;
     }
@@ -141,35 +137,5 @@ class MapResource
         return $this->spots->reduce(function (int $carry, MapAvailableActivity $spot) {
             return $carry + $spot->getQuantity();
         }, 0);
-    }
-
-    public function spawnNewSpot(int $resourceQuantity = 0): void
-    {
-        if (!$resourceQuantity) {
-            $freeSpace = $this->getFreeSpace();
-            if (!$freeSpace) {
-                return;
-            }
-
-            try {
-                $maxResourceQuantity = min(
-                    $this->getFreeSpace(),
-                    $this->getMaxSpotAvailability()
-                );
-                $resourceQuantity = random_int(1, $maxResourceQuantity);
-            } catch (RandomException $e) {
-                $resourceQuantity = 1;
-            }
-        }
-
-        $instance = (new MapAvailableActivity(
-                $this->getMap(),
-                ActivityType::RESOURCE_GATHERING,
-                $resourceQuantity
-            ))
-            ->setIcon($this->resource->getIcon())
-            ->setName($this->resource->getName())
-        ;
-        $this->addSpot($instance);
     }
 }

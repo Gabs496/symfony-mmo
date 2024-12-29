@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\GameRule\GameActivity;
+use App\GameRule\Map;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +25,14 @@ class MapController extends AbstractController
 
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(): Response
+    public function home(Map $map): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
 
         return $this->render('map/home.html.twig', [
-            'map' => $user->getPosition(),
+            'playerPosition' => $user->getPosition(),
+            'mapAvailableActivities' => $map->getAvailableActivities($user->getPosition()),
         ]);
     }
 

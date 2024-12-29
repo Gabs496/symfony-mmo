@@ -43,8 +43,8 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'playerCharacters')]
-    private ?Map $position = null;
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $position = null;
     private array $roles = [];
 
     public function __construct()
@@ -92,12 +92,12 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
         return $this;
     }
 
-    public function getPosition(): ?Map
+    public function getPosition(): ?string
     {
         return $this->position;
     }
 
-    public function setPosition(?Map $position): static
+    public function setPosition(?string $position): static
     {
         $this->position = $position;
 
