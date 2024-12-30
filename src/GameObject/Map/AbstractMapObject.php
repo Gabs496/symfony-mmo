@@ -1,45 +1,42 @@
 <?php
 
-namespace App\GameRule;
+namespace App\GameObject\Map;
 
-use App\Entity\ActivityType;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Game\MapResource;
+use App\GameObject\AbstractGameObject;
+use App\GameObject\ResourceCollection;
+use App\GameRule\Activity\ActivityType;
 use App\Repository\Data\MapAvailableActivityRepository;
-use App\Repository\Game\MapResourceRepository;
 use Random\RandomException;
-use ReflectionException;
 
-readonly class Map
+abstract readonly class AbstractMapObject extends AbstractGameObject
 {
     public function __construct(
-        private MapResourceRepository $mapResourceRepository,
-        private ResourceCollection $resourceCollection,
         private MapAvailableActivityRepository $mapAvailableActivityRepository,
+        private ResourceCollection   $resourceCollection,
     )
     {
+        parent::__construct();
     }
-
-    public function mapResourceFullfill(MapResource $mapResource, bool $full = false): void
+    public function resourceFullfill(MapResource $mapResource, bool $full = false): void
     {
         if (!$mapResource->hasFreeSpace()) {
             return;
         }
 
-        $this->spawnNewSpot($mapResource);
+        $this->spawnNewResource($mapResource);
         while ($full && $mapResource->hasFreeSpace()) {
-            $this->spawnNewSpot($mapResource);
+            $this->spawnNewResource($mapResource);
         }
 
-        $this->mapResourceRepository->save($mapResource);
+        $this->mapAvailableActivityRepository->save($mapResource);
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    private function spawnNewSpot(MapResource $mapResource, int $resourceQuantity = 0): void
+
+    private function spawnNewResource(MapResource $mapResource, int $resourceQuantity = 0): void
     {
-        $resource = $this->resourceCollection->getResource($mapResource->getResourceId());
+        $resource = $this->resourceCollection->get($mapResource->getResourceId());
         if (!$resourceQuantity) {
             $freeSpace = $mapResource->getFreeSpace();
             if (!$freeSpace) {
@@ -63,13 +60,13 @@ readonly class Map
             $resourceQuantity
         ))
             ->setIcon(sprintf('/map_activity/%s/%s.png', strtolower(ActivityType::RESOURCE_GATHERING->value), strtolower($mapResource->getResourceId())))
-            ->setName($resource->getName())
+            ->setName($resource->getElement()->getName())
         ;
         $mapResource->addSpot($instance);
     }
 
-    public function getAvailableActivities(string $mapId): array
+    public function getAvailableActivities()
     {
-        return $this->mapAvailableActivityRepository->findBy(['mapId' => $mapId]);
+        return $this->mapAvailableActivityRepository->findBy(['mapId' => $this->element->getId()]);
     }
 }

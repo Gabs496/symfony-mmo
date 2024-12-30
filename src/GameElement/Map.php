@@ -1,28 +1,20 @@
 <?php
 
-namespace App\GameObject\Map;
+namespace App\GameElement;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Attribute;
 
-abstract readonly class AbstractMap implements MapInterface
+#[Attribute]
+readonly class Map implements GameElementInterface
 {
-    protected string $description;
-
-    /**
-     * @param string $id
-     * @param string $name
-     * @param float $coordinateX
-     * @param float $coordinateY
-     */
     public function __construct(
         protected string $id,
         protected string $name,
         protected float $coordinateX,
         protected float $coordinateY,
+        protected string $description = ''
     )
     {
-        $this->description = '';
     }
 
     public function getId(): string
@@ -48,10 +40,5 @@ abstract readonly class AbstractMap implements MapInterface
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    public function getAvailableActivities(): Collection
-    {
-        return new ArrayCollection();
     }
 }

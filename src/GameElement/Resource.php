@@ -1,12 +1,12 @@
 <?php
 
-namespace App\GameObject\Resource;
+namespace App\GameElement;
 
 use App\Entity\MasteryType;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-readonly class AsResource
+readonly class Resource implements GameElementInterface
 {
     public function __construct(
         private string      $id,

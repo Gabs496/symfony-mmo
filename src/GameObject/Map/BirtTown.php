@@ -2,13 +2,22 @@
 
 namespace App\GameObject\Map;
 
-readonly class BirtTown extends AbstractMap
-{
-    protected string $description;
+use App\GameElement\Map;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-    public function __construct()
+#[Map(
+    id: self::ID,
+    name: 'Birt Town',
+    coordinateX: 0.0,
+    coordinateY: 0.0
+)]
+#[AutoconfigureTag('game.map')]
+readonly class BirtTown extends AbstractMapObject
+{
+    public const string ID = 'BIRT_TOWN';
+
+    public static function getId(): string
     {
-        parent::__construct('BIRT_TOWN', 'Birt Town', 0.0, 0.0);
-        $this->description = 'A small town in the middle of nowhere.';
+        return self::ID;
     }
 }

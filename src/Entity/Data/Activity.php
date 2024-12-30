@@ -3,9 +3,9 @@
 namespace App\Entity\Data;
 
 use App\Entity\ActivityStep;
-use App\Entity\ActivityType;
 use App\Entity\Mastery;
 use App\Entity\MasterySet;
+use App\GameRule\Activity\ActivityType;
 use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;

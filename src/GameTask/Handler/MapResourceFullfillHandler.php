@@ -2,7 +2,7 @@
 
 namespace App\GameTask\Handler;
 
-use App\GameRule\Map;
+use App\GameObject\MapCollection;
 use App\GameTask\Message\MapResourceFullfill;
 use App\Repository\Game\MapResourceRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -12,7 +12,7 @@ readonly class MapResourceFullfillHandler
 {
     public function __construct(
         private MapResourceRepository $mapResourceRepository,
-        private Map                   $gameMap,
+        private MapCollection $mapCollection,
     )
     {
     }
@@ -20,6 +20,7 @@ readonly class MapResourceFullfillHandler
     public function __invoke(MapResourceFullfill $message): void
     {
         $mapResource = $this->mapResourceRepository->find($message->getMapResourceId());
-        $this->gameMap->mapResourceFullfill($mapResource);
+        $map = $this->mapCollection->get($mapResource->getMapId());
+        $map->resourceFullfill($mapResource);
     }
 }

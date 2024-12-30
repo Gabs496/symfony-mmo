@@ -3,7 +3,6 @@
 namespace App\Entity\Data;
 
 use App\Entity\AbstractCharacter;
-use App\Entity\Game\Map;
 use App\Entity\ItemBagType;
 use App\Entity\MasterySet;
 use App\Entity\MasteryType;
