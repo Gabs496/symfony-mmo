@@ -5,7 +5,7 @@ namespace App\GameElement;
 use App\Entity\MasteryType;
 use Attribute;
 
-#[Attribute(Attribute::TARGET_CLASS)]
+#[Attribute]
 readonly class Resource implements GameElementInterface
 {
     public function __construct(

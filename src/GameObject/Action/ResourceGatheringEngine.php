@@ -7,6 +7,7 @@ use App\Entity\Data\Activity;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Mastery;
+use App\GameElement\Action\ActionEngine;
 use App\GameObject\ResourceCollection;
 use App\GameRule\Activity\ActivityType;
 use App\GameTask\Message\BroadcastActivityStatusChange;
@@ -20,8 +21,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[ActionEngine(ResourceGatheringAction::class)]
 #[AutoconfigureTag('game.action')]
-readonly class ResourceGathering extends AbstractAction
+readonly class ResourceGatheringEngine extends AbstractActionEngine
 {
     public function __construct(
         private ResourceCollection $resourceCollection,
@@ -34,35 +36,31 @@ readonly class ResourceGathering extends AbstractAction
 
     /**
      * @psalm-param PlayerCharacter[] $who
-     * @psalm-param  MapAvailableActivity $on
+     * @psalm-param  MapAvailableActivity $directObject
      * @throws Exception|ExceptionInterface
      */
-    public function execute(array $whos, object $on): void
+    public function run(object $subject, object $directObject): void
     {
-
-        if (count($whos) !== 1) {
-            throw new Exception('Only one character can gather resources');
-        }
-        $character = $whos[0];
+        $character = $subject;
 
         /** @var Resource $resource */
-        $resource = $this->resourceCollection->get($on->getMapResource()->getResourceId())->getElement();
+        $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId())->getElement();
         $activity = (new Activity(ActivityType::RESOURCE_GATHERING))
             ->setMasteryInvolveds([new Mastery($resource->getInvolvedMastery(), $resource->getDifficulty())])
         ;
 
-        for ($i = 0; $on->getQuantity() > $i; $i++) {
+        for ($i = 0; $directObject->getQuantity() > $i; $i++) {
             $step = (new ActivityStep($resource->getGatheringTime()))
                 ->addOnFinish(new RewardMastery($character->getId(), $resource->getInvolvedMastery(), 0.01))
                 ->addOnFinish(new RewardItem($character->getId(), $resource->getRewardItemId(), 1))
-                ->addOnFinish(new ConsumeMapAvailableActivity($on->getId()))
+                ->addOnFinish(new ConsumeMapAvailableActivity($directObject->getId()))
             ;
 
             $activity->addStep($step);
         }
 
         $activity->applyMasteryPerformance($character->getMasterySet());
-        $on->setInvolvingActivity($activity);
+        $directObject->setInvolvingActivity($activity);
 
         //TODO: lock player activity
 

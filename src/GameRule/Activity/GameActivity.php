@@ -1,35 +1,36 @@
 <?php
 
 namespace App\GameRule\Activity;
-use App\GameElement\Action;
-use App\GameObject\Action\AbstractAction;
-use App\GameObject\ActionCollection;
+use App\GameElement\Action\ActionAvailable;
+use App\GameObject\Action\AbstractActionEngine;
+use App\GameObject\ActionEngineCollection;
+use Exception;
 use ReflectionClass;
 
 readonly class GameActivity
 {
     public function __construct(
-        private ActionCollection $actionCollection,
+        private ActionEngineCollection $actionCollection,
     )
     {
     }
 
-    /**
-     */
-    public function execute(array $whos, object $on, string $action): void
+    public function execute(object $subject, object $directObject, string $actionId): void
     {
-        $reflectionClass = new ReflectionClass($on);
-        $availableActionAttributes = $reflectionClass->getAttributes(Action::class);
+        // TODO: check if subject can do action
+
+        $reflectionClass = new ReflectionClass($directObject);
+        $availableActionAttributes = $reflectionClass->getAttributes(ActionAvailable::class);
         foreach ($availableActionAttributes as $availableActionAttribute) {
-            /** @var Action $availableAction */
+            /** @var ActionAvailable $availableAction */
             $availableAction = $availableActionAttribute->newInstance();
-            if ($availableAction->getClass() === $action) {
-                /** @var AbstractAction $actionClass */
-                $actionClass = $this->actionCollection->get($availableAction->getClass());
-                $actionClass->execute($whos, $on);
+            if ($availableAction->getId() === $actionId && $availableAction->isAsDirectObject()) {
+                /** @var AbstractActionEngine $engine */
+                $engine = $this->actionCollection->getEngineFor($availableAction->getId());
+                $engine->run($subject, $directObject);
             }
         }
 
-        //TODO: action not available error
+        //TODO: action not available on object error
     }
 }

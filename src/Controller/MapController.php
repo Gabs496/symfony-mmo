@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
-use App\GameObject\Action\ResourceGathering;
+use App\GameObject\Action\ResourceGatheringAction;
+use App\GameObject\Action\ResourceGatheringEngine;
 use App\GameObject\MapCollection;
 use App\GameRule\Activity\GameActivity;
 use App\Repository\Data\MapAvailableActivityRepository;
@@ -47,7 +48,7 @@ class MapController extends AbstractController
 
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->execute([$user], $availableActivity, ResourceGathering::class);
+        $gameActivity->execute($user, $availableActivity, ResourceGatheringAction::class);
 
         $this->addFlash('success', 'Activity finished');
 
