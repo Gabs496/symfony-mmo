@@ -1,7 +1,8 @@
 <?php
 
-namespace App\GameObject;
+namespace App\GameEngine\Resource;
 
+use App\GameEngine\AbstractGameObjectCollection;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class ResourceCollection extends AbstractGameObjectCollection

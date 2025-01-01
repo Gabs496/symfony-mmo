@@ -5,7 +5,7 @@ namespace App\Entity\Data;
 use App\Entity\Game\MapResource;
 use App\GameElement\Action\ActionAvailable;
 use App\GameObject\Action\ResourceGatheringAction;
-use App\GameRule\Activity\ActivityType;
+use App\GameEngine\Activity\ActivityType;
 use App\Interface\ConsumableInterface;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Doctrine\ORM\Mapping as ORM;

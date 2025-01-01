@@ -1,15 +1,14 @@
 <?php
 
-namespace App\GameObject\Action;
+namespace App\GameEngine\Action;
 
 use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Mastery;
-use App\GameElement\Action\ActionEngine;
-use App\GameObject\ResourceCollection;
-use App\GameRule\Activity\ActivityType;
+use App\GameEngine\Activity\ActivityType;
+use App\GameEngine\Resource\ResourceCollection;
 use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\GameTask\Message\ConsumeMapAvailableActivity;
 use App\GameTask\Message\RewardItem;
@@ -21,8 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-#[ActionEngine(ResourceGatheringAction::class)]
-#[AutoconfigureTag('game.action')]
+#[AutoconfigureTag('game.engine.action')]
 readonly class ResourceGatheringEngine extends AbstractActionEngine
 {
     public function __construct(
@@ -31,7 +29,6 @@ readonly class ResourceGatheringEngine extends AbstractActionEngine
         private MessageBusInterface $messageBus,
     )
     {
-        parent::__construct('gather');
     }
 
     /**

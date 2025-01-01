@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Map;
+namespace App\GameEngine\Map;
 
 use App\GameElement\Map;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -11,13 +11,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     coordinateX: 0.0,
     coordinateY: 0.0
 )]
-#[AutoconfigureTag('game.map')]
-readonly class BirtTown extends AbstractMapObject
+#[AutoconfigureTag('game.engine.map')]
+readonly class BirtTownEngine extends AbstractMapEngine
 {
     public const string ID = 'BIRT_TOWN';
 
-    public static function getId(): string
-    {
-        return self::ID;
-    }
 }

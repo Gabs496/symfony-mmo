@@ -1,16 +1,17 @@
 <?php
 
-namespace App\GameRule\Activity;
+namespace App\GameEngine\Activity;
 use App\GameElement\Action\ActionAvailable;
-use App\GameObject\Action\AbstractActionEngine;
-use App\GameObject\ActionEngineCollection;
-use Exception;
+use App\GameEngine\Action\AbstractActionEngine;
+use App\GameEngine\Action\ActionEngineCollection;
+use App\GameEngine\Engine;
 use ReflectionClass;
 
 readonly class GameActivity
 {
+
     public function __construct(
-        private ActionEngineCollection $actionCollection,
+        private ActionEngineCollection $actionEngineCollection,
     )
     {
     }
@@ -26,7 +27,10 @@ readonly class GameActivity
             $availableAction = $availableActionAttribute->newInstance();
             if ($availableAction->getId() === $actionId && $availableAction->isAsDirectObject()) {
                 /** @var AbstractActionEngine $engine */
-                $engine = $this->actionCollection->getEngineFor($availableAction->getId());
+                $actionReflectionClass = new ReflectionClass($actionId);
+                //TODO: check if action is available on object
+                $gameEngine = $actionReflectionClass->getAttributes(Engine::class)[0]->newInstance();
+                $engine = $this->actionEngineCollection->get($gameEngine->getId());
                 $engine->run($subject, $directObject);
             }
         }

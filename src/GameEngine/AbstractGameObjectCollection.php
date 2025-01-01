@@ -1,7 +1,8 @@
 <?php
 
-namespace App\GameObject;
+namespace App\GameEngine;
 
+use App\GameObject\AbstractGameObject;
 use InvalidArgumentException;
 
 abstract readonly class AbstractGameObjectCollection

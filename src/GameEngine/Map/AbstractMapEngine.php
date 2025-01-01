@@ -1,23 +1,29 @@
 <?php
 
-namespace App\GameObject\Map;
+namespace App\GameEngine\Map;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Game\MapResource;
-use App\GameObject\AbstractGameObject;
-use App\GameObject\ResourceCollection;
-use App\GameRule\Activity\ActivityType;
+use App\GameElement\Map;
+use App\GameEngine\Activity\ActivityType;
+use App\GameEngine\Resource\ResourceCollection;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Random\RandomException;
+use ReflectionClass;
 
-abstract readonly class AbstractMapObject extends AbstractGameObject
+abstract readonly class AbstractMapEngine
 {
+    protected Map $map;
     public function __construct(
         private MapAvailableActivityRepository $mapAvailableActivityRepository,
         private ResourceCollection   $resourceCollection,
     )
     {
-        parent::__construct();
+        $reflection = new ReflectionClass($this);
+        foreach ($reflection->getAttributes(Map::class) as $mapAttribute) {
+            $this->map = $mapAttribute->newInstance();
+            break;
+        }
     }
     public function resourceFullfill(MapResource $mapResource, bool $full = false): void
     {
@@ -67,6 +73,11 @@ abstract readonly class AbstractMapObject extends AbstractGameObject
 
     public function getAvailableActivities()
     {
-        return $this->mapAvailableActivityRepository->findBy(['mapId' => $this->element->getId()]);
+        return $this->mapAvailableActivityRepository->findBy(['mapId' => $this->getMap()->getId()]);
+    }
+
+    public function getMap(): Map
+    {
+        return $this->map;
     }
 }

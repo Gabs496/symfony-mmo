@@ -4,10 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
+use App\GameEngine\Map\MapEngineCollection;
 use App\GameObject\Action\ResourceGatheringAction;
-use App\GameObject\Action\ResourceGatheringEngine;
-use App\GameObject\MapCollection;
-use App\GameRule\Activity\GameActivity;
+use App\GameEngine\Activity\GameActivity;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +24,7 @@ class MapController extends AbstractController
 
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(MapCollection $mapCollection): Response
+    public function home(MapEngineCollection $mapCollection): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();

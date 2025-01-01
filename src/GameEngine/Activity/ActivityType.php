@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameRule\Activity;
+namespace App\GameEngine\Activity;
 
 enum ActivityType: string
 {
