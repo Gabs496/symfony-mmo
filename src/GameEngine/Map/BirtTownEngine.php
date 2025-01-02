@@ -2,7 +2,7 @@
 
 namespace App\GameEngine\Map;
 
-use App\GameElement\Map;
+use App\GameElement\Map\Map;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[Map(

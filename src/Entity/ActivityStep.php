@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Interface\ActivityEventInterface;
-
 class ActivityStep
 {
     /**
@@ -11,8 +9,6 @@ class ActivityStep
      */
     private float $duration;
     private bool $isCompleted = false;
-
-    private array $onFinish = [];
 
     private ?float $scheduledAt = null;
 
@@ -34,22 +30,6 @@ class ActivityStep
     public function setIsCompleted(bool $isCompleted): void
     {
         $this->isCompleted = $isCompleted;
-    }
-
-    public function getOnFinish(): array
-    {
-        return $this->onFinish;
-    }
-
-    public function setOnFinish(array $onFinish): void
-    {
-        $this->onFinish = $onFinish;
-    }
-
-    public function addOnFinish(ActivityEventInterface $event): static
-    {
-        $this->onFinish[] = $event;
-        return $this;
     }
 
     public function getScheduledAt(): ?float

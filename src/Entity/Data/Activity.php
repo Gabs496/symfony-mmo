@@ -3,9 +3,8 @@
 namespace App\Entity\Data;
 
 use App\Entity\ActivityStep;
-use App\Entity\Mastery;
-use App\Entity\MasterySet;
-use App\GameEngine\Activity\ActivityType;
+use App\GameElement\Mastery\MasterySet;
+use App\GameObject\Activity\ActivityType;
 use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,10 +26,6 @@ class Activity
     /** @var ActivityStep[] */
     #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
     protected array $steps = [];
-
-    /** @var Mastery[] */
-    #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
-    protected array $masteryInvolveds = [];
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     protected ?DateTimeImmutable $startedAt = null;
@@ -67,18 +62,6 @@ class Activity
     {
         $this->steps[] = $step;
 
-        return $this;
-    }
-
-    public function getMasteryInvolveds(): array
-    {
-        return $this->masteryInvolveds;
-    }
-
-    /** @param Mastery[] $masteryInvolveds */
-    public function setMasteryInvolveds(array $masteryInvolveds): static
-    {
-        $this->masteryInvolveds = $masteryInvolveds;
         return $this;
     }
 

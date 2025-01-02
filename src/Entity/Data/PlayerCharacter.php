@@ -3,13 +3,10 @@
 namespace App\Entity\Data;
 
 use App\Entity\AbstractCharacter;
-use App\Entity\ItemBagType;
-use App\Entity\MasterySet;
-use App\Entity\MasteryType;
 use App\Entity\Security\User;
+use App\GameElement\Mastery\MasterySet;
+use App\GameElement\Mastery\MasteryType;
 use App\Repository\Data\PlayerCharacterRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,11 +26,8 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     #[ORM\Column(length: 50)]
     protected ?string $name = null;
 
-    /**
-     * @var Collection<int, ItemInstanceBag>
-     */
-    #[ORM\OneToMany(targetEntity: ItemInstanceBag::class, mappedBy: 'player', cascade: ['persist', 'remove'])]
-    protected Collection $itemInstanceBags;
+    #[ORM\OneToOne(targetEntity: BackpackItemBag::class, inversedBy: 'player', cascade: ['persist', 'remove'])]
+    protected BackpackItemBag $backpack;
 
     #[ORM\Column(type: 'json_document', nullable: true, options: ['jsonb' => true])]
     private MasterySet $masterySet;
@@ -48,8 +42,8 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
 
     public function __construct()
     {
-        $this->itemInstanceBags = new ArrayCollection();
         $this->masterySet = new MasterySet();
+        $this->backpack = new BackpackItemBag($this);
     }
 
     public function getId(): ?string
@@ -122,27 +116,9 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
         return $this->getName();
     }
 
-    public function getItemBag(ItemBagType $itemBagType): ItemInstanceBag
+    public function getBackpack(): BackpackItemBag
     {
-        foreach ($this->itemInstanceBags as $itemBag) {
-            if ($itemBag->is($itemBagType)) {
-                return $itemBag;
-            }
-        }
-        $itemBag = new ItemInstanceBag($itemBagType, $this);
-        $this->itemInstanceBags->add($itemBag);
-        return $itemBag;
-    }
-
-    public function addToItemBag(ItemBagType $itemBagType, ItemInstance $itemInstance): static
-    {
-        $this->getItemBag($itemBagType)->addItem($itemInstance);
-        return $this;
-    }
-
-    public function takeItem(ItemInstance $itemInstance): void
-    {
-        $this->addToItemBag(ItemBagType::BACKPACK, $itemInstance);
+        return $this->backpack;
     }
 
     public function cloneMasterySet(): MasterySet

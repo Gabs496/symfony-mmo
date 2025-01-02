@@ -3,9 +3,9 @@
 namespace App\Entity\Data;
 
 use App\Entity\Game\MapResource;
-use App\GameElement\Action\ActionAvailable;
-use App\GameObject\Action\ResourceGatheringAction;
-use App\GameEngine\Activity\ActivityType;
+use App\GameElement\Activity\ActivityAvailable;
+use App\GameObject\Activity\ActivityType;
+use App\GameObject\Activity\ResourceGatheringActivity;
 use App\Interface\ConsumableInterface;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +13,7 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapAvailableActivityRepository::class)]
 #[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true)]
-#[ActionAvailable(ResourceGatheringAction::class, as: ActionAvailable::AS_DIRECT_OBJECT)]
+#[ActivityAvailable(ResourceGatheringActivity::class, as: ActivityAvailable::AS_DIRECT_OBJECT)]
 class MapAvailableActivity implements ConsumableInterface
 {
     #[ORM\Id]

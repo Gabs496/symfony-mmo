@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\GameEngine\Map\MapEngineCollection;
-use App\GameObject\Action\ResourceGatheringAction;
-use App\GameEngine\Activity\GameActivity;
+use App\GameObject\Activity\ResourceGatheringActivity;
+use App\GameEngine\Activity\ActivityEngine;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +36,7 @@ class MapController extends AbstractController
     }
 
     #[Route('/activity/start/{id}', name: 'app_map_activity_start')]
-    public function startActivity(MapAvailableActivity $availableActivity, GameActivity $gameActivity, MapAvailableActivityRepository $repository, Request $request): Response
+    public function startActivity(MapAvailableActivity $availableActivity, ActivityEngine $gameActivity, MapAvailableActivityRepository $repository, Request $request): Response
     {
         //TODO: controllare se il giocatore è nella mappa giusta
         if ($availableActivity->isEmpty()) {
@@ -47,7 +47,7 @@ class MapController extends AbstractController
 
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->execute($user, $availableActivity, ResourceGatheringAction::class);
+        $gameActivity->execute($user, $availableActivity, ResourceGatheringActivity::class);
 
         $this->addFlash('success', 'Activity finished');
 

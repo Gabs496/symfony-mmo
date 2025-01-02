@@ -4,9 +4,9 @@ namespace App\GameEngine\Map;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Game\MapResource;
-use App\GameElement\Map;
-use App\GameEngine\Activity\ActivityType;
+use App\GameElement\Map\Map;
 use App\GameEngine\Resource\ResourceCollection;
+use App\GameObject\Activity\ActivityType;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Random\RandomException;
 use ReflectionClass;
@@ -66,7 +66,7 @@ abstract readonly class AbstractMapEngine
             $resourceQuantity
         ))
             ->setIcon(sprintf('/map_activity/%s/%s.png', strtolower(ActivityType::RESOURCE_GATHERING->value), strtolower($mapResource->getResourceId())))
-            ->setName($resource->getElement()->getName())
+            ->setName($resource->getName())
         ;
         $mapResource->addSpot($instance);
     }

@@ -2,14 +2,14 @@
 
 namespace App\Entity\Data;
 
-use App\Entity\Game\Item;
-use App\Interface\ItemInterface;
-use App\Interface\ItemTypeInterface;
+use App\GameElement\GameObject\GameObjectReference;
+use App\GameElement\Item\AbstractItem;
+use App\GameElement\Item\AbstractItemInstance;
 use App\Repository\Data\ItemInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
-class ItemInstance implements ItemInterface
+class ItemInstance extends AbstractItemInstance
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -17,11 +17,11 @@ class ItemInstance implements ItemInterface
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Item::class)]
-    private Item $item;
+    #[ORM\Column(length: 50)]
+    private string $itemId;
 
-    #[ORM\ManyToOne(targetEntity: ItemInstanceBag::class, inversedBy: 'items')]
-    private ?ItemInstanceBag $bag = null;
+    #[ORM\ManyToOne(targetEntity: ItemBag::class, inversedBy: 'items')]
+    private ?ItemBag $bag = null;
 
     #[ORM\Column(type: 'integer')]
     private int $quantity = 1;
@@ -29,9 +29,13 @@ class ItemInstance implements ItemInterface
     #[ORM\Column(type: 'float')]
     private float $wear;
 
-    public function __construct(Item $item)
+    #[GameObjectReference(AbstractItem::class, objectIdProperty: 'itemId')]
+    protected readonly AbstractItem $item;
+
+    public function __construct(AbstractItem $item)
     {
-        $this->item = $item;
+        parent::__construct($item);
+        $this->itemId = $item->getId();
     }
 
     public function getId(): ?string
@@ -39,17 +43,17 @@ class ItemInstance implements ItemInterface
         return $this->id;
     }
 
-    public function getItem(): Item
+    public function getItemId(): string
     {
-        return $this->item;
+        return $this->itemId;
     }
 
-    public function getBag(): ?ItemInstanceBag
+    public function getBag(): ?ItemBag
     {
         return $this->bag;
     }
 
-    public function setBag(ItemInstanceBag $bag): static
+    public function setBag(ItemBag $bag): static
     {
         $this->bag = $bag;
         return $this;
@@ -77,52 +81,7 @@ class ItemInstance implements ItemInterface
         return $this;
     }
 
-    public function getName(): string
-    {
-        return $this->item->getName();
-    }
-
-    public function getDescription(): string
-    {
-        return $this->item->getDescription();
-    }
-
-    public function getWeight(): float
-    {
-        return $this->item->getWeight();
-    }
-
-    public function getAdvisedExperience(): float
-    {
-        return $this->item->getAdvisedExperience();
-    }
-
-    public function isEquippable(): bool
-    {
-        return $this->item->isEquippable();
-    }
-
-    public function isConsumable(): bool
-    {
-        return $this->item->isConsumable();
-    }
-
-    public function isStackable(): bool
-    {
-        return $this->item->isStackable();
-    }
-
-    public function getMaxCondition(): float
-    {
-        return $this->item->getMaxCondition();
-    }
-
-    public function getType(): ItemTypeInterface
-    {
-        return $this->item->getType();
-    }
-
-    public static function createFrom(Item $item, int $quantity = 1): ItemInstance
+    public static function createFrom(AbstractItem $item, int $quantity = 1): ItemInstance
     {
         return (new self($item))
             ->setQuantity($quantity)
@@ -131,9 +90,9 @@ class ItemInstance implements ItemInterface
 
     }
 
-    public function isInstanceOf(Item $item): bool
+    public function isInstanceOf(AbstractItem $item): bool
     {
-        return $this->item === $item;
+        return $this->itemId === $item->getId();
     }
 
     public function addQuantity(int $quantity): static
