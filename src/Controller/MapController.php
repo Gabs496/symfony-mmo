@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
-use App\GameEngine\Map\MapEngineCollection;
+use App\GameEngine\Map\MapEngine;
 use App\GameObject\Activity\ResourceGatheringActivity;
 use App\GameEngine\Activity\ActivityEngine;
 use App\Repository\Data\MapAvailableActivityRepository;
@@ -24,14 +24,14 @@ class MapController extends AbstractController
 
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(MapEngineCollection $mapCollection): Response
+    public function home(MapEngine $mapEngine): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
 
         return $this->render('map/home.html.twig', [
             'player' => $user,
-            'mapAvailableActivities' => $mapCollection->get($user->getPosition())->getAvailableActivities(),
+            'mapAvailableActivities' => $mapEngine->getAvailableActivities($user->getMap()),
         ]);
     }
 

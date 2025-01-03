@@ -2,19 +2,19 @@
 
 namespace App\GameElement\Map;
 
-use Attribute;
+use App\Core\GameObject\AbstractGameObject;
 
-#[Attribute]
-readonly class Map
+readonly abstract class AbstractMap extends AbstractGameObject
 {
     public function __construct(
-        protected string $id,
+        string $id,
         protected string $name,
         protected float $coordinateX,
         protected float $coordinateY,
         protected string $description = ''
     )
     {
+        parent::__construct($id);
     }
 
     public function getId(): string

@@ -1,10 +1,8 @@
 <?php
 
-namespace App\GameEngine;
+namespace App\Core\GameObject;
 
-use App\Core\GameObject\AbstractGameObjectCollection;
-use App\Core\GameObject\GameObjectCollection;
-use App\Core\GameObject\GameObjectReference;
+use App\Core\GameObject\Exception\GameObjectCollectionNotFound;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
@@ -54,6 +52,6 @@ class GameObjectDoctrineListener
                 }
             }
         }
-         // TODO: throw exception
+         throw new GameObjectCollectionNotFound('Game object collection for class "'.$id.'" not found');
     }
 }

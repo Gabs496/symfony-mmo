@@ -2,8 +2,10 @@
 
 namespace App\Entity\Data;
 
+use App\Core\GameObject\GameObjectReference;
 use App\Entity\AbstractCharacter;
 use App\Entity\Security\User;
+use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameElement\Mastery\MasteryType;
 use App\Repository\Data\PlayerCharacterRepository;
@@ -39,6 +41,9 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $position = null;
     private array $roles = [];
+
+    #[GameObjectReference(AbstractMap::class, objectIdProperty: 'position')]
+    private AbstractMap $map;
 
     public function __construct()
     {
@@ -129,5 +134,10 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     public function getMasterySet(): MasterySet
     {
         return ($this->masterySet ??= new MasterySet());
+    }
+
+    public function getMap(): AbstractMap
+    {
+        return $this->map;
     }
 }
