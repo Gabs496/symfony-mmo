@@ -2,7 +2,7 @@
 
 namespace App\GameEngine\Resource;
 
-use App\GameElement\GameObject\AbstractGameObjectCollection;
+use App\Core\GameObject\AbstractGameObjectCollection;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class ResourceCollection extends AbstractGameObjectCollection

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\GameObject;
+namespace App\Core\GameObject;
 
 use Attribute;
 
@@ -8,14 +8,14 @@ use Attribute;
 readonly class GameObjectReference
 {
     public function __construct(
-        private string $collectionId,
+        private string $class,
         private string $objectIdProperty,
     ) {
     }
 
-    public function getCollectionId(): string
+    public function getClass(): string
     {
-        return $this->collectionId;
+        return $this->class;
     }
 
     public function getObjectIdProperty(): string

@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapAvailableActivityRepository::class)]
-#[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true)]
+#[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true, template: 'map/MapAvailableActivity.stream.html.twig')]
 #[ActivityAvailable(ResourceGatheringActivity::class, as: ActivityAvailable::AS_DIRECT_OBJECT)]
 class MapAvailableActivity implements ConsumableInterface
 {

@@ -30,7 +30,7 @@ readonly class BroadcastActivityStatusChangeHandler
 
         foreach ($activity->getMapAvailableActivities() as $mapAvailableActivity) {
             $this->hub->publish(new Update(['mapAvailableActivities_' . $mapAvailableActivity->getMapId()],
-                $this->twig->load('broadcast/Data/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapAvailableActivity, 'id' => $mapAvailableActivity->getId()])
+                $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapAvailableActivity, 'id' => $mapAvailableActivity->getId()])
             ));
         }
     }

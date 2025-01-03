@@ -5,10 +5,21 @@
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header bg-info">{{ 'activities'|trans|capitalize }}</div>
-                <turbo-frame class="card-body" id="map_available_activities" {{ custom_turbo_stream_listen('mapAvailableActivities_' ~ playerPosition) }}>
+                <turbo-frame class="card-body" id="map_available_activities" {{ custom_turbo_stream_listen('mapAvailableActivities_' ~ player.position) }}>
                     {% for entity in mapAvailableActivities %}
                         {% set id = entity.id %}
-                        {{ block('create', 'broadcast/Data/MapAvailableActivity.stream.html.twig') }}
+                        {{ block('create', 'map/MapAvailableActivity.stream.html.twig') }}
+                    {% endfor %}
+                </turbo-frame>
+            </div>
+        </div>
+        <div class="col-lg-4 ms-auto">
+            <div class="card">
+                <div class="card-header bg-info">{{ 'backpack'|trans|capitalize }}</div>
+                <turbo-frame class="card-body d-flex" id="item_bag_{{ player.backpack.id }}" {{ custom_turbo_stream_listen('item_bag_' ~ player.backpack.id) }}>
+                    {% for entity in player.backpack.items %}
+                        {% set id = entity.id %}
+                        {{ block('create', 'item_bag/ItemInstance.stream.html.twig') }}
                     {% endfor %}
                 </turbo-frame>
             </div>

@@ -30,7 +30,7 @@ class MapController extends AbstractController
         $user = $this->getUser();
 
         return $this->render('map/home.html.twig', [
-            'playerPosition' => $user->getPosition(),
+            'player' => $user,
             'mapAvailableActivities' => $mapCollection->get($user->getPosition())->getAvailableActivities(),
         ]);
     }
@@ -53,7 +53,7 @@ class MapController extends AbstractController
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-            return $this->renderBlock('broadcast/Data/MapAvailableActivity.stream.html.twig', 'remove', [
+            return $this->renderBlock('map/MapAvailableActivity.stream.html.twig', 'remove', [
                 'entity' => $availableActivity,
                 'id' => $availableActivity->getId(),
             ]);

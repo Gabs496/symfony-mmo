@@ -2,8 +2,8 @@
 
 namespace App\GameEngine\Item;
 
-use App\GameElement\GameObject\AbstractGameObjectCollection;
-use App\GameElement\GameObject\GameObjectCollection;
+use App\Core\GameObject\AbstractGameObjectCollection;
+use App\Core\GameObject\GameObjectCollection;
 use App\GameElement\Item\AbstractItem;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;

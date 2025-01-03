@@ -1,0 +1,6 @@
+<div class="bg-dark border-primary rounded m-1">
+    <div style="width: 3em; height: 3em;" class="position-relative">
+        <img src="{{ asset('images/items/' ~ entity.item.id|lower ~ '.png') }}" alt="{{ entity.item.name }}" title="{{ entity.item.name }}" class="h-100"/>
+        <span class="badge bg-secondary position-absolute bottom-0 end-0">{{ entity.quantity }}</span>
+    </div>
+</div>

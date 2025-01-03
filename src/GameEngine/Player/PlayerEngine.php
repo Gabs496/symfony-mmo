@@ -11,6 +11,7 @@ readonly class PlayerEngine
     {
         $backPack = $player->getBackpack();
         $itemInstance->setBag($backPack);
+        //TODO: manage item bag full
         $backPack->addItem($itemInstance);
     }
 }

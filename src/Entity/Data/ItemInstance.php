@@ -2,13 +2,15 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\GameObject\GameObjectReference;
+use App\Core\GameObject\GameObjectReference;
 use App\GameElement\Item\AbstractItem;
 use App\GameElement\Item\AbstractItemInstance;
 use App\Repository\Data\ItemInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
+#[Broadcast(topics: ['@="item_bag_" ~ entity.getBag().getId()'], private: true, template: 'item_bag/ItemInstance.stream.html.twig')]
 class ItemInstance extends AbstractItemInstance
 {
     #[ORM\Id]

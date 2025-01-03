@@ -2,9 +2,9 @@
 
 namespace App\GameEngine;
 
-use App\GameElement\GameObject\AbstractGameObjectCollection;
-use App\GameElement\GameObject\GameObjectCollection;
-use App\GameElement\GameObject\GameObjectReference;
+use App\Core\GameObject\AbstractGameObjectCollection;
+use App\Core\GameObject\GameObjectCollection;
+use App\Core\GameObject\GameObjectReference;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
@@ -31,7 +31,7 @@ class GameObjectDoctrineListener
             foreach ($property->getAttributes(GameObjectReference::class) as $gameObjectAttribute) {
                 /** @var GameObjectReference $gameObjectReference */
                 $gameObjectReference = $gameObjectAttribute->newInstance();
-                $collectionId = $gameObjectReference->getCollectionId();
+                $collectionId = $gameObjectReference->getClass();
                 $objectIdProperty = $reflection->getProperty($gameObjectReference->getObjectIdProperty());
 
                 $collection = $this->getCollection($collectionId);
