@@ -22,4 +22,39 @@ abstract readonly class AbstractRecipe
     )
     {
     }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getIngredients(): array
+    {
+        return $this->ingredients;
+    }
+
+    public function getCraftingTime(): float
+    {
+        return $this->craftingTime;
+    }
+
+    public function getRequirements(): array
+    {
+        return $this->requirements;
+    }
+
+    public function getRewards(): array
+    {
+        return $this->rewards;
+    }
 }

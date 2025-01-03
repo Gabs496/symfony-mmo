@@ -1,0 +1,10 @@
+<div class="bg-dark border-primary rounded m-1 row">
+    <div style="width: 3em; height: 3em;" class="col-auto">
+{#        <img src="{{ asset('images/items/' ~ entity.item.id|lower ~ '.png') }}" alt="{{ entity.item.name }}" title="{{ entity.item.name }}" class="h-100"/>#}
+    </div>
+    <div class="col-lg-4">{{ recipe.name }}</div>
+    <div class="col-lg-6">{{ recipe.description }}</div>
+    <div class="col-auto ms-auto" id="playeActivity_RECIPE_CRAFTING">
+        <a href="{{ path('app_map_craft', {id: recipe.id}) }}" class="btn btn-primary">{{ 'craft'|trans|upper }}</a>
+    </div>
+</div>

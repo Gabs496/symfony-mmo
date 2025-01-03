@@ -9,7 +9,9 @@ use App\GameObject\Gathering\LogChestnut;
 use App\GameObject\Item\Sword\WoodenSword;
 use App\GameObject\Reward\ItemReward;
 use App\GameObject\Reward\MasteryReward;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('game.recipe')]
 readonly class SwordWoodenRecipe extends AbstractRecipe
 {
 

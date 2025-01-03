@@ -1,21 +1,17 @@
 <?php
 
-namespace App\GameEngine\Activity;
+namespace App\GameEngine\Crafting\Activity;
 
 use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
-use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Gathering\AbstractResource;
-use App\GameElement\Reward\RewardPlayer;
+use App\GameElement\Crafting\AbstractRecipe;
+use App\GameEngine\Activity\AbstractActivityEngine;
 use App\GameEngine\Engine;
-use App\GameEngine\Resource\ResourceCollection;
+use App\GameEngine\Reward\PlayerRewardEngine;
 use App\GameObject\Activity\ActivityType;
-use App\GameObject\Activity\ResourceGatheringActivity;
-use App\GameObject\Reward\ItemReward;
-use App\GameObject\Reward\MasteryReward;
+use App\GameObject\Activity\RecipeCraftingActivity;
 use App\GameTask\Message\BroadcastActivityStatusChange;
-use App\GameTask\Message\ConsumeMapAvailableActivity;
 use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
 use Exception;
@@ -24,37 +20,31 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AutoconfigureTag('game.engine.action')]
-#[Engine(ResourceGatheringActivity::class)]
-readonly class ResourceGatheringEngine extends AbstractActivityEngine
+#[Engine(RecipeCraftingActivity::class)]
+readonly class RecipeCraftingEngine extends AbstractActivityEngine
 {
     public function __construct(
-        private ResourceCollection  $resourceCollection,
         private ActivityRepository  $activityRepository,
         private MessageBusInterface $messageBus,
+        private PlayerRewardEngine  $playerRewardEngine,
     )
     {
     }
 
     /**
-     * @psalm-param PlayerCharacter[] $who
-     * @psalm-param  MapAvailableActivity $directObject
+     * @psalm-param  PlayerCharacter[] $who
+     * @psalm-param   AbstractRecipe $directObject
      * @throws Exception|ExceptionInterface
      */
     public function run(object $subject, object $directObject): void
     {
         $character = $subject;
+        $activity = (new Activity(ActivityType::RECIPE_CRAFTING));
 
-        /** @var AbstractResource $resource */
-        $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
-        $activity = (new Activity(ActivityType::RESOURCE_GATHERING));
-
-        for ($i = 0; $directObject->getQuantity() > $i; $i++) {
-            $step = new ActivityStep($resource->getGatheringTime());
-            $activity->addStep($step);
-        }
+        $step = new ActivityStep($directObject->getCraftingTime());
+        $activity->addStep($step);
 
         $activity->applyMasteryPerformance($character->getMasterySet());
-        $directObject->setInvolvingActivity($activity);
 
         //TODO: lock player activity
 
@@ -76,10 +66,7 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
 //            $step->setIsCompleted(true);
 //            $this->repository->save($activity);
 
-
-            $this->messageBus->dispatch(new RewardPlayer($character->getId(), new MasteryReward($resource->getInvolvedMastery(), 0.01)));
-            $this->messageBus->dispatch(new RewardPlayer($character->getId(), new ItemReward( $resource->getRewardItemId(), 1)));
-            $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
+            $this->playerRewardEngine->reward($character->getId(), $directObject->getRewards());
 
             $activity->progressStep();
             $this->activityRepository->save($activity);

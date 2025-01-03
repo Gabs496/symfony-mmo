@@ -18,6 +18,7 @@ readonly class WoodenSword extends AbstractItem
             description: 'A simple sword made of chestnut wood.',
             equippable: true,
             maxCondition: 1.0,
+            weight: 0.2,
         );
     }
 

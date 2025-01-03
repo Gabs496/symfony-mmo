@@ -1,6 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block main %}
+{#    <div {{ custom_turbo_stream_listen('playerActivity') }}></div>#}
     <div class="row">
         <div class="col-lg-4">
             <div class="card">
@@ -13,10 +14,26 @@
                 </turbo-frame>
             </div>
         </div>
-        <div class="col-lg-4 ms-auto">
+        <div class="col-lg-4">
             <div class="card">
-                <div class="card-header bg-info">{{ 'backpack'|trans|capitalize }}</div>
-                <turbo-frame class="card-body d-flex" id="item_bag_{{ player.backpack.id }}" {{ custom_turbo_stream_listen('item_bag_' ~ player.backpack.id) }}>
+                <div class="card-header bg-info">{{ 'recipes'|trans|capitalize }}</div>
+                <turbo-frame class="card-body" id="recipes">
+                    {% for recipe in recipes %}
+                        {% include 'map/recipe_row.html.twig' %}
+                    {% endfor %}
+                </turbo-frame>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-info">
+{#                    <div>#}
+{#                        <div class="progress" id="item_bag_fullness_{{ player.backpack.id }}">#}
+{#                        </div>#}
+{#                    </div>#}
+                    {{ 'backpack'|trans|capitalize }}
+                </div>
+                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_{{ player.backpack.id }}" {{ custom_turbo_stream_listen('item_bag_' ~ player.backpack.id) }}>
                     {% for entity in player.backpack.items %}
                         {% set id = entity.id %}
                         {{ block('create', 'item_bag/ItemInstance.stream.html.twig') }}

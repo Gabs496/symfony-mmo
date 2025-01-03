@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\ItemBag;
+namespace App\GameElement\ItemBag\Exception;
 
 use RuntimeException;
 

@@ -4,7 +4,6 @@ namespace App\GameEngine\Reward;
 
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Item\AbstractItem;
 use App\GameElement\Reward\RewardPlayer;
 use App\GameEngine\Item\ItemCollection;
 use App\GameEngine\Player\PlayerEngine;

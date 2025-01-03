@@ -3,6 +3,7 @@
 namespace App\GameElement\ItemBag;
 
 use App\GameElement\Item\AbstractItemInstance;
+use App\GameElement\ItemBag\Exception\MaxSizeReachedException;
 
 abstract class AbstractItemBag
 {
@@ -56,18 +57,23 @@ abstract class AbstractItemBag
         return $this->size;
     }
 
-    public function getFullness(): float
+    public function getOccupedSpace(): float
     {
         $items = iterator_to_array($this->items);
         return array_reduce($items,
             fn($carry, AbstractItemInstance $instance)
-                => (float)bcadd($carry, $instance->getItem()->getWeight(), 2),
+                => (float)bcadd($carry, bcmul($instance->getItem()->getWeight(), $instance->getQuantity(), 4), 4),
             0.0
         );
     }
 
+    public function getFullness(): float
+    {
+        return (float)bcdiv($this->getOccupedSpace(), $this->size, 4);
+    }
+
     public function isFull(): bool
     {
-        return bccomp($this->getFullness(), $this->size, 2) >= 0;
+        return bccomp($this->getOccupedSpace(), $this->size, 4) >= 0;
     }
 }

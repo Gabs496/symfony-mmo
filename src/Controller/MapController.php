@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
+use App\GameEngine\Crafting\RecipeCollection;
 use App\GameEngine\Map\MapEngine;
+use App\GameObject\Activity\RecipeCraftingActivity;
 use App\GameObject\Activity\ResourceGatheringActivity;
 use App\GameEngine\Activity\ActivityEngine;
 use App\Repository\Data\MapAvailableActivityRepository;
@@ -24,7 +26,7 @@ class MapController extends AbstractController
 
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(MapEngine $mapEngine): Response
+    public function home(MapEngine $mapEngine, RecipeCollection $recipeCollection): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
@@ -32,6 +34,7 @@ class MapController extends AbstractController
         return $this->render('map/home.html.twig', [
             'player' => $user,
             'mapAvailableActivities' => $mapEngine->getAvailableActivities($user->getMap()),
+            'recipes' => $recipeCollection->all(),
         ]);
     }
 
@@ -57,6 +60,23 @@ class MapController extends AbstractController
                 'entity' => $availableActivity,
                 'id' => $availableActivity->getId(),
             ]);
+        }
+        return $this->redirectToRoute('app_map');
+    }
+
+    #[Route('/craft//{id}', name: 'app_map_craft')]
+    public function craftRecipe(ActivityEngine $gameActivity, RecipeCollection $recipeCollection, string $id, Request $request): Response
+    {
+        $recipe = $recipeCollection->get($id);
+        /** @var PlayerCharacter $user */
+        $user = $this->getUser();
+        $gameActivity->execute($user, $recipe, RecipeCraftingActivity::class);
+
+        $this->addFlash('success', 'Activity finished');
+
+        if ($request->headers->get('Turbo-Frame')) {
+            $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+            return new Response();
         }
         return $this->redirectToRoute('app_map');
     }

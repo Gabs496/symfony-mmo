@@ -1,9 +1,7 @@
 <?php
 
 namespace App\GameEngine\Activity;
-use App\GameElement\Activity\ActivityAvailable;
-use App\GameEngine\Engine;
-use ReflectionClass;
+use App\GameElement\Activity\Exception\ActivityNotAvailableException;
 
 readonly class ActivityEngine
 {
@@ -17,18 +15,20 @@ readonly class ActivityEngine
     public function execute(object $subject, object $directObject, string $activityId): void
     {
         // TODO: check if subject can do action
+        // and if directObject is valid for the action
 
-        $reflectionClass = new ReflectionClass($directObject);
-        $availableActionAttributes = $reflectionClass->getAttributes(ActivityAvailable::class);
-        foreach ($availableActionAttributes as $availableActionAttribute) {
-            /** @var ActivityAvailable $availableActivity */
-            $availableActivity = $availableActionAttribute->newInstance();
-            if ($availableActivity->getId() === $activityId && $availableActivity->isAsDirectObject()) {
+//        $reflectionClass = new ReflectionClass($directObject);
+//        $availableActionAttributes = $reflectionClass->getAttributes(ActivityAvailable::class);
+//        foreach ($availableActionAttributes as $availableActionAttribute) {
+//            /** @var ActivityAvailable $availableActivity */
+//            $availableActivity = $availableActionAttribute->newInstance();
+//            if ($availableActivity->getId() === $activityId && $availableActivity->isAsDirectObject()) {
                 $engine = $this->actionEngineCollection->getForAcvtivity($activityId);
                 $engine->run($subject, $directObject);
-            }
-        }
+                return;
+//            }
+//        }
 
-        //TODO: action not available on object error
+        throw new ActivityNotAvailableException("Activity $activityId is not available for " . $directObject::class);
     }
 }
