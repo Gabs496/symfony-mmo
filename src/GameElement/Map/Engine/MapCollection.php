@@ -1,21 +1,21 @@
 <?php
 
-namespace App\GameEngine\Item;
+namespace App\GameElement\Map\Engine;
 
 use App\Core\GameObject\AbstractGameObjectCollection;
 use App\Core\GameObject\GameObjectCollection;
-use App\GameElement\Item\AbstractItem;
+use App\GameElement\Map\AbstractMap;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 #[AutoconfigureTag('game.object_collection')]
-#[GameObjectCollection(AbstractItem::class)]
-readonly class ItemCollection extends AbstractGameObjectCollection
+#[GameObjectCollection(AbstractMap::class)]
+readonly class MapCollection extends AbstractGameObjectCollection
 {
     public function __construct(
-        /** @var AbstractItem[] $gameObjects */
-        #[AutowireIterator('game.item')]
-        protected iterable $gameObjects,
-    ) {
+        #[AutowireIterator('game.map')]
+        protected iterable $gameObjects
+    )
+    {
     }
 }

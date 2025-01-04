@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Activity;
+namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Crafting\AbstractRecipe;

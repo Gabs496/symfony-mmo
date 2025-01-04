@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameEngine;
+namespace App\Core;
 
 use Attribute;
 

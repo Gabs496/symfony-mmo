@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GameEngine\Map;
+namespace App\GameElement\Map\Engine;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Game\MapResource;
+use App\GameElement\Gathering\Engine\ResourceCollection;
 use App\GameElement\Map\AbstractMap;
-use App\GameEngine\Resource\ResourceCollection;
 use App\GameObject\Activity\ActivityType;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Random\RandomException;

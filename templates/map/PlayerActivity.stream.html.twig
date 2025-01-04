@@ -1,22 +1,22 @@
 {# Learn how to use Turbo Streams: https://github.com/symfony/ux-turbo#broadcast-doctrine-entities-update #}
-{% block create %}
-    <turbo-stream action="append" target="playerActivity_{{ entity.type }}">
-        <template>
-            <div id="activity_{{ id }}">
-                {% include 'parts/activity.html.twig' %}
-            </div>
-        </template>
-    </turbo-stream>
-{% endblock %}
+{#{% block create %}#}
+{#    <turbo-stream action="append" target="playerActivity_{{ entity.type.value }}">#}
+{#        <template>#}
+{#            <div id="activity_progress_{{ id }}" class="activity_progress w-100" style="min-width: 5em;">#}
+{#                {% include 'parts/activity.html.twig' %}#}
+{#            </div>#}
+{#        </template>#}
+{#    </turbo-stream>#}
+{#{% endblock %}#}
 
-{% block update %}
-    <turbo-stream action="update" target="activity_{{ id }}">
-        <template>
-            {% include 'parts/activity.html.twig' %}
-        </template>
-    </turbo-stream>
-{% endblock %}
+{#{% block update %}#}
+{#    <turbo-stream action="update" target="activity_progress_{{ id }}">#}
+{#        <template>#}
+{#            {% include 'parts/activity.html.twig' %}#}
+{#        </template>#}
+{#    </turbo-stream>#}
+{#{% endblock %}#}
 
-{% block remove %}
-    <turbo-stream action="remove" target="activity_{{ id }}"></turbo-stream>
-{% endblock %}
+{#{% block remove %}#}
+{#    <turbo-stream action="remove" target="activity_progress_{{ id }}"></turbo-stream>#}
+{#{% endblock %}#}

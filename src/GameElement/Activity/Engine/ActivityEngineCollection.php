@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GameEngine\Activity;
+namespace App\GameElement\Activity\Engine;
 
-use App\GameEngine\Engine;
+use App\Core\Engine;
 use InvalidArgumentException;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;

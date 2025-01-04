@@ -17,11 +17,13 @@
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header bg-info">{{ 'recipes'|trans|capitalize }}</div>
-                <turbo-frame class="card-body" id="recipes">
-                    {% for recipe in recipes %}
-                        {% include 'map/recipe_row.html.twig' %}
-                    {% endfor %}
-                </turbo-frame>
+                <div class="card-body">
+                    <turbo-frame id="recipes">
+                        {% for recipe in recipes %}
+                            {% include 'map/recipe_row.html.twig' %}
+                        {% endfor %}
+                    </turbo-frame>
+                </div>
             </div>
         </div>
         <div class="col-lg-4">

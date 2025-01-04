@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
-use App\GameEngine\Crafting\RecipeCollection;
-use App\GameEngine\Map\MapEngine;
-use App\GameObject\Activity\RecipeCraftingActivity;
-use App\GameObject\Activity\ResourceGatheringActivity;
-use App\GameEngine\Activity\ActivityEngine;
+use App\GameElement\Activity\Engine\ActivityEngine;
+use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
+use App\GameElement\Crafting\Engine\RecipeCollection;
+use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
+use App\GameElement\Map\Engine\MapEngine;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,7 +64,7 @@ class MapController extends AbstractController
         return $this->redirectToRoute('app_map');
     }
 
-    #[Route('/craft//{id}', name: 'app_map_craft')]
+    #[Route('/craft/{id}', name: 'app_map_craft')]
     public function craftRecipe(ActivityEngine $gameActivity, RecipeCollection $recipeCollection, string $id, Request $request): Response
     {
         $recipe = $recipeCollection->get($id);

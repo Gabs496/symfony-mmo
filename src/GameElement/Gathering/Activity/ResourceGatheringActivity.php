@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Activity;
+namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\ActivityInterface;
 

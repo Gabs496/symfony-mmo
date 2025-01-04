@@ -1,13 +1,13 @@
 <?php
 
-namespace App\GameEngine\Reward;
+namespace App\Engine\Reward;
 
+use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Crafting\Reward\ItemReward;
+use App\GameElement\Item\Engine\ItemCollection;
 use App\GameElement\Reward\RewardPlayer;
-use App\GameEngine\Item\ItemCollection;
-use App\GameEngine\Player\PlayerEngine;
-use App\GameObject\Reward\ItemReward;
 use App\GameObject\Reward\MasteryReward;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

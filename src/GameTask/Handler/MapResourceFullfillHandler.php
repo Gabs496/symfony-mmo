@@ -2,7 +2,7 @@
 
 namespace App\GameTask\Handler;
 
-use App\GameEngine\Map\MapEngine;
+use App\GameElement\Map\Engine\MapEngine;
 use App\GameTask\Message\MapResourceFullfill;
 use App\Repository\Game\MapResourceRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

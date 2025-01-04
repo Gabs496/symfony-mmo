@@ -2,9 +2,22 @@
     <div style="width: 3em; height: 3em;" class="col-auto">
 {#        <img src="{{ asset('images/items/' ~ entity.item.id|lower ~ '.png') }}" alt="{{ entity.item.name }}" title="{{ entity.item.name }}" class="h-100"/>#}
     </div>
-    <div class="col-lg-4">{{ recipe.name }}</div>
-    <div class="col-lg-6">{{ recipe.description }}</div>
-    <div class="col-auto ms-auto" id="playeActivity_RECIPE_CRAFTING">
-        <a href="{{ path('app_map_craft', {id: recipe.id}) }}" class="btn btn-primary">{{ 'craft'|trans|upper }}</a>
+    <div class="col">
+        <div>{{ recipe.name }}</div>
+        <div>{{ recipe.description }}</div>
+    </div>
+    <div class="col-12">
+        <div class="d-flex align-items-center">
+            {% for ingredient in recipe.ingredients %}
+                <div class="ms-auto">
+                    {% include 'item/item.widget.html.twig' with {item: ingredient.item, quantity: ingredient.quantity, maskedDanger: not player.backpack.has(ingredient.item, ingredient.quantity)} %}
+                </div>
+            {% endfor %}
+            <div class="activity_panel ms-2" id="playerActivity_RECIPE_CRAFTING">
+                <div class="ms-auto">
+                    <a href="{{ path('app_map_craft', {id: recipe.id}) }}" class="btn btn-primary activity_event_starter">{{ 'craft'|trans|upper }}</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

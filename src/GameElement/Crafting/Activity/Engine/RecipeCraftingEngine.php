@@ -1,16 +1,17 @@
 <?php
 
-namespace App\GameEngine\Crafting\Activity;
+namespace App\GameElement\Crafting\Activity\Engine;
 
+use App\Core\Engine;
+use App\Engine\Reward\PlayerRewardEngine;
 use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\Engine\AbstractActivityEngine;
 use App\GameElement\Crafting\AbstractRecipe;
-use App\GameEngine\Activity\AbstractActivityEngine;
-use App\GameEngine\Engine;
-use App\GameEngine\Reward\PlayerRewardEngine;
+use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
+use App\GameElement\Item\Engine\ItemCollection;
 use App\GameObject\Activity\ActivityType;
-use App\GameObject\Activity\RecipeCraftingActivity;
 use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
@@ -19,6 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+/** @extends AbstractActivityEngine<PlayerCharacter,RecipeCraftingActivity> */
 #[AutoconfigureTag('game.engine.action')]
 #[Engine(RecipeCraftingActivity::class)]
 readonly class RecipeCraftingEngine extends AbstractActivityEngine
@@ -26,13 +28,13 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     public function __construct(
         private ActivityRepository  $activityRepository,
         private MessageBusInterface $messageBus,
-        private PlayerRewardEngine  $playerRewardEngine,
+        private PlayerRewardEngine  $playerRewardEngine, private ItemCollection $itemCollection,
     )
     {
     }
 
     /**
-     * @psalm-param  PlayerCharacter[] $who
+     * @psalm-param  PlayerCharacter $subject
      * @psalm-param   AbstractRecipe $directObject
      * @throws Exception|ExceptionInterface
      */
@@ -41,8 +43,11 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
         $character = $subject;
         $activity = (new Activity(ActivityType::RECIPE_CRAFTING));
 
-        $step = new ActivityStep($directObject->getCraftingTime());
-        $activity->addStep($step);
+        $this->takeIngredient($subject, $directObject);
+
+        foreach ($this->generateSteps($character, $directObject) as $generatedStep) {
+            $activity->addStep($generatedStep);
+        }
 
         $activity->applyMasteryPerformance($character->getMasterySet());
 
@@ -52,6 +57,7 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
         $this->activityRepository->save($activity);
 
         while ($step = $activity->getNextStep()) {
+
             $step->setScheduledAt(microtime(true));
             $this->activityRepository->save($activity);
             $this->messageBus->dispatch(new BroadcastActivityStatusChange($activity->getId()));
@@ -63,10 +69,10 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
                 return;
             }
 
+            $this->onStepFinish($character, $directObject, $step);
+
 //            $step->setIsCompleted(true);
 //            $this->repository->save($activity);
-
-            $this->playerRewardEngine->reward($character->getId(), $directObject->getRewards());
 
             $activity->progressStep();
             $this->activityRepository->save($activity);
@@ -75,16 +81,38 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
         $this->activityRepository->remove($activity);
     }
 
-    private function waitForStepFinish(ActivityStep $step): void
-    {
-        $seconds = floor($step->getDuration());
-        $microseconds = (int)bcmul(bcsub($step->getDuration(), $seconds, 4), 1000000, 0);
-        sleep($seconds);
-        usleep($microseconds);
-    }
-
     public static function getId(): string
     {
         return self::class;
+    }
+
+    /**
+     * @psalm-param  PlayerCharacter $subject
+     * @psalm-param   AbstractRecipe $directObject
+     */
+    public function generateSteps(object $subject, object $directObject): iterable
+    {
+        yield new ActivityStep($directObject->getCraftingTime());
+    }
+
+    /**
+     * @psalm-param  PlayerCharacter $subject
+     * @psalm-param   AbstractRecipe $directObject
+     * @throws ExceptionInterface
+     */
+    public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
+    {
+        $this->playerRewardEngine->reward($subject->getId(), $directObject->getRewards());
+    }
+
+    /**
+     * @psalm-param  PlayerCharacter $subject
+     * @psalm-param   AbstractRecipe $directObject
+     */
+    private function takeIngredient(object $subject, object $directObject): void
+    {
+        foreach ($directObject->getIngredients() as $ingredient) {
+            $subject->getBackpack()->extract($ingredient->getItem(), $ingredient->getQuantity());
+        }
     }
 }

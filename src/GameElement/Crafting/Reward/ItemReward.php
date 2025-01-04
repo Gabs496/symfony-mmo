@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Reward;
+namespace App\GameElement\Crafting\Reward;
 
 use App\GameElement\Reward\RewardInterface;
 

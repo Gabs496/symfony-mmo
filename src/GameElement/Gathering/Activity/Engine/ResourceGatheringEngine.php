@@ -1,19 +1,18 @@
 <?php
 
-namespace App\GameEngine\Gathering\Activity;
+namespace App\GameElement\Gathering\Activity\Engine;
 
+use App\Core\Engine;
 use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Gathering\AbstractResource;
+use App\GameElement\Activity\Engine\AbstractActivityEngine;
+use App\GameElement\Crafting\Reward\ItemReward;
+use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
+use App\GameElement\Gathering\Engine\ResourceCollection;
 use App\GameElement\Reward\RewardPlayer;
-use App\GameEngine\Activity\AbstractActivityEngine;
-use App\GameEngine\Engine;
-use App\GameEngine\Resource\ResourceCollection;
 use App\GameObject\Activity\ActivityType;
-use App\GameObject\Activity\ResourceGatheringActivity;
-use App\GameObject\Reward\ItemReward;
 use App\GameObject\Reward\MasteryReward;
 use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\GameTask\Message\ConsumeMapAvailableActivity;
@@ -37,24 +36,19 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
     }
 
     /**
-     * @psalm-param PlayerCharacter[] $who
+     * @psalm-param PlayerCharacter $subject
      * @psalm-param  MapAvailableActivity $directObject
      * @throws Exception|ExceptionInterface
      */
     public function run(object $subject, object $directObject): void
     {
-        $character = $subject;
-
-        /** @var AbstractResource $resource */
-        $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
         $activity = (new Activity(ActivityType::RESOURCE_GATHERING));
 
-        for ($i = 0; $directObject->getQuantity() > $i; $i++) {
-            $step = new ActivityStep($resource->getGatheringTime());
-            $activity->addStep($step);
+        foreach ($this->generateSteps($subject, $directObject) as $generatedStep) {
+            $activity->addStep($generatedStep);
         }
 
-        $activity->applyMasteryPerformance($character->getMasterySet());
+        $activity->applyMasteryPerformance($subject->getMasterySet());
         $directObject->setInvolvingActivity($activity);
 
         //TODO: lock player activity
@@ -74,13 +68,10 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
                 return;
             }
 
+            $this->onStepFinish($subject, $directObject, $step);
+
 //            $step->setIsCompleted(true);
 //            $this->repository->save($activity);
-
-
-            $this->messageBus->dispatch(new RewardPlayer($character->getId(), new MasteryReward($resource->getInvolvedMastery(), 0.01)));
-            $this->messageBus->dispatch(new RewardPlayer($character->getId(), new ItemReward( $resource->getRewardItemId(), 1)));
-            $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
 
             $activity->progressStep();
             $this->activityRepository->save($activity);
@@ -89,16 +80,35 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
         $this->activityRepository->remove($activity);
     }
 
-    private function waitForStepFinish(ActivityStep $step): void
-    {
-        $seconds = floor($step->getDuration());
-        $microseconds = (int)bcmul(bcsub($step->getDuration(), $seconds, 4), 1000000, 0);
-        sleep($seconds);
-        usleep($microseconds);
-    }
-
     public static function getId(): string
     {
         return self::class;
+    }
+
+    /**
+     * @psalm-param PlayerCharacter $subject
+     * @psalm-param  MapAvailableActivity $directObject
+     */
+    public function generateSteps(object $subject, object $directObject): iterable
+    {
+        $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
+        for ($i = 0; $directObject->getQuantity() > $i; $i++) {
+            $step = new ActivityStep($resource->getGatheringTime());
+            yield $step;
+        }
+    }
+
+    /**
+     * @psalm-param PlayerCharacter $subject
+     * @psalm-param  MapAvailableActivity $directObject
+     * @throws ExceptionInterface
+     */
+    public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
+    {
+        $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
+        $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new MasteryReward($resource->getInvolvedMastery(), 0.01)));
+        $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new ItemReward( $resource->getRewardItemId(), 1)));
+        $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
+
     }
 }

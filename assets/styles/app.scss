@@ -31,3 +31,7 @@ $leftBarWidth: 6em;
 .nav.nav-leftline .nav-link:hover {
   border-left: $nav-underline-border-width solid currentColor;
 }
+
+.activity_panel:has(> .activity_progress) .activity_event_starter {
+    display: none;
+}

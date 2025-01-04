@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameEngine\Activity;
+namespace App\GameElement\Activity\Engine;
 use App\GameElement\Activity\Exception\ActivityNotAvailableException;
 
 readonly class ActivityEngine

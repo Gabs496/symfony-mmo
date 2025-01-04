@@ -19,7 +19,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-            - '../src/GameElement'
 
     Symfony\UX\StimulusBundle\Helper\StimulusHelper:
         alias: 'stimulus.helper'

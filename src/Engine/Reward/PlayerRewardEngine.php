@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameEngine\Reward;
+namespace App\Engine\Reward;
 
 use App\GameElement\Reward\RewardPlayer;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;

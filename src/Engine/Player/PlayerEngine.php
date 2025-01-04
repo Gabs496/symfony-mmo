@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameEngine\Player;
+namespace App\Engine\Player;
 
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;

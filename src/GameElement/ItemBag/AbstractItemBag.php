@@ -2,7 +2,9 @@
 
 namespace App\GameElement\ItemBag;
 
+use App\GameElement\Item\AbstractItem;
 use App\GameElement\Item\AbstractItemInstance;
+use App\GameElement\ItemBag\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\ItemBag\Exception\MaxSizeReachedException;
 
 abstract class AbstractItemBag
@@ -39,12 +41,35 @@ abstract class AbstractItemBag
         $this->items[] = $itemInstance;
     }
 
-    public function removeItem(AbstractItemInstance $itemInstance): void
+    /**
+     * @throws ItemQuantityNotAvailableException
+     */
+    public function extract(AbstractItem $item, int $quantity): AbstractItemInstance
     {
-        $key = array_search($itemInstance, $this->items, true);
-        if ($key !== false) {
-            unset($this->items[$key]);
+        foreach ($this->items as $itemInstance) {
+            if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {
+                $itemInstance->setQuantity($itemInstance->getQuantity() - $quantity);
+                $extracted = clone $itemInstance;
+                $extracted->setQuantity($quantity);
+                if ($itemInstance->getQuantity() <= 0) {
+                    unset($itemInstance);
+                }
+                return $extracted;
+            }
         }
+
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getName(), $quantity));
+    }
+
+    public function has(AbstractItem $item, int $quantity = 1): bool
+    {
+        foreach ($this->items as $itemInstance) {
+            if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getItems(): iterable
