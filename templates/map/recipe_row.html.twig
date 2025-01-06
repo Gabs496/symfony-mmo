@@ -1,6 +1,8 @@
 <div class="bg-dark border-primary rounded m-1 row">
     <div style="width: 3em; height: 3em;" class="col-auto">
-{#        <img src="{{ asset('images/items/' ~ entity.item.id|lower ~ '.png') }}" alt="{{ entity.item.name }}" title="{{ entity.item.name }}" class="h-100"/>#}
+        {% for reward in recipe.itemRewards %}
+            <img src="{{ asset('images/items/' ~ reward.item.id|lower ~ '.png') }}" alt="{{ reward.item.name }}" title="{{ reward.item.name }}" class="h-100"/>
+        {% endfor %}
     </div>
     <div class="col">
         <div>{{ recipe.name }}</div>

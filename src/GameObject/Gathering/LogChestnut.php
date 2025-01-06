@@ -19,7 +19,7 @@ readonly class LogChestnut extends AbstractResource
             name: 'Chestnut Log',
             difficulty: 0.5,
             involvedMastery: new Woodcutting(),
-            rewardItemId: ChestnutLog::ID,
+            rewardItem: new ChestnutLog(),
             gatheringTime: 1.5,
         );
     }

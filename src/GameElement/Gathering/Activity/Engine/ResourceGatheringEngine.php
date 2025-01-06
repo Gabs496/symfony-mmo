@@ -20,8 +20,11 @@ use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
 use Exception;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Twig\Environment;
 
 #[AutoconfigureTag('game.engine.action')]
 #[Engine(ResourceGatheringActivity::class)]
@@ -31,6 +34,8 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
         private ResourceCollection  $resourceCollection,
         private ActivityRepository  $activityRepository,
         private MessageBusInterface $messageBus,
+        private HubInterface        $hub,
+        private Environment         $twig,
     )
     {
     }
@@ -101,14 +106,21 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
     /**
      * @psalm-param PlayerCharacter $subject
      * @psalm-param  MapAvailableActivity $directObject
-     * @throws ExceptionInterface
      */
     public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
     {
         $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
         $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new MasteryReward($resource->getInvolvedMastery(), 0.01)));
-        $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new ItemReward( $resource->getRewardItemId(), 1)));
+        $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new ItemReward( $resource->getRewardItem(), 1)));
         $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
-
+        $this->hub->publish(new Update(
+            'success_message_' . $subject->getId(),
+            $this->twig->render('success_message.stream.html.twig', [
+                'messages' => [
+                    '+0.01 experience',
+                    '+1 ' . $resource->getRewardItem()->getName(),
+                ]
+            ]
+        )));
     }
 }

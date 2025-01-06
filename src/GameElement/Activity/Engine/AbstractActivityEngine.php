@@ -8,6 +8,7 @@ use App\Entity\ActivityStep;
  * @template T
  * @template S
  */
+//TODO: manage cancel operation
 readonly abstract class AbstractActivityEngine
 {
     /**

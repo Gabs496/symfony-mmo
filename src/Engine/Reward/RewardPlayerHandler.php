@@ -6,7 +6,6 @@ use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Crafting\Reward\ItemReward;
-use App\GameElement\Item\Engine\ItemCollection;
 use App\GameElement\Reward\RewardPlayer;
 use App\GameObject\Reward\MasteryReward;
 use App\Repository\Data\PlayerCharacterRepository;
@@ -17,7 +16,6 @@ readonly class RewardPlayerHandler
 {
     public function __construct(
         private PlayerCharacterRepository $repository,
-        private ItemCollection            $itemCollection,
         private PlayerEngine              $playerEngine,
     )
     {
@@ -37,8 +35,7 @@ readonly class RewardPlayerHandler
         }
 
        if ($reward instanceof ItemReward) {
-           $item = $this->itemCollection->get($reward->getItemId());
-           $this->playerEngine->giveItem($playerCharacter, ItemInstance::createFrom($item, $reward->getQuantity()));
+           $this->playerEngine->giveItem($playerCharacter, ItemInstance::createFrom($reward->getItem(), $reward->getQuantity()));
        }
 
         $this->repository->save($playerCharacter);

@@ -30,7 +30,7 @@ readonly class SwordWoodenRecipe extends AbstractRecipe
             ],
             rewards: [
                 new MasteryReward(type: new SwordCrafting(), experience: 0.1),
-                new ItemReward(itemId: WoodenSword::ID, quantity: 1),
+                new ItemReward(item: new WoodenSword(), quantity: 1),
             ]
         );
     }

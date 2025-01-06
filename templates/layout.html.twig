@@ -23,4 +23,7 @@
             </div>
         </div>
     </div>
+    <div id="success_messages" class="position-absolute bottom-50 end-50" {{ custom_turbo_stream_listen('success_message_' ~ app.user.id) }}>
+
+    </div>
 {% endblock %}

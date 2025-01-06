@@ -1,0 +1,9 @@
+<turbo-stream action="update" target="success_messages">
+    <template>
+        {% for message in messages %}
+        <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
+            <span class="badge bg-success">{{ message }}</span>
+        </div>
+        {% endfor %}
+    </template>
+</turbo-stream>

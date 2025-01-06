@@ -40,7 +40,7 @@
                 <div class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.backpack.id }}">
                     {% for entity in player.backpack.items %}
                         {% set id = entity.id %}
-                            {% include 'item_bag/item_row.html.twig' %}
+                        {{ block('create', 'item_bag/items_update.stream.html.twig') }}
                     {% endfor %}
                 </div>
             </div>

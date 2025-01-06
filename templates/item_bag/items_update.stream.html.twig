@@ -2,7 +2,7 @@
 {% block create %}
     <turbo-stream action="append" target="item_bag_items_{{ entity.bag.id }}">
         <template>
-            <div class="animate__animated animate__zoomIn animate__faster">
+            <div  id="item_instance_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
                 {% include 'item_bag/item_row.html.twig' %}
             </div>
         </template>

@@ -2,20 +2,21 @@
 
 namespace App\GameElement\Crafting\Reward;
 
+use App\GameElement\Item\AbstractItem;
 use App\GameElement\Reward\RewardInterface;
 
 readonly class ItemReward implements RewardInterface
 {
     public function __construct(
-        private string  $itemId,
-        private int $quantity = 1
+        private AbstractItem $item,
+        private int          $quantity = 1
     )
     {
     }
 
-    public function getItemId(): string
+    public function getItem(): AbstractItem
     {
-        return $this->itemId;
+        return $this->item;
     }
 
     public function getQuantity(): int

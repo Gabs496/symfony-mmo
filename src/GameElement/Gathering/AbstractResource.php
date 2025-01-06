@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Gathering;
 
+use App\GameElement\Item\AbstractItem;
 use App\GameElement\Mastery\MasteryType;
 
 readonly class AbstractResource
@@ -11,7 +12,7 @@ readonly class AbstractResource
         private string      $name,
         private float       $difficulty,
         private MasteryType $involvedMastery,
-        private string      $rewardItemId,
+        private AbstractItem      $rewardItem,
         private float       $gatheringTime,
     )
     {
@@ -38,9 +39,9 @@ readonly class AbstractResource
         return $this->involvedMastery;
     }
 
-    public function getRewardItemId(): string
+    public function getRewardItem(): AbstractItem
     {
-        return $this->rewardItemId;
+        return $this->rewardItem;
     }
 
     public function getGatheringTime(): float

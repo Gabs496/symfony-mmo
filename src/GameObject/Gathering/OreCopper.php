@@ -19,7 +19,7 @@ readonly class OreCopper extends AbstractResource
             name: 'Copper Ore',
             difficulty: 0.5,
             involvedMastery: new Mining(),
-            rewardItemId: CopperOre::ID,
+            rewardItem: new CopperOre(),
             gatheringTime: 1.5
         );
     }
