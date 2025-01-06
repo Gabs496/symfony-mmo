@@ -5,9 +5,9 @@ namespace App\GameObject\Crafting\Recipe;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\RecipeIngredient;
 use App\GameElement\Crafting\Reward\ItemReward;
-use App\GameElement\Mastery\MasteryType;
 use App\GameObject\Item\Resource\Log\ChestnutLog;
 use App\GameObject\Item\Sword\WoodenSword;
+use App\GameObject\Mastery\SwordCrafting;
 use App\GameObject\Reward\MasteryReward;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -29,7 +29,7 @@ readonly class SwordWoodenRecipe extends AbstractRecipe
             requirements: [
             ],
             rewards: [
-                new MasteryReward(type: MasteryType::SWORD_CRAFTING, experience: 0.1),
+                new MasteryReward(type: new SwordCrafting(), experience: 0.1),
                 new ItemReward(itemId: WoodenSword::ID, quantity: 1),
             ]
         );

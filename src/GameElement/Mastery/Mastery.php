@@ -5,12 +5,12 @@ namespace App\GameElement\Mastery;
 class Mastery
 {
     public function __construct(
-        protected readonly MasteryType $type,
+        protected readonly string $type,
         protected float $experience
     )
     {
     }
-    public function getType(): MasteryType
+    public function getType(): string
     {
         return $this->type;
     }

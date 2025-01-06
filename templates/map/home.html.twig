@@ -30,17 +30,17 @@
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header bg-info">
+                    {{ 'backpack'|trans|capitalize }}
                     <div>
                         <div class="progress" id="item_bag_fullness_{{ player.backpack.id }}">
                             <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ player.backpack.fullness*100 }}%;"></div>
                         </div>
                     </div>
-                    {{ 'backpack'|trans|capitalize }}
                 </div>
                 <div class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.backpack.id }}">
                     {% for entity in player.backpack.items %}
                         {% set id = entity.id %}
-                        {% include 'item_bag/item_row.html.twig' %}
+                            {% include 'item_bag/item_row.html.twig' %}
                     {% endfor %}
                 </div>
             </div>

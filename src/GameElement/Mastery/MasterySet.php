@@ -17,7 +17,7 @@ class MasterySet
     public function getMastery(MasteryType $masteryType): Mastery
     {
         foreach ($this->masteries as $mastery) {
-            if ($mastery->getType() === $masteryType) {
+            if ($mastery->getType() === (string)$masteryType) {
                 return $mastery;
             }
         }

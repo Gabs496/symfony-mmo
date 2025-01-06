@@ -2,10 +2,6 @@
 
 namespace App\GameElement\Mastery;
 
-enum MasteryType: string
+abstract class MasteryType
 {
-    case WOODCUTTING = 'WOODCUTTING';
-    case MINING = 'MINING';
-
-    case SWORD_CRAFTING = 'SWORD_CRAFTING';
 }
