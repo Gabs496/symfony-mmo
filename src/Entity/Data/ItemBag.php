@@ -2,8 +2,11 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\ItemBag\AbstractItemBag;
-use App\GameElement\ItemBag\ItemBagType;
+use App\GameElement\Item\AbstractItem;
+use App\GameElement\Item\AbstractItemBag;
+use App\GameElement\Item\AbstractItemInstance;
+use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
+use App\GameElement\Item\ItemBagType;
 use App\Repository\Data\ItemInstanceBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,7 +29,7 @@ abstract class ItemBag extends AbstractItemBag
     private PlayerCharacter $player;
 
     /** @var Collection<int, ItemInstance> */
-    #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected iterable $items;
 
     #[ORM\Column(type: 'float')]
@@ -52,5 +55,25 @@ abstract class ItemBag extends AbstractItemBag
     public function setPlayer(PlayerCharacter $player): void
     {
         $this->player = $player;
+    }
+
+    /**
+     * @throws ItemQuantityNotAvailableException
+     */
+    public function extract(AbstractItem $item, int $quantity): AbstractItemInstance
+    {
+        foreach ($this->items as $key => $itemInstance) {
+            if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {
+                $itemInstance->setQuantity($itemInstance->getQuantity() - $quantity);
+                $extracted = clone $itemInstance;
+                $extracted->setQuantity($quantity);
+                if ($itemInstance->getQuantity() <= 0) {
+                    $this->items->remove($key);
+                }
+                return $extracted;
+            }
+        }
+
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getName(), $quantity));
     }
 }

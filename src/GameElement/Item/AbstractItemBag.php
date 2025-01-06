@@ -1,11 +1,9 @@
 <?php
 
-namespace App\GameElement\ItemBag;
+namespace App\GameElement\Item;
 
-use App\GameElement\Item\AbstractItem;
-use App\GameElement\Item\AbstractItemInstance;
-use App\GameElement\ItemBag\Exception\ItemQuantityNotAvailableException;
-use App\GameElement\ItemBag\Exception\MaxSizeReachedException;
+use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
+use App\GameElement\Item\Exception\MaxSizeReachedException;
 
 abstract class AbstractItemBag
 {
