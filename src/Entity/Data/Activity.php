@@ -3,6 +3,7 @@
 namespace App\Entity\Data;
 
 use App\Entity\ActivityStep;
+use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Mastery\MasterySet;
 use App\GameObject\Activity\ActivityType;
 use App\Repository\Data\ActivityRepository;
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 //#[Broadcast(topics: ['@="playerActivity"'], private: true, template: 'map/PlayerActivity.stream.html.twig')]
-class Activity
+class Activity implements ActivityInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]

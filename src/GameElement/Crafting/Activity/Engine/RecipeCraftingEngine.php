@@ -7,10 +7,12 @@ use App\Engine\Reward\PlayerRewardEngine;
 use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
-use App\GameElement\Item\Engine\ItemCollection;
+use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
+use App\GameElement\Notification\Exception\UserNotificationException;
 use App\GameObject\Activity\ActivityType;
 use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\Repository\Data\ActivityRepository;
@@ -19,6 +21,9 @@ use Exception;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Throwable;
+use Twig\Error\LoaderError;
+use Twig\Error\SyntaxError;
 
 /** @extends AbstractActivityEngine<PlayerCharacter,RecipeCraftingActivity> */
 #[AutoconfigureTag('game.engine.action')]
@@ -28,8 +33,7 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     public function __construct(
         private ActivityRepository  $activityRepository,
         private MessageBusInterface $messageBus,
-        private PlayerRewardEngine  $playerRewardEngine, private ItemCollection $itemCollection,
-    )
+        private PlayerRewardEngine  $playerRewardEngine,)
     {
     }
 
@@ -51,8 +55,9 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
 
         $activity->applyMasteryPerformance($character->getMasterySet());
 
-        //TODO: lock player activity
-
+        if ($subject instanceof ActivityInvolvableInterface) {
+            $subject->startActivity($activity);
+        }
         $activity->setStartedAt(new DateTimeImmutable());
         $this->activityRepository->save($activity);
 
@@ -78,6 +83,9 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
             $this->activityRepository->save($activity);
         }
 
+        if ($subject instanceof ActivityInvolvableInterface) {
+            $subject->endActivity($activity);
+        }
         $this->activityRepository->remove($activity);
     }
 
@@ -96,9 +104,10 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     }
 
     /**
-     * @psalm-param  PlayerCharacter $subject
-     * @psalm-param   AbstractRecipe $directObject
-     * @throws ExceptionInterface
+     * @param object $subject
+     * @param object $directObject
+     * @param ActivityStep $step
+     * @throws Throwable
      */
     public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
     {
@@ -108,11 +117,16 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     /**
      * @psalm-param  PlayerCharacter $subject
      * @psalm-param   AbstractRecipe $directObject
+     * @throws UserNotificationException
      */
     private function takeIngredient(object $subject, object $directObject): void
     {
-        foreach ($directObject->getIngredients() as $ingredient) {
-            $subject->getBackpack()->extract($ingredient->getItem(), $ingredient->getQuantity());
+        try {
+            foreach ($directObject->getIngredients() as $ingredient) {
+                $subject->getBackpack()->extract($ingredient->getItem(), $ingredient->getQuantity());
+            }
+        } catch (ItemQuantityNotAvailableException $e) {
+            throw new UserNotificationException($subject->getId(),'Recipe ingredients not availables');
         }
     }
 }

@@ -4,7 +4,7 @@ namespace App\GameObject\Crafting\Recipe;
 
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\RecipeIngredient;
-use App\GameElement\Crafting\Reward\ItemReward;
+use App\GameElement\Item\Reward\ItemReward;
 use App\GameObject\Item\Resource\Log\ChestnutLog;
 use App\GameObject\Item\Sword\WoodenSword;
 use App\GameObject\Mastery\SwordCrafting;

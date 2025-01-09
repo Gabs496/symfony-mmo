@@ -4,7 +4,7 @@ namespace App\GameElement\Item\Exception;
 
 use RuntimeException;
 
-class MaxSizeReachedException extends RuntimeException
+class MaxBagSizeReachedException extends RuntimeException
 {
     protected $message = 'Max size reached';
 }

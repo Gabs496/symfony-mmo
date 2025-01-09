@@ -3,15 +3,16 @@
 namespace App\GameElement\Gathering\Activity\Engine;
 
 use App\Core\Engine;
+use App\Engine\Reward\PlayerRewardEngine;
 use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
-use App\GameElement\Crafting\Reward\ItemReward;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Engine\ResourceCollection;
-use App\GameElement\Reward\RewardPlayer;
+use App\GameElement\Item\Reward\ItemReward;
 use App\GameObject\Activity\ActivityType;
 use App\GameObject\Reward\MasteryReward;
 use App\GameTask\Message\BroadcastActivityStatusChange;
@@ -20,11 +21,9 @@ use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
 use Exception;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Twig\Environment;
+use Throwable;
 
 #[AutoconfigureTag('game.engine.action')]
 #[Engine(ResourceGatheringActivity::class)]
@@ -34,8 +33,7 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
         private ResourceCollection  $resourceCollection,
         private ActivityRepository  $activityRepository,
         private MessageBusInterface $messageBus,
-        private HubInterface        $hub,
-        private Environment         $twig,
+        private PlayerRewardEngine  $playerRewardEngine,
     )
     {
     }
@@ -49,40 +47,67 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
     {
         $activity = (new Activity(ActivityType::RESOURCE_GATHERING));
 
-        foreach ($this->generateSteps($subject, $directObject) as $generatedStep) {
-            $activity->addStep($generatedStep);
-        }
-
-        $activity->applyMasteryPerformance($subject->getMasterySet());
-        $directObject->setInvolvingActivity($activity);
-
-        //TODO: lock player activity
-
-        $activity->setStartedAt(new DateTimeImmutable());
-        $this->activityRepository->save($activity);
-
-        while ($step = $activity->getNextStep()) {
-            $step->setScheduledAt(microtime(true));
-            $this->activityRepository->save($activity);
-            $this->messageBus->dispatch(new BroadcastActivityStatusChange($activity->getId()));
-
-            $this->waitForStepFinish($step);
-
-            $activity = $this->activityRepository->find($activity->getId());
-            if (!$activity instanceof Activity) {
-                return;
+        try {
+            foreach ($this->generateSteps($subject, $directObject) as $generatedStep) {
+                $activity->addStep($generatedStep);
             }
 
-            $this->onStepFinish($subject, $directObject, $step);
+            $activity->applyMasteryPerformance($subject->getMasterySet());
+            if ($subject instanceof ActivityInvolvableInterface) {
+                $subject->startActivity($activity);
+            }
+            if ($directObject instanceof ActivityInvolvableInterface) {
+                $directObject->startActivity($activity);
+            }
+
+            //TODO: lock player activity
+
+            $activity->setStartedAt(new DateTimeImmutable());
+            $this->activityRepository->save($activity);
+
+            while ($step = $activity->getNextStep()) {
+                $step->setScheduledAt(microtime(true));
+                $this->activityRepository->save($activity);
+                $this->messageBus->dispatch(new BroadcastActivityStatusChange($activity->getId()));
+
+                $this->waitForStepFinish($step);
+
+                $activity = $this->activityRepository->find($activity->getId());
+                if (!$activity instanceof Activity) {
+                    return;
+                }
+
+                $this->onStepFinish($subject, $directObject, $step);
 
 //            $step->setIsCompleted(true);
 //            $this->repository->save($activity);
 
-            $activity->progressStep();
-            $this->activityRepository->save($activity);
+                $activity->progressStep();
+                $this->activityRepository->save($activity);
+            }
+
+            if ($subject instanceof ActivityInvolvableInterface) {
+                $subject->endActivity($activity);
+            }
+            if ($directObject instanceof ActivityInvolvableInterface) {
+                $directObject->endActivity($activity);
+            }
+
+            $this->activityRepository->remove($activity);
+        } catch (Exception $e)
+        {
+            if ($subject instanceof ActivityInvolvableInterface) {
+                $subject->endActivity($activity);
+            }
+            if ($directObject instanceof ActivityInvolvableInterface) {
+                $directObject->endActivity($activity);
+            }
+            $this->activityRepository->remove($activity);
+
+            throw $e;
         }
 
-        $this->activityRepository->remove($activity);
+
     }
 
     public static function getId(): string
@@ -106,21 +131,17 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
     /**
      * @psalm-param PlayerCharacter $subject
      * @psalm-param  MapAvailableActivity $directObject
+     * @throws Throwable
      */
     public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
     {
         $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
-        $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new MasteryReward($resource->getInvolvedMastery(), 0.01)));
-        $this->messageBus->dispatch(new RewardPlayer($subject->getId(), new ItemReward( $resource->getRewardItem(), 1)));
+        $rewards = [
+            new MasteryReward($resource->getInvolvedMastery(), 0.01),
+            new ItemReward( $resource->getRewardItem(), 1),
+        ];
+        $this->playerRewardEngine->reward($subject->getId(), $rewards);
+
         $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
-        $this->hub->publish(new Update(
-            'success_message_' . $subject->getId(),
-            $this->twig->render('success_message.stream.html.twig', [
-                'messages' => [
-                    '+0.01 experience',
-                    '+1 ' . $resource->getRewardItem()->getName(),
-                ]
-            ]
-        )));
     }
 }

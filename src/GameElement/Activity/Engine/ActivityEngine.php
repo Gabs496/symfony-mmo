@@ -23,9 +23,9 @@ readonly class ActivityEngine
 //            /** @var ActivityAvailable $availableActivity */
 //            $availableActivity = $availableActionAttribute->newInstance();
 //            if ($availableActivity->getId() === $activityId && $availableActivity->isAsDirectObject()) {
-                $engine = $this->actionEngineCollection->getForAcvtivity($activityId);
-                $engine->run($subject, $directObject);
-                return;
+            $engine = $this->actionEngineCollection->getForAcvtivity($activityId);
+            $engine->run($subject, $directObject);
+            return;
 //            }
 //        }
 

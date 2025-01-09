@@ -1,11 +1,12 @@
 <?php
 
-namespace App\GameElement\Crafting\Reward;
+namespace App\GameElement\Item\Reward;
 
 use App\GameElement\Item\AbstractItem;
 use App\GameElement\Reward\RewardInterface;
+use App\GameElement\Reward\RewardNotificationInterface;
 
-readonly class ItemReward implements RewardInterface
+readonly class ItemReward implements RewardInterface, RewardNotificationInterface
 {
     public function __construct(
         private AbstractItem $item,
@@ -19,8 +20,13 @@ readonly class ItemReward implements RewardInterface
         return $this->item;
     }
 
-    public function getQuantity(): int
+    public function getQuantity(): float
     {
         return $this->quantity;
+    }
+
+    public function getName(): string
+    {
+        return $this->item->getName();
     }
 }

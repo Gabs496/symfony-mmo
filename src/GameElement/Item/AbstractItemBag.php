@@ -3,7 +3,7 @@
 namespace App\GameElement\Item;
 
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
-use App\GameElement\Item\Exception\MaxSizeReachedException;
+use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 
 abstract class AbstractItemBag
 {
@@ -18,12 +18,12 @@ abstract class AbstractItemBag
     }
 
     /**
-     * @throws MaxSizeReachedException
+     * @throws MaxBagSizeReachedException
      */
     public function addItem(AbstractItemInstance $itemInstance): void
     {
         if ($this->isFull()) {
-            throw new MaxSizeReachedException();
+            throw new MaxBagSizeReachedException();
         }
 
         $item = $itemInstance->getItem();

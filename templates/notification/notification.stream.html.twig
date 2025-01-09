@@ -1,0 +1,18 @@
+{% block success %}
+<turbo-stream action="append" target="notifications">
+    <template>
+        <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
+            <span class="badge bg-success">{{ message }}</span>
+        </div>
+    </template>
+</turbo-stream>
+{% endblock %}
+{% block danger %}
+    <turbo-stream action="append" target="notifications">
+        <template>
+            <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
+                <span class="badge bg-danger">{{ message }}</span>
+            </div>
+        </template>
+    </turbo-stream>
+{% endblock %}

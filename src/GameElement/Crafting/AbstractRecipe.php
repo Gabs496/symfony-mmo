@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Crafting;
 
-use App\GameElement\Crafting\Reward\ItemReward;
+use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\RewardInterface;
 
 abstract readonly class AbstractRecipe
@@ -54,6 +54,7 @@ abstract readonly class AbstractRecipe
         return $this->requirements;
     }
 
+    /** @return RewardInterface[] */
     public function getRewards(): array
     {
         return $this->rewards;

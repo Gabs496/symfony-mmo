@@ -4,6 +4,8 @@ namespace App\Entity\Data;
 
 use App\Entity\Game\MapResource;
 use App\GameElement\Activity\ActivityAvailable;
+use App\GameElement\Activity\ActivityInterface;
+use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameObject\Activity\ActivityType;
 use App\Interface\ConsumableInterface;
@@ -14,7 +16,7 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 #[ORM\Entity(repositoryClass: MapAvailableActivityRepository::class)]
 #[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true, template: 'map/MapAvailableActivity.stream.html.twig')]
 #[ActivityAvailable(ResourceGatheringActivity::class, as: ActivityAvailable::AS_DIRECT_OBJECT)]
-class MapAvailableActivity implements ConsumableInterface
+class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -121,14 +123,39 @@ class MapAvailableActivity implements ConsumableInterface
         return bccomp($this->quantity, 0.0, 2) === 0;
     }
 
-    public function getInvolvingActivity(): ?Activity
+    /**
+     * @psalm-return Activity|null
+     */
+    public function getInvolvingActivity(): ?ActivityInterface
     {
         return $this->involvingActivity;
     }
 
-    public function setInvolvingActivity(?Activity $involvingActivity): void
+    /**
+     * @psalm-param Activity|null $involvingActivity
+     */
+    public function setInvolvingActivity(?ActivityInterface $involvingActivity): void
     {
         $this->involvingActivity = $involvingActivity;
-        $involvingActivity->getMapAvailableActivities()->add($this);
+        $involvingActivity?->getMapAvailableActivities()->add($this);
+    }
+
+    public function startActivity(ActivityInterface $activity): void
+    {
+        $this->setInvolvingActivity($activity);
+    }
+
+    public function endActivity(ActivityInterface $activity): void
+    {
+        $this->setInvolvingActivity(null);
+    }
+
+    public function isInvolvedInActivity(?ActivityInterface $activity = null): bool
+    {
+        if (!$activity) {
+            return (bool)$this->involvingActivity;
+        }
+
+        return $this->involvingActivity === $activity;
     }
 }
