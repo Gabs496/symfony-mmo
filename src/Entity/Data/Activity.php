@@ -5,7 +5,6 @@ namespace App\Entity\Data;
 use App\Entity\ActivityStep;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Mastery\MasterySet;
-use App\GameObject\Activity\ActivityType;
 use App\Repository\Data\ActivityRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,8 +22,8 @@ class Activity implements ActivityInterface
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
-    #[ORM\Column(type: 'string', enumType: ActivityType::class)]
-    protected ActivityType $type;
+    #[ORM\Column(type: 'string')]
+    protected string $type;
 
     /** @var ActivityStep[] */
     #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
@@ -38,9 +37,9 @@ class Activity implements ActivityInterface
     protected Collection $mapAvailableActivities;
 
     /**
-     * @param ActivityType $type
+     * @param string $type
      */
-    public function __construct(ActivityType $type)
+    public function __construct(string $type)
     {
         $this->type = $type;
         $this->mapAvailableActivities = new ArrayCollection();
@@ -51,7 +50,7 @@ class Activity implements ActivityInterface
         return $this->id;
     }
 
-    public function getType(): ActivityType
+    public function getType(): string
     {
         return $this->type;
     }

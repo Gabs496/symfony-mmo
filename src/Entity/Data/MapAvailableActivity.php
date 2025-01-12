@@ -7,7 +7,6 @@ use App\GameElement\Activity\ActivityAvailable;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
-use App\GameObject\Activity\ActivityType;
 use App\Interface\ConsumableInterface;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,8 +26,8 @@ class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInt
     #[ORM\Column(length: 50, nullable: false)]
     private ?string $mapId;
 
-    #[ORM\Column(enumType: ActivityType::class)]
-    private ActivityType $type;
+    #[ORM\Column(type: 'string')]
+    private string $type;
 
     #[ORM\Column(type: 'float')]
     private float $quantity;
@@ -46,7 +45,7 @@ class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInt
     #[ORM\ManyToOne(targetEntity: Activity::class, cascade: ['persist'], inversedBy: 'mapAvailableActivities')]
     private ?Activity $involvingActivity = null;
 
-    public function __construct(string $mapId, ActivityType $type, float $quantity)
+    public function __construct(string $mapId, string $type, float $quantity)
     {
         $this->mapId = $mapId;
         $this->type = $type;
@@ -58,7 +57,7 @@ class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInt
         return $this->id;
     }
 
-    public function getType(): ?ActivityType
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -157,5 +156,10 @@ class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInt
         }
 
         return $this->involvingActivity === $activity;
+    }
+
+    public function getInvolvedActivity(): ?ActivityInterface
+    {
+        return $this->involvingActivity;
     }
 }

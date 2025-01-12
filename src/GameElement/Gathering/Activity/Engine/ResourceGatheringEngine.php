@@ -5,23 +5,16 @@ namespace App\GameElement\Gathering\Activity\Engine;
 use App\Core\Engine;
 use App\Engine\Reward\PlayerRewardEngine;
 use App\Entity\ActivityStep;
-use App\Entity\Data\Activity;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Engine\ResourceCollection;
 use App\GameElement\Item\Reward\ItemReward;
-use App\GameObject\Activity\ActivityType;
 use App\GameObject\Reward\MasteryReward;
-use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\GameTask\Message\ConsumeMapAvailableActivity;
 use App\Repository\Data\ActivityRepository;
-use DateTimeImmutable;
-use Exception;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
@@ -31,83 +24,12 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
 {
     public function __construct(
         private ResourceCollection  $resourceCollection,
-        private ActivityRepository  $activityRepository,
-        private MessageBusInterface $messageBus,
+        ActivityRepository  $activityRepository,
+        MessageBusInterface $messageBus,
         private PlayerRewardEngine  $playerRewardEngine,
     )
     {
-    }
-
-    /**
-     * @psalm-param PlayerCharacter $subject
-     * @psalm-param  MapAvailableActivity $directObject
-     * @throws Exception|ExceptionInterface
-     */
-    public function run(object $subject, object $directObject): void
-    {
-        $activity = (new Activity(ActivityType::RESOURCE_GATHERING));
-
-        try {
-            foreach ($this->generateSteps($subject, $directObject) as $generatedStep) {
-                $activity->addStep($generatedStep);
-            }
-
-            $activity->applyMasteryPerformance($subject->getMasterySet());
-            if ($subject instanceof ActivityInvolvableInterface) {
-                $subject->startActivity($activity);
-            }
-            if ($directObject instanceof ActivityInvolvableInterface) {
-                $directObject->startActivity($activity);
-            }
-
-            //TODO: lock player activity
-
-            $activity->setStartedAt(new DateTimeImmutable());
-            $this->activityRepository->save($activity);
-
-            while ($step = $activity->getNextStep()) {
-                $step->setScheduledAt(microtime(true));
-                $this->activityRepository->save($activity);
-                $this->messageBus->dispatch(new BroadcastActivityStatusChange($activity->getId()));
-
-                $this->waitForStepFinish($step);
-
-                $activity = $this->activityRepository->find($activity->getId());
-                if (!$activity instanceof Activity) {
-                    return;
-                }
-
-                $this->onStepFinish($subject, $directObject, $step);
-
-//            $step->setIsCompleted(true);
-//            $this->repository->save($activity);
-
-                $activity->progressStep();
-                $this->activityRepository->save($activity);
-            }
-
-            if ($subject instanceof ActivityInvolvableInterface) {
-                $subject->endActivity($activity);
-            }
-            if ($directObject instanceof ActivityInvolvableInterface) {
-                $directObject->endActivity($activity);
-            }
-
-            $this->activityRepository->remove($activity);
-        } catch (Exception $e)
-        {
-            if ($subject instanceof ActivityInvolvableInterface) {
-                $subject->endActivity($activity);
-            }
-            if ($directObject instanceof ActivityInvolvableInterface) {
-                $directObject->endActivity($activity);
-            }
-            $this->activityRepository->remove($activity);
-
-            throw $e;
-        }
-
-
+        parent::__construct($activityRepository, $messageBus);
     }
 
     public static function getId(): string
@@ -143,5 +65,9 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
         $this->playerRewardEngine->reward($subject->getId(), $rewards);
 
         $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
+    }
+
+    public function onStepStart(object $subject, object $directObject): void
+    {
     }
 }

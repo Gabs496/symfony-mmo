@@ -8,7 +8,6 @@ use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Notification\Engine\NotificationEngine;
-use App\GameElement\Notification\Exception\UserNotificationException;
 use App\GameElement\Reward\RewardNotificationInterface;
 use App\GameElement\Reward\RewardPlayer;
 use App\GameObject\Reward\MasteryReward;
@@ -43,7 +42,8 @@ readonly class RewardPlayerHandler
            try {
                $this->playerEngine->giveItem($playerCharacter, ItemInstance::createFrom($reward->getItem(), $reward->getQuantity()));
            } catch (MaxBagSizeReachedException $e) {
-               throw new UserNotificationException($playerCharacter->getId(), 'Your bag is full, you cannot receive the item.', $e);
+               $this->notificationEngine->danger($rewardPlayer->getPlayerId(), 'Your bag is full, you cannot receive the item.');
+               return;
            }
        }
 

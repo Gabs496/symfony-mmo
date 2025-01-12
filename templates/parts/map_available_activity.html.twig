@@ -13,10 +13,8 @@
             <span class="fw-bold">{{ entity.quantity }}</span>
         </div>
         <div class="col ms-auto">
-            {% if entity.involvingActivity %}
-                {% set entity = entity.involvingActivity %}
-                {% set id = entity.id %}
-                {% include 'parts/activity.html.twig' %}
+            {% if entity.involvedInActivity %}
+                {% include 'parts/activity.html.twig' with {entity: entity.involvedActivity, id: entity.id} %}
             {% else %}
                 <a href="{{ path('app_map_activity_start', {id: entity.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>
             {% endif %}
