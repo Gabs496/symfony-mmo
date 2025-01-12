@@ -5,6 +5,8 @@ namespace App\Entity\Data;
 use App\Core\GameObject\GameObjectReference;
 use App\Entity\AbstractCharacter;
 use App\Entity\Security\User;
+use App\GameElement\Activity\ActivityInterface;
+use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameElement\Mastery\MasteryType;
@@ -17,7 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: PlayerCharacterRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
-class PlayerCharacter extends AbstractCharacter implements UserInterface
+class PlayerCharacter extends AbstractCharacter implements UserInterface, ActivityInvolvableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -44,6 +46,10 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
 
     #[GameObjectReference(AbstractMap::class, objectIdProperty: 'position')]
     private AbstractMap $map;
+
+    #[ORM\ManyToOne(targetEntity: Activity::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ActivityInterface $currentActivity;
 
     public function __construct()
     {
@@ -136,8 +142,36 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
         return ($this->masterySet ??= new MasterySet());
     }
 
+    public function setMap(AbstractMap $map): void
+    {
+        $this->map = $map;
+    }
     public function getMap(): AbstractMap
     {
         return $this->map;
+    }
+
+    public function startActivity(ActivityInterface $activity): void
+    {
+        $this->currentActivity = $activity;
+    }
+
+    public function endActivity(ActivityInterface $activity): void
+    {
+        $this->currentActivity = null;
+    }
+
+    public function isInvolvedInActivity(?ActivityInterface $activity = null): bool
+    {
+        if (!$this->currentActivity) {
+            return false;
+        }
+
+        return $this->currentActivity === $activity;
+    }
+
+    public function getInvolvedActivity(): ?ActivityInterface
+    {
+        return $this->currentActivity;
     }
 }

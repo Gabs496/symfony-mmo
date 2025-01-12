@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Gathering\Activity\Engine;
 
-use App\Core\Engine;
+use App\Core\EngineFor;
 use App\Engine\Reward\PlayerRewardEngine;
 use App\Entity\ActivityStep;
 use App\Entity\Data\MapAvailableActivity;
@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
 #[AutoconfigureTag('game.engine.action')]
-#[Engine(ResourceGatheringActivity::class)]
+#[EngineFor(ResourceGatheringActivity::class)]
 readonly class ResourceGatheringEngine extends AbstractActivityEngine
 {
     public function __construct(

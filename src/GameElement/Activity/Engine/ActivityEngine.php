@@ -1,7 +1,9 @@
 <?php
 
 namespace App\GameElement\Activity\Engine;
+use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\Exception\ActivityNotAvailableException;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 readonly class ActivityEngine
 {
@@ -12,7 +14,11 @@ readonly class ActivityEngine
     {
     }
 
-    public function execute(object $subject, object $directObject, string $activityId): void
+    /**
+     * @throws \DateMalformedStringException
+     * @throws ExceptionInterface
+     */
+    public function execute(object $subject, object $directObject, ActivityInterface $activity): void
     {
         // TODO: check if subject can do action
         // and if directObject is valid for the action
@@ -23,8 +29,8 @@ readonly class ActivityEngine
 //            /** @var ActivityAvailable $availableActivity */
 //            $availableActivity = $availableActionAttribute->newInstance();
 //            if ($availableActivity->getId() === $activityId && $availableActivity->isAsDirectObject()) {
-            $engine = $this->actionEngineCollection->getForAcvtivity($activityId);
-            $engine->run($subject, $directObject, $activityId);
+            $engine = $this->actionEngineCollection->getForAcvtivity($activity::class);
+            $engine->run($subject, $directObject, $activity);
             return;
 //            }
 //        }

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Crafting\Activity\Engine;
 
-use App\Core\Engine;
+use App\Core\EngineFor;
 use App\Engine\Reward\PlayerRewardEngine;
 use App\Entity\ActivityStep;
 use App\Entity\Data\PlayerCharacter;
@@ -18,7 +18,7 @@ use Throwable;
 
 /** @extends AbstractActivityEngine<PlayerCharacter,RecipeCraftingActivity> */
 #[AutoconfigureTag('game.engine.action')]
-#[Engine(RecipeCraftingActivity::class)]
+#[EngineFor(RecipeCraftingActivity::class)]
 readonly class RecipeCraftingEngine extends AbstractActivityEngine
 {
     public function __construct(

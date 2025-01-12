@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Activity\Engine;
 
-use App\Core\Engine;
+use App\Core\EngineFor;
 use InvalidArgumentException;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -31,7 +31,7 @@ readonly class ActivityEngineCollection
     {
         foreach ($this->activityEngines as $activityEngine) {
             $activityEngineReflection = new ReflectionClass($activityEngine);
-            $engineAttributes = $activityEngineReflection->getAttributes(Engine::class);
+            $engineAttributes = $activityEngineReflection->getAttributes(EngineFor::class);
             foreach ($engineAttributes as $engineAttribute) {
                 $activity = $engineAttribute->newInstance();
                 if ($activity->getId() === $activityId) {

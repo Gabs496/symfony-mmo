@@ -5,7 +5,7 @@ namespace App\Core;
 use Attribute;
 
 #[Attribute]
-readonly class Engine
+readonly class EngineFor
 {
     public function __construct(
         public string $id,

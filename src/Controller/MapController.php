@@ -9,10 +9,12 @@ use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Crafting\Engine\RecipeCollection;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Map\Engine\MapEngine;
+use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
@@ -39,18 +41,18 @@ class MapController extends AbstractController
     }
 
     #[Route('/activity/start/{id}', name: 'app_map_activity_start')]
-    public function startActivity(MapAvailableActivity $availableActivity, ActivityEngine $gameActivity, MapAvailableActivityRepository $repository, Request $request): Response
+    public function startActivity(NotificationEngine $notificationEngine, MapAvailableActivity $availableActivity, ActivityEngine $gameActivity, MapAvailableActivityRepository $repository, Request $request): Response
     {
+        /** @var PlayerCharacter $player */
+        $player = $this->getUser();
         //TODO: controllare se il giocatore è nella mappa giusta
         if ($availableActivity->isEmpty()) {
             $repository->remove($availableActivity);
-            $this->addFlash('danger', 'Activity is not available');
+            $notificationEngine->danger($player->getId(), 'Activity is not available');
             return $this->redirectToRoute('app_map');
         }
 
-        /** @var PlayerCharacter $user */
-        $user = $this->getUser();
-        $gameActivity->execute($user, $availableActivity, ResourceGatheringActivity::class);
+        $gameActivity->execute($player, $availableActivity, new ResourceGatheringActivity($player->getId(), $availableActivity->getMapResource()));
 
         $this->addFlash('success', 'Activity finished');
 
@@ -64,13 +66,17 @@ class MapController extends AbstractController
         return $this->redirectToRoute('app_map');
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws ExceptionInterface
+     */
     #[Route('/craft/{id}', name: 'app_map_craft')]
     public function craftRecipe(ActivityEngine $gameActivity, RecipeCollection $recipeCollection, string $id, Request $request): Response
     {
         $recipe = $recipeCollection->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->execute($user, $recipe, RecipeCraftingActivity::class);
+        $gameActivity->execute($user, $recipe, new RecipeCraftingActivity($user->getId(), $recipe));
 
         $this->addFlash('success', 'Activity finished');
 
