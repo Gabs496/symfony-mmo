@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map;
 
-use App\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameObject\AbstractGameObject;
 
 readonly abstract class AbstractMap extends AbstractGameObject
 {

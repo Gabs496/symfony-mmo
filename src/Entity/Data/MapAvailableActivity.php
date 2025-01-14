@@ -32,7 +32,7 @@ class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInt
     #[ORM\Column(type: 'float')]
     private float $quantity;
 
-    #[ORM\ManyToOne(targetEntity: MapResource::class, inversedBy: 'spots')]
+    #[ORM\ManyToOne(targetEntity: MapResource::class, inversedBy: 'spots', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: true)]
     private ?MapResource $mapResource = null;
 
@@ -156,10 +156,5 @@ class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInt
         }
 
         return $this->involvingActivity === $activity;
-    }
-
-    public function getInvolvedActivity(): ?ActivityInterface
-    {
-        return $this->involvingActivity;
     }
 }

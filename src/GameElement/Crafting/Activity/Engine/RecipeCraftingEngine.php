@@ -2,15 +2,15 @@
 
 namespace App\GameElement\Crafting\Activity\Engine;
 
-use App\Core\EngineFor;
-use App\Engine\Reward\PlayerRewardEngine;
-use App\Entity\ActivityStep;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
+use App\GameElement\Core\EngineFor;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
+use App\GameElement\Reward\RewardApply;
 use App\Repository\Data\ActivityRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,7 +22,6 @@ use Throwable;
 readonly class RecipeCraftingEngine extends AbstractActivityEngine
 {
     public function __construct(
-        private PlayerRewardEngine  $playerRewardEngine,
         ActivityRepository  $activityRepository,
         MessageBusInterface $messageBus,
     )
@@ -52,7 +51,9 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
      */
     public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
     {
-        $this->playerRewardEngine->reward($subject->getId(), $directObject->getRewards());
+        foreach ($directObject->getRewards() as $reward) {
+            $this->messageBus->dispatch(new RewardApply($reward, $subject));
+        }
     }
 
     /**

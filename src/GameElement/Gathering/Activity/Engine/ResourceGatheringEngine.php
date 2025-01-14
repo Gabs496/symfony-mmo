@@ -2,16 +2,16 @@
 
 namespace App\GameElement\Gathering\Activity\Engine;
 
-use App\Core\EngineFor;
-use App\Engine\Reward\PlayerRewardEngine;
-use App\Entity\ActivityStep;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
+use App\GameElement\Core\EngineFor;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Engine\ResourceCollection;
 use App\GameElement\Item\Reward\ItemReward;
-use App\GameObject\Reward\MasteryReward;
+use App\GameElement\Mastery\MasteryReward;
+use App\GameElement\Reward\RewardApply;
 use App\GameTask\Message\ConsumeMapAvailableActivity;
 use App\Repository\Data\ActivityRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -26,7 +26,6 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
         private ResourceCollection  $resourceCollection,
         ActivityRepository  $activityRepository,
         MessageBusInterface $messageBus,
-        private PlayerRewardEngine  $playerRewardEngine,
     )
     {
         parent::__construct($activityRepository, $messageBus);
@@ -62,8 +61,9 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
             new MasteryReward($resource->getInvolvedMastery(), 0.01),
             new ItemReward( $resource->getRewardItem(), 1),
         ];
-        $this->playerRewardEngine->reward($subject->getId(), $rewards);
-
+        foreach ($rewards as $reward) {
+            $this->messageBus->dispatch(new RewardApply($reward, $subject));
+        }
         $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
     }
 

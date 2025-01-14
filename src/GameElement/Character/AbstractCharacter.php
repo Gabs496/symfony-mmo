@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\GameElement\Character;
 
 abstract class AbstractCharacter
 {

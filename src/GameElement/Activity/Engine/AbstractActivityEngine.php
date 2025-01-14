@@ -2,10 +2,10 @@
 
 namespace App\GameElement\Activity\Engine;
 
-use App\Entity\ActivityStep;
 use App\Entity\Data\Activity;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
+use App\GameElement\Activity\ActivityStep;
 use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\Repository\Data\ActivityRepository;
 use DateMalformedStringException;

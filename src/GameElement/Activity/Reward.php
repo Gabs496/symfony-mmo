@@ -1,19 +1,17 @@
 <?php
 
-namespace App\GameElement\Reward;
+namespace App\GameElement\Activity;
 
-readonly class RewardPlayer
+use App\GameElement\Reward\RewardInterface;
+use Attribute;
+
+#[Attribute]
+readonly class Reward
 {
     public function __construct(
-        private string $playerId,
         private RewardInterface $reward,
     )
     {
-    }
-
-    public function getPlayerId(): string
-    {
-        return $this->playerId;
     }
 
     public function getReward(): RewardInterface

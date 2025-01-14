@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\GameObject;
+namespace App\GameElement\Core\GameObject;
 
 readonly abstract class AbstractGameObject
 {

@@ -2,7 +2,7 @@
 
 namespace App\Entity\Data;
 
-use App\Core\GameObject\GameObjectReference;
+use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Item\AbstractItem;
 use App\GameElement\Item\AbstractItemBag;
 use App\GameElement\Item\AbstractItemInstance;

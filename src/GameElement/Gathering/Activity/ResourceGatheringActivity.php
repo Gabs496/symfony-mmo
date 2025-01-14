@@ -4,24 +4,19 @@ namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\ActivityInterface;
+use App\GameElement\Gathering\AbstractResource;
 
 #[Activity(id: 'RESOURCE_GATHERING')]
 readonly class ResourceGatheringActivity implements ActivityInterface
 {
     public function __construct(
-        private string $playerId,
-        private string $mapResourceId,
+        private AbstractResource $resource,
     )
     {
     }
 
-    public function getPlayerId(): string
+    public function getResource(): AbstractResource
     {
-        return $this->playerId;
-    }
-
-    public function getMapResourceId(): string
-    {
-        return $this->mapResourceId;
+        return $this->resource;
     }
 }

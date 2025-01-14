@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GameObject\Reward;
+namespace App\GameElement\Mastery;
 
-use App\GameElement\Mastery\MasteryType;
+use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Reward\RewardInterface;
 use App\GameElement\Reward\RewardNotificationInterface;
 
@@ -32,5 +32,10 @@ readonly class MasteryReward implements RewardInterface, RewardNotificationInter
     public function getQuantity(): float
     {
         return $this->experience;
+    }
+
+    public function getSubject(): AbstractCharacter
+    {
+        return $this->subject;
     }
 }

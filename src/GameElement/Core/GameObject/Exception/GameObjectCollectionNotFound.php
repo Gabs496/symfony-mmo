@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\GameObject\Exception;
+namespace App\GameElement\Core\GameObject\Exception;
 
 use RuntimeException;
 

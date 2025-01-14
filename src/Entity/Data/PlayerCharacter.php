@@ -2,11 +2,11 @@
 
 namespace App\Entity\Data;
 
-use App\Core\GameObject\GameObjectReference;
-use App\Entity\AbstractCharacter;
 use App\Entity\Security\User;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
+use App\GameElement\Character\AbstractCharacter;
+use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameElement\Mastery\MasteryType;
@@ -151,6 +151,11 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface, Activi
         return $this->map;
     }
 
+    public function getCurrentActivity(): ?ActivityInterface
+    {
+        return $this->currentActivity;
+    }
+
     public function startActivity(ActivityInterface $activity): void
     {
         $this->currentActivity = $activity;
@@ -168,10 +173,5 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface, Activi
         }
 
         return $this->currentActivity === $activity;
-    }
-
-    public function getInvolvedActivity(): ?ActivityInterface
-    {
-        return $this->currentActivity;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Activity\Engine;
 
-use App\Core\EngineFor;
+use App\GameElement\Core\EngineFor;
 use InvalidArgumentException;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;

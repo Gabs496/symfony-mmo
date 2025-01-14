@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Crafting\Engine;
 
-use App\Core\GameObject\AbstractGameObjectCollection;
-use App\Core\GameObject\GameObjectCollection;
+use App\GameElement\Core\GameObject\AbstractGameObjectCollection;
+use App\GameElement\Core\GameObject\GameObjectCollection;
 use App\GameElement\Crafting\AbstractRecipe;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;

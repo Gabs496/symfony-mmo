@@ -3,6 +3,8 @@
 namespace App\Entity\Game;
 
 use App\Entity\Data\MapAvailableActivity;
+use App\GameElement\Core\GameObject\GameObjectReference;
+use App\GameElement\Gathering\AbstractResource;
 use App\Repository\Game\MapResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -36,6 +38,9 @@ class MapResource
      */
     #[ORM\OneToMany(targetEntity: MapAvailableActivity::class, mappedBy: 'mapResource', cascade: ['persist'])]
     private Collection $spots;
+
+    #[GameObjectReference(AbstractResource::class, objectIdProperty: 'resourceId')]
+    private AbstractResource $resource;
 
     public function __construct()
     {
@@ -137,5 +142,15 @@ class MapResource
         return $this->spots->reduce(function (int $carry, MapAvailableActivity $spot) {
             return $carry + $spot->getQuantity();
         }, 0);
+    }
+
+    public function getResource(): AbstractResource
+    {
+        return $this->resource;
+    }
+
+    public function setResource(AbstractResource $resource): void
+    {
+        $this->resource = $resource;
     }
 }

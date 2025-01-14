@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\GameObject;
+namespace App\GameElement\Core\GameObject;
 
-use App\Core\GameObject\Exception\GameObjectCollectionNotFound;
+use App\GameElement\Core\GameObject\Exception\GameObjectCollectionNotFound;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Item;
 
-use App\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameObject\AbstractGameObject;
 
 readonly abstract class AbstractItem extends AbstractGameObject implements ItemInterface
 {

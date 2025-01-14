@@ -7,5 +7,4 @@ interface ActivityInvolvableInterface
     public function startActivity(ActivityInterface $activity): void;
     public function endActivity(ActivityInterface $activity): void;
     public function isInvolvedInActivity(?ActivityInterface $activity = null): bool;
-    public function getInvolvedActivity(): ?ActivityInterface;
 }

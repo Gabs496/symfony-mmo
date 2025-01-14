@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Core;
+namespace App\GameElement\Core\GameObject;
 
 use Attribute;
 
 #[Attribute]
-readonly class EngineFor
+class GameObjectCollection
 {
     public function __construct(
-        public string $id,
+        private string $id,
     )
-    {}
+    {
+    }
 
     public function getId(): string
     {
