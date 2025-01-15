@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameTask\Message;
+namespace App\Engine\MapAvailableActivity\Event;
 
 use App\Interface\ActivityEventInterface;
 

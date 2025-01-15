@@ -1,9 +1,9 @@
 <?php
 
-namespace App\GameTask\Handler;
+namespace App\Engine\MapAvailableActivity\Event\Handler;
 
+use App\Engine\MapAvailableActivity\Event\ConsumeMapAvailableActivity;
 use App\Entity\Data\MapAvailableActivity;
-use App\GameTask\Message\ConsumeMapAvailableActivity;
 use App\Repository\Data\MapAvailableActivityRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

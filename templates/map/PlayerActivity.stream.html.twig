@@ -1,5 +1,15 @@
-<turbo-stream action="update" target="player_current_activity">
-    <template>
-        {% include 'parts/activity.html.twig' with {entity: activity, full: true} %}
-    </template>
-</turbo-stream>
+{% block start %}
+    <turbo-stream action="update" target="player_current_activity">
+        <template>
+            <div id="player_current_activity_progressbar">
+                {% include 'parts/activity.html.twig' with {entity: activity, full: true} %}
+            </div>
+        </template>
+    </turbo-stream>
+{% endblock %}
+{% block end %}
+    <turbo-stream action="remove" target="player_current_activity_progressbar">
+        <template>
+        </template>
+    </turbo-stream>
+{% endblock %}

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Activity\Event;
 
-class ActivityStarted
+readonly class ActivityStarted
 {
     public function __construct(
         private string $activityId,

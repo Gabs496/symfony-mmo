@@ -2,12 +2,12 @@
 
 namespace App\GameElement\Activity\Engine;
 
-use App\Engine\BroadcastActivityStatusChange;
 use App\Entity\Data\Activity;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\ActivityWithRewardInterface;
+use App\GameElement\Activity\Event\ActivityEnded;
 use App\GameElement\Activity\Event\ActivityStarted;
 use App\GameElement\Reward\RewardApply;
 use App\Repository\Data\ActivityRepository;
@@ -61,12 +61,13 @@ readonly abstract class AbstractActivityEngine
                 $this->onStepStart($subject, $directObject);
                 $step->setScheduledAt(microtime(true));
                 $this->activityRepository->save($activity);
-                $this->messageBus->dispatch(new BroadcastActivityStatusChange($activity->getId()));
                 $this->messageBus->dispatch(new ActivityStarted($activity->getId(), $subject));
                 $this->messageBus->dispatch(new ActivityStarted($activity->getId(), $directObject));
 
-
                 $this->waitForStepFinish($step);
+
+                $this->messageBus->dispatch(new ActivityEnded($activity->getId(), $subject));
+                $this->messageBus->dispatch(new ActivityEnded($activity->getId(), $directObject));
 
                 $activity = $this->activityRepository->find($activity->getId());
                 if (!$activity instanceof Activity) {
@@ -115,12 +116,6 @@ readonly abstract class AbstractActivityEngine
      * @return ActivityStep[]
      */
     protected abstract function generateSteps(object $subject, object $directObject): iterable;
-
-    /**
-     * @psalm-param T $subject
-     * @psalm-param S $directObject
-     */
-    protected abstract function onStepFinish(object $subject, object $directObject, ActivityStep $step): void;
 
     /**
      * @psalm-param T $subject

@@ -47,16 +47,6 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     }
 
     /**
-     * @param object $subject
-     * @param object $directObject
-     * @param ActivityStep $step
-     * @throws Throwable
-     */
-    public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
-    {
-    }
-
-    /**
      * @psalm-param  PlayerCharacter $subject
      * @psalm-param   AbstractRecipe $directObject
      * @throws Throwable

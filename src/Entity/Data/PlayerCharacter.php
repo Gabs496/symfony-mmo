@@ -151,6 +151,9 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface, Activi
         return $this->map;
     }
 
+    /**
+     * @return Activity|null
+     */
     public function getCurrentActivity(): ?ActivityInterface
     {
         return $this->currentActivity;

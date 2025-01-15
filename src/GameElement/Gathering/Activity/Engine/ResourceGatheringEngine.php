@@ -9,14 +9,9 @@ use App\GameElement\Activity\Engine\AbstractActivityEngine;
 use App\GameElement\Core\EngineFor;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Engine\ResourceCollection;
-use App\GameElement\Item\Reward\ItemReward;
-use App\GameElement\Mastery\MasteryReward;
-use App\GameElement\Reward\RewardApply;
-use App\GameTask\Message\ConsumeMapAvailableActivity;
 use App\Repository\Data\ActivityRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Throwable;
 
 #[AutoconfigureTag('game.engine.action')]
 #[EngineFor(ResourceGatheringActivity::class)]
@@ -47,16 +42,6 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
             $step = new ActivityStep($resource->getGatheringTime());
             yield $step;
         }
-    }
-
-    /**
-     * @psalm-param PlayerCharacter $subject
-     * @psalm-param  MapAvailableActivity $directObject
-     * @throws Throwable
-     */
-    public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
-    {
-        $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
     }
 
     public function onStepStart(object $subject, object $directObject): void
