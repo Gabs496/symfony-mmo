@@ -6,6 +6,8 @@ use App\Entity\Data\Activity;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\ActivityStep;
+use App\GameElement\Activity\ActivityWithRewardInterface;
+use App\GameElement\Reward\RewardApply;
 use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\Repository\Data\ActivityRepository;
 use DateMalformedStringException;
@@ -34,9 +36,9 @@ readonly abstract class AbstractActivityEngine
      * @psalm-param S $directObject
      * @throws ExceptionInterface|DateMalformedStringException
      */
-    public function run(object $subject, object $directObject, ActivityInterface $activity): void
+    public function run(object $subject, object $directObject, ActivityInterface $type): void
     {
-        $activity = (new Activity($this->getId($activity)));
+        $activity = (new Activity($this->getId($type)));
         try {
             foreach ($this->generateSteps($subject, $directObject) as $generatedStep) {
                 $activity->addStep($generatedStep);
@@ -65,6 +67,12 @@ readonly abstract class AbstractActivityEngine
                 $activity = $this->activityRepository->find($activity->getId());
                 if (!$activity instanceof Activity) {
                     return;
+                }
+
+                if ($type instanceof ActivityWithRewardInterface) {
+                    foreach ($type->getRewards() as $reward) {
+                        $this->messageBus->dispatch(new RewardApply($reward, $subject));
+                    }
                 }
 
                 $this->onStepFinish($subject, $directObject, $step);

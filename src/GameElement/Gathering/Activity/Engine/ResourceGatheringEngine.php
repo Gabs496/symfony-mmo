@@ -56,14 +56,6 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
      */
     public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
     {
-        $resource = $this->resourceCollection->get($directObject->getMapResource()->getResourceId());
-        $rewards = [
-            new MasteryReward($resource->getInvolvedMastery(), 0.01),
-            new ItemReward( $resource->getRewardItem(), 1),
-        ];
-        foreach ($rewards as $reward) {
-            $this->messageBus->dispatch(new RewardApply($reward, $subject));
-        }
         $this->messageBus->dispatch(new ConsumeMapAvailableActivity($directObject->getId()));
     }
 

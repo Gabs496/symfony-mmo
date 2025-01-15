@@ -76,7 +76,7 @@ class MapController extends AbstractController
         $recipe = $recipeCollection->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->execute($user, $recipe, new RecipeCraftingActivity($user->getId(), $recipe));
+        $gameActivity->execute($user, $recipe, new RecipeCraftingActivity($recipe));
 
         $this->addFlash('success', 'Activity finished');
 

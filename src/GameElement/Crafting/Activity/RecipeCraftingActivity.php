@@ -4,25 +4,25 @@ namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\ActivityInterface;
+use App\GameElement\Activity\ActivityWithRewardInterface;
 use App\GameElement\Crafting\AbstractRecipe;
 
 #[Activity(id: 'RECIPE_CRAFTING')]
-readonly class RecipeCraftingActivity implements ActivityInterface
+readonly class RecipeCraftingActivity implements ActivityInterface, ActivityWithRewardInterface
 {
     public function __construct(
-        private string $playerId,
         private AbstractRecipe $recipe,
     )
     {
     }
 
-    public function getPlayerId(): string
-    {
-        return $this->playerId;
-    }
-
     public function getRecipe(): AbstractRecipe
     {
         return $this->recipe;
+    }
+
+    public function getRewards(): iterable
+    {
+        yield from $this->recipe->getRewards();
     }
 }

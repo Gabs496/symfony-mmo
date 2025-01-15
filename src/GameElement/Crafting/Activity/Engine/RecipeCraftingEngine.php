@@ -10,7 +10,6 @@ use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
-use App\GameElement\Reward\RewardApply;
 use App\Repository\Data\ActivityRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -51,9 +50,6 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
      */
     public function onStepFinish(object $subject, object $directObject, ActivityStep $step): void
     {
-        foreach ($directObject->getRewards() as $reward) {
-            $this->messageBus->dispatch(new RewardApply($reward, $subject));
-        }
     }
 
     /**
