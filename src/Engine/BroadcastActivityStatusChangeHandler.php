@@ -1,9 +1,8 @@
 <?php
 
-namespace App\GameTask\Handler;
+namespace App\Engine;
 
 use App\Entity\Data\Activity;
-use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\Repository\Data\ActivityRepository;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;

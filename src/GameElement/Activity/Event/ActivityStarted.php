@@ -1,11 +1,12 @@
 <?php
 
-namespace App\GameTask\Message;
+namespace App\GameElement\Activity\Event;
 
-readonly class BroadcastActivityStatusChange
+class ActivityStarted
 {
     public function __construct(
         private string $activityId,
+        private object $subject,
     )
     {
     }
@@ -13,5 +14,10 @@ readonly class BroadcastActivityStatusChange
     public function getActivityId(): string
     {
         return $this->activityId;
+    }
+
+    public function getSubject(): object
+    {
+        return $this->subject;
     }
 }

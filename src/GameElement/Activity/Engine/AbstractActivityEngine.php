@@ -2,13 +2,14 @@
 
 namespace App\GameElement\Activity\Engine;
 
+use App\Engine\BroadcastActivityStatusChange;
 use App\Entity\Data\Activity;
 use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\ActivityWithRewardInterface;
+use App\GameElement\Activity\Event\ActivityStarted;
 use App\GameElement\Reward\RewardApply;
-use App\GameTask\Message\BroadcastActivityStatusChange;
 use App\Repository\Data\ActivityRepository;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -61,6 +62,9 @@ readonly abstract class AbstractActivityEngine
                 $step->setScheduledAt(microtime(true));
                 $this->activityRepository->save($activity);
                 $this->messageBus->dispatch(new BroadcastActivityStatusChange($activity->getId()));
+                $this->messageBus->dispatch(new ActivityStarted($activity->getId(), $subject));
+                $this->messageBus->dispatch(new ActivityStarted($activity->getId(), $directObject));
+
 
                 $this->waitForStepFinish($step);
 
