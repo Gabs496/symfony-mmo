@@ -32,9 +32,9 @@
                 <div class="card-header bg-info">
                     {{ 'backpack'|trans|capitalize }}
                     <div>
-                        <div class="progress" id="item_bag_fullness_{{ player.backpack.id }}">
+                        <turbo-frame class="progress" id="item_bag_fullness_{{ player.backpack.id }}" {{ custom_turbo_stream_listen('item_bag_fullness_' ~ player.backpack.id) }}>
                             <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ player.backpack.fullness*100 }}%;"></div>
-                        </div>
+                        </turbo-frame>
                     </div>
                 </div>
                 <div class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.backpack.id }}">

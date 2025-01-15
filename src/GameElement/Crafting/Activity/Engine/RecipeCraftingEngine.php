@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Crafting\Activity\Engine;
 
+use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
@@ -20,12 +21,15 @@ use Throwable;
 #[EngineFor(RecipeCraftingActivity::class)]
 readonly class RecipeCraftingEngine extends AbstractActivityEngine
 {
+    private PlayerEngine $playerEngine;
+
     public function __construct(
         ActivityRepository  $activityRepository,
-        MessageBusInterface $messageBus,
+        MessageBusInterface $messageBus, PlayerEngine $playerEngine,
     )
     {
         parent::__construct($activityRepository, $messageBus);
+        $this->playerEngine = $playerEngine;
     }
 
     public static function getId(): string
@@ -71,7 +75,7 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     {
         try {
             foreach ($directObject->getIngredients() as $ingredient) {
-                $subject->getBackpack()->extract($ingredient->getItem(), $ingredient->getQuantity());
+                $this->playerEngine->takeItem($subject, $ingredient->getItem(), $ingredient->getQuantity());
             }
         } catch (ItemQuantityNotAvailableException $e) {
             throw new UserNotificationException($subject->getId(),'Recipe ingredients not availables');
