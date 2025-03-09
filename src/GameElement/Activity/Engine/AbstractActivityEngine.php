@@ -7,8 +7,8 @@ use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\ActivityWithRewardInterface;
-use App\GameElement\Activity\Event\ActivityEnded;
-use App\GameElement\Activity\Event\ActivityStarted;
+use App\GameElement\Activity\Event\ActivityStepEndEvent;
+use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\GameElement\Reward\RewardApply;
 use App\Repository\Data\ActivityRepository;
 use DateMalformedStringException;
@@ -17,6 +17,7 @@ use Exception;
 use ReflectionClass;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @template T
@@ -28,6 +29,7 @@ readonly abstract class AbstractActivityEngine
     public function __construct(
         protected ActivityRepository  $activityRepository,
         protected MessageBusInterface $messageBus,
+        protected EventDispatcherInterface $eventDispatcher,
     )
     {
     }
@@ -58,16 +60,14 @@ readonly abstract class AbstractActivityEngine
             $this->activityRepository->save($activity);
 
             while ($step = $activity->getNextStep()) {
-                $this->onStepStart($subject, $directObject);
                 $step->setScheduledAt(microtime(true));
                 $this->activityRepository->save($activity);
-                $this->messageBus->dispatch(new ActivityStarted($activity->getId(), $subject));
-                $this->messageBus->dispatch(new ActivityStarted($activity->getId(), $directObject));
+
+                $this->eventDispatcher->dispatch(new ActivityStepStartEvent($type, $subject));
 
                 $this->waitForStepFinish($step);
 
-                $this->messageBus->dispatch(new ActivityEnded($activity->getId(), $subject));
-                $this->messageBus->dispatch(new ActivityEnded($activity->getId(), $directObject));
+                $this->eventDispatcher->dispatch(new ActivityStepEndEvent($type, $subject));
 
                 $activity = $this->activityRepository->find($activity->getId());
                 if (!$activity instanceof Activity) {
@@ -79,8 +79,6 @@ readonly abstract class AbstractActivityEngine
                         $this->messageBus->dispatch(new RewardApply($reward, $subject));
                     }
                 }
-
-                $this->onStepFinish($subject, $directObject, $step);
 
     //            $step->setIsCompleted(true);
     //            $this->repository->save($activity);
@@ -116,12 +114,6 @@ readonly abstract class AbstractActivityEngine
      * @return ActivityStep[]
      */
     protected abstract function generateSteps(object $subject, object $directObject): iterable;
-
-    /**
-     * @psalm-param T $subject
-     * @psalm-param S $directObject
-     */
-    protected abstract function onStepStart(object $subject, object $directObject): void;
 
     protected function waitForStepFinish(ActivityStep $step): void
     {

@@ -52,7 +52,7 @@ class MapController extends AbstractController
             return $this->redirectToRoute('app_map');
         }
 
-        $gameActivity->execute($player, $availableActivity, new ResourceGatheringActivity($availableActivity->getMapResource()->getResource()));
+        $gameActivity->execute($player, $availableActivity, new ResourceGatheringActivity($availableActivity));
 
         $this->addFlash('success', 'Activity finished');
 

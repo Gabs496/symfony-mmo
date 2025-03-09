@@ -6,6 +6,7 @@ use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
+use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\GameElement\Core\EngineFor;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
@@ -13,6 +14,8 @@ use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
 use App\Repository\Data\ActivityRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
@@ -25,10 +28,12 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
 
     public function __construct(
         ActivityRepository  $activityRepository,
-        MessageBusInterface $messageBus, PlayerEngine $playerEngine,
+        MessageBusInterface $messageBus,
+        PlayerEngine $playerEngine,
+        EventDispatcherInterface $eventDispatcher,
     )
     {
-        parent::__construct($activityRepository, $messageBus);
+        parent::__construct($activityRepository, $messageBus, $eventDispatcher);
         $this->playerEngine = $playerEngine;
     }
 
@@ -51,9 +56,15 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
      * @psalm-param   AbstractRecipe $directObject
      * @throws Throwable
      */
-    public  function onStepStart(object $subject, object $directObject): void
+    #[AsEventListener(ActivityStepStartEvent::class)]
+    public  function onStepStart(ActivityStepStartEvent $event): void
     {
-        $this->takeIngredient($subject, $directObject);
+        $activity = $event->getActivityType();
+        if (!$activity instanceof RecipeCraftingActivity) {
+            return;
+        }
+
+        $this->takeIngredient($event->getSubject(), $activity->getRecipe());
     }
 
     /**

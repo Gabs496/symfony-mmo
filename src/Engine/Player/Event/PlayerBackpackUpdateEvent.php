@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player\Event;
 
-readonly class PlayerBackpackUpdated
+readonly class PlayerBackpackUpdateEvent
 {
     public function __construct(
         private string $playerId,

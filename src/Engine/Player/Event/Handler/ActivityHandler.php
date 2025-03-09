@@ -2,14 +2,14 @@
 
 namespace App\Engine\Player\Event\Handler;
 
-use App\Engine\Player\Event\PlayerBackpackUpdated;
+use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Activity\Event\ActivityEnded;
-use App\GameElement\Activity\Event\ActivityStarted;
+use App\GameElement\Activity\Event\ActivityStepEndEvent;
+use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\Repository\Data\PlayerCharacterRepository;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Twig\Environment;
 
 readonly class ActivityHandler
@@ -23,8 +23,8 @@ readonly class ActivityHandler
 
     }
 
-    #[AsMessageHandler]
-    public function onPlayerBackpackUpdated(PlayerBackpackUpdated $event): void
+    #[AsEventListener(PlayerBackpackUpdateEvent::class)]
+    public function onPlayerBackpackUpdated(PlayerBackpackUpdateEvent $event): void
     {
         $player = $this->playerCharacterRepository->find($event->getPlayerId());
         $this->hub->publish(new Update(
@@ -33,21 +33,21 @@ readonly class ActivityHandler
         ));
     }
 
-    #[AsMessageHandler]
-    public function onPlayerActivityStart(ActivityStarted $event): void
+    #[AsEventListener(ActivityStepStartEvent::class)]
+    public function onPlayerActivityStart(ActivityStepStartEvent $event): void
     {
-        if (!$event->getSubject() instanceof PlayerCharacter) {
+        $player = $event->getSubject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
-        $player = $this->playerCharacterRepository->find($event->getSubject()->getId());
         $this->hub->publish(new Update(
             'player_current_activity_' . $player->getName(),
             $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()])
         ));
     }
 
-    #[AsMessageHandler]
-    public function onPlayerActivityEnd(ActivityEnded $event): void
+    #[AsEventListener(ActivityStepEndEvent::class)]
+    public function onPlayerActivityEnd(ActivityStepEndEvent $event): void
     {
         if (!$event->getSubject() instanceof PlayerCharacter) {
             return;
