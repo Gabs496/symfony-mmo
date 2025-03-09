@@ -1,13 +1,13 @@
 <?php
 
-namespace App\GameObject\Mastery;
+namespace App\GameObject\Mastery\Gathering;
 
 use App\GameElement\Mastery\MasteryType;
 
-class Woodcutting extends MasteryType
+class Mining extends MasteryType
 {
     public function __toString(): string
     {
-        return 'WOODCUTTING';
+        return 'MINING';
     }
 }

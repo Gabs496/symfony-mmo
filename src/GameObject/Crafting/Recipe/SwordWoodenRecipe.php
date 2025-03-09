@@ -8,7 +8,7 @@ use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Mastery\MasteryReward;
 use App\GameObject\Item\Resource\Log\ChestnutLog;
 use App\GameObject\Item\Sword\WoodenSword;
-use App\GameObject\Mastery\SwordCrafting;
+use App\GameObject\Mastery\Crafting\SwordCrafting;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('game.recipe')]

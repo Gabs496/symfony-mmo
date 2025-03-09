@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Mastery;
+namespace App\GameObject\Mastery\Crafting;
 
 use App\GameElement\Mastery\MasteryType;
 
