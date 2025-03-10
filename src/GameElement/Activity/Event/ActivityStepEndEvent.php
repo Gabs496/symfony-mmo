@@ -7,15 +7,15 @@ use App\GameElement\Activity\ActivityInterface;
 readonly class ActivityStepEndEvent
 {
     public function __construct(
-        private ActivityInterface $activityTYpe,
+        private ActivityInterface $activity,
         private object            $subject,
     )
     {
     }
 
-    public function getActivityTYpe(): ActivityInterface
+    public function getActivity(): ActivityInterface
     {
-        return $this->activityTYpe;
+        return $this->activity;
     }
 
 

@@ -7,15 +7,15 @@ use App\GameElement\Activity\ActivityInterface;
 readonly class BeforeActivityStepStartEvent
 {
     public function __construct(
-        private ActivityInterface $activityType,
+        private ActivityInterface $activity,
         private object            $subject,
     )
     {
     }
 
-    public function getActivityType(): ActivityInterface
+    public function getActivity(): ActivityInterface
     {
-        return $this->activityType;
+        return $this->activity;
     }
 
 

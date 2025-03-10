@@ -70,12 +70,12 @@ readonly abstract class AbstractActivityEngine
 
                 $this->waitForStepFinish($step);
 
-                $this->eventDispatcher->dispatch(new ActivityStepEndEvent($type, $subject));
-
                 $activity = $this->activityRepository->find($activity->getId());
                 if (!$activity instanceof Activity) {
                     return;
                 }
+
+                $this->eventDispatcher->dispatch(new ActivityStepEndEvent($type, $subject));
 
                 if ($type instanceof ActivityWithRewardInterface) {
                     foreach ($type->getRewards() as $reward) {

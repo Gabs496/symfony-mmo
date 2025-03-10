@@ -23,7 +23,7 @@ readonly class ActivityHandler
     #[AsEventListener(ActivityStartEvent::class)]
     public function onActivityStart(ActivityStartEvent $event): void
     {
-        $activity = $event->getActivityType();
+        $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }
@@ -34,7 +34,7 @@ readonly class ActivityHandler
     #[AsEventListener(ActivityStepStartEvent::class)]
     public function onActivityStepStart(ActivityStepStartEvent $event): void
     {
-        $activity = $event->getActivityType();
+        $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }
@@ -48,7 +48,7 @@ readonly class ActivityHandler
     #[AsEventListener(ActivityEndEvent::class)]
     public function onActivityEnd(ActivityEndEvent $event): void
     {
-        $activity = $event->getActivityType();
+        $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }

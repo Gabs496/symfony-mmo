@@ -59,7 +59,7 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
     #[AsEventListener(BeforeActivityStartEvent::class)]
     public  function beforeActivityStart(BeforeActivityStartEvent $event): void
     {
-        $activity = $event->getActivityType();
+        $activity = $event->getActivity();
         if (!$activity instanceof RecipeCraftingActivity) {
             return;
         }

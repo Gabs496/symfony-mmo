@@ -8,16 +8,16 @@ use App\GameElement\Activity\ActivityInterface;
 readonly class ActivityEndEvent
 {
     public function __construct(
-        private ActivityInterface $activityType,
+        private ActivityInterface $activity,
         private object            $subject,
         private Activity          $activityEntity,
     )
     {
     }
 
-    public function getActivityType(): ActivityInterface
+    public function getActivity(): ActivityInterface
     {
-        return $this->activityType;
+        return $this->activity;
     }
 
 
