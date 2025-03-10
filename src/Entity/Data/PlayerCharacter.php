@@ -4,7 +4,6 @@ namespace App\Entity\Data;
 
 use App\Entity\Security\User;
 use App\GameElement\Activity\ActivityInterface;
-use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Map\AbstractMap;
@@ -19,7 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: PlayerCharacterRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
-class PlayerCharacter extends AbstractCharacter implements UserInterface, ActivityInvolvableInterface
+class PlayerCharacter extends AbstractCharacter implements UserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]

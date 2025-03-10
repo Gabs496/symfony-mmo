@@ -52,7 +52,7 @@ readonly class ResourceGatheringEngine extends AbstractActivityEngine
     }
 
     #[AsEventListener(ActivityStepEndEvent::class)]
-    public function onActivityEnd(ActivityStepEndEvent $event): void
+    public function onActivityStepEnd(ActivityStepEndEvent $event): void
     {
         $activity = $event->getActivityTYpe();
         if (!$activity instanceof ResourceGatheringActivity) {

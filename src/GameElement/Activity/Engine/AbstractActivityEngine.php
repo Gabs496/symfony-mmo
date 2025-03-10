@@ -4,9 +4,12 @@ namespace App\GameElement\Activity\Engine;
 
 use App\Entity\Data\Activity;
 use App\GameElement\Activity\ActivityInterface;
-use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\ActivityWithRewardInterface;
+use App\GameElement\Activity\Event\BeforeActivityStartEvent;
+use App\GameElement\Activity\Event\BeforeActivityStepStartEvent;
+use App\GameElement\Activity\Event\ActivityEndEvent;
+use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\ActivityStepEndEvent;
 use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\GameElement\Reward\RewardApply;
@@ -49,17 +52,17 @@ readonly abstract class AbstractActivityEngine
 
             $activity->applyMasteryPerformance($subject->getMasterySet());
 
-            if ($subject instanceof ActivityInvolvableInterface) {
-                $subject->startActivity($activity);
-            }
-            if ($directObject instanceof ActivityInvolvableInterface) {
-                $directObject->startActivity($activity);
-            }
+            $this->eventDispatcher->dispatch(new BeforeActivityStartEvent($type, $subject, $activity));
 
             $activity->setStartedAt(new DateTimeImmutable());
             $this->activityRepository->save($activity);
 
+            $this->eventDispatcher->dispatch(new ActivityStartEvent($type, $subject, $activity));
+
             while ($step = $activity->getNextStep()) {
+
+                $this->eventDispatcher->dispatch(new BeforeActivityStepStartEvent($type, $subject));
+
                 $step->setScheduledAt(microtime(true));
                 $this->activityRepository->save($activity);
 
@@ -87,23 +90,16 @@ readonly abstract class AbstractActivityEngine
                 $this->activityRepository->save($activity);
             }
 
-            if ($subject instanceof ActivityInvolvableInterface) {
-                $subject->endActivity($activity);
-            }
-            if ($directObject instanceof ActivityInvolvableInterface) {
-                $directObject->endActivity($activity);
-            }
-            $this->activityRepository->remove($activity);
+
         } catch (Exception $e)
         {
-            if ($subject instanceof ActivityInvolvableInterface) {
-                $subject->endActivity($activity);
-            }
-            if ($directObject instanceof ActivityInvolvableInterface) {
-                $directObject->endActivity($activity);
-            }
-            $this->activityRepository->remove($activity);
+        }
 
+        $this->eventDispatcher->dispatch(new ActivityEndEvent($type, $subject, $activity));
+
+        $this->activityRepository->remove($activity);
+
+        if (isset($e) && $e) {
             throw $e;
         }
     }

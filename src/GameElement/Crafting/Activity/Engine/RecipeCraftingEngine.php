@@ -6,7 +6,7 @@ use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\Engine\AbstractActivityEngine;
-use App\GameElement\Activity\Event\ActivityStepStartEvent;
+use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Core\EngineFor;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
@@ -56,8 +56,8 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
      * @psalm-param   AbstractRecipe $directObject
      * @throws Throwable
      */
-    #[AsEventListener(ActivityStepStartEvent::class)]
-    public  function onStepStart(ActivityStepStartEvent $event): void
+    #[AsEventListener(BeforeActivityStartEvent::class)]
+    public  function beforeActivityStart(BeforeActivityStartEvent $event): void
     {
         $activity = $event->getActivityType();
         if (!$activity instanceof RecipeCraftingActivity) {

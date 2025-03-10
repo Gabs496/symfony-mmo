@@ -4,6 +4,8 @@ namespace App\Engine\Player\Event\Handler;
 
 use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\Event\ActivityEndEvent;
+use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\ActivityStepEndEvent;
 use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\Repository\Data\PlayerCharacterRepository;
@@ -33,8 +35,18 @@ readonly class ActivityHandler
         ));
     }
 
+    #[AsEventListener(ActivityStartEvent::class)]
+    public function onPlayerActivityStart(ActivityStartEvent $event): void
+    {
+        $player = $event->getSubject();
+        if (!$player instanceof PlayerCharacter) {
+            return;
+        }
+        $player->startActivity($event->getActivityEntity());
+    }
+
     #[AsEventListener(ActivityStepStartEvent::class)]
-    public function onPlayerActivityStart(ActivityStepStartEvent $event): void
+    public function onPlayerActivityStepStart(ActivityStepStartEvent $event): void
     {
         $player = $event->getSubject();
         if (!$player instanceof PlayerCharacter) {
@@ -47,7 +59,7 @@ readonly class ActivityHandler
     }
 
     #[AsEventListener(ActivityStepEndEvent::class)]
-    public function onPlayerActivityEnd(ActivityStepEndEvent $event): void
+    public function onPlayerActivityStepEnd(ActivityStepEndEvent $event): void
     {
         if (!$event->getSubject() instanceof PlayerCharacter) {
             return;
@@ -57,5 +69,15 @@ readonly class ActivityHandler
             'player_current_activity_' . $player->getName(),
             $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $player->getCurrentActivity()])
         ));
+    }
+
+    #[AsEventListener(ActivityEndEvent::class)]
+    public function onPlayerActivityEnd(ActivityEndEvent $event): void
+    {
+        $player = $event->getSubject();
+        if (!$player instanceof PlayerCharacter) {
+            return;
+        }
+        $player->endActivity($event->getActivityEntity());
     }
 }

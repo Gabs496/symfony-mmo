@@ -2,6 +2,8 @@
 
 namespace App\Engine\MapAvailableActivity\Event\Handler;
 
+use App\GameElement\Activity\Event\ActivityEndEvent;
+use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -18,16 +20,39 @@ readonly class ActivityHandler
     {
     }
 
-    #[AsEventListener(ActivityStepStartEvent::class)]
-    public function onActivityStepStart(ActivityStepStartEvent $event): void
+    #[AsEventListener(ActivityStartEvent::class)]
+    public function onActivityStart(ActivityStartEvent $event): void
     {
-        if (!$event->getActivityType() instanceof ResourceGatheringActivity) {
+        $activity = $event->getActivityType();
+        if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }
 
-        $mapAvailableActivity = $event->getActivityType()->getMapAvailableActivity();
+        $activity->getMapAvailableActivity()->startActivity($event->getActivityEntity());
+    }
+
+    #[AsEventListener(ActivityStepStartEvent::class)]
+    public function onActivityStepStart(ActivityStepStartEvent $event): void
+    {
+        $activity = $event->getActivityType();
+        if (!$activity instanceof ResourceGatheringActivity) {
+            return;
+        }
+
+        $mapAvailableActivity = $activity->getMapAvailableActivity();
         $this->hub->publish(new Update(['mapAvailableActivities_' . $mapAvailableActivity->getMapId()],
             $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapAvailableActivity, 'id' => $mapAvailableActivity->getId()])
         ));
+    }
+
+    #[AsEventListener(ActivityEndEvent::class)]
+    public function onActivityEnd(ActivityEndEvent $event): void
+    {
+        $activity = $event->getActivityType();
+        if (!$activity instanceof ResourceGatheringActivity) {
+            return;
+        }
+
+        $activity->getMapAvailableActivity()->endActivity($event->getActivityEntity());
     }
 }

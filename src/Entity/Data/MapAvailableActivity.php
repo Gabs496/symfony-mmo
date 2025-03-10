@@ -5,7 +5,6 @@ namespace App\Entity\Data;
 use App\Entity\Game\MapResource;
 use App\GameElement\Activity\ActivityAvailable;
 use App\GameElement\Activity\ActivityInterface;
-use App\GameElement\Activity\ActivityInvolvableInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\Interface\ConsumableInterface;
 use App\Repository\Data\MapAvailableActivityRepository;
@@ -15,7 +14,7 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 #[ORM\Entity(repositoryClass: MapAvailableActivityRepository::class)]
 #[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true, template: 'map/MapAvailableActivity.stream.html.twig')]
 #[ActivityAvailable(ResourceGatheringActivity::class, as: ActivityAvailable::AS_DIRECT_OBJECT)]
-class MapAvailableActivity implements ConsumableInterface, ActivityInvolvableInterface
+class MapAvailableActivity implements ConsumableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]

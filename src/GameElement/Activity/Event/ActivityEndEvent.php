@@ -2,13 +2,15 @@
 
 namespace App\GameElement\Activity\Event;
 
+use App\Entity\Data\Activity;
 use App\GameElement\Activity\ActivityInterface;
 
-readonly class ActivityStepStartEvent
+readonly class ActivityEndEvent
 {
     public function __construct(
         private ActivityInterface $activityType,
         private object            $subject,
+        private Activity          $activityEntity,
     )
     {
     }
@@ -22,5 +24,10 @@ readonly class ActivityStepStartEvent
     public function getSubject(): object
     {
         return $this->subject;
+    }
+
+    public function getActivityEntity(): Activity
+    {
+        return $this->activityEntity;
     }
 }

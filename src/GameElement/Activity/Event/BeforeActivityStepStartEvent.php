@@ -4,7 +4,7 @@ namespace App\GameElement\Activity\Event;
 
 use App\GameElement\Activity\ActivityInterface;
 
-readonly class ActivityStepStartEvent
+readonly class BeforeActivityStepStartEvent
 {
     public function __construct(
         private ActivityInterface $activityType,
