@@ -27,7 +27,7 @@
             {{ custom_turbo_stream_listen('notification_' ~ app.user.id) }}
     >
     </turbo-frame>
-    <turbo-frame id="player_current_activity" class="position-absolute bottom-0 w-100"
+    <turbo-frame id="player_current_activity" class="position-fixed bottom-0 w-100"
             {{ custom_turbo_stream_listen('player_current_activity_' ~ app.user.name) }}
     >
     </turbo-frame>
