@@ -1,40 +1,31 @@
 <?php
 
-namespace App\GameElement\Crafting\Activity\Engine;
+namespace App\GameElement\Crafting\Activity;
 
 use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Activity\ActivityStep;
-use App\GameElement\Activity\Engine\AbstractActivityEngine;
+use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
+use App\GameElement\Activity\Event\ActivityStepEndEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
-use App\GameElement\Core\EngineFor;
 use App\GameElement\Crafting\AbstractRecipe;
-use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
-use App\Repository\Data\ActivityRepository;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use App\GameElement\Reward\RewardApply;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
-/** @extends AbstractActivityEngine<PlayerCharacter,RecipeCraftingActivity> */
-#[AutoconfigureTag('game.engine.action')]
-#[EngineFor(RecipeCraftingActivity::class)]
-readonly class RecipeCraftingEngine extends AbstractActivityEngine
+/** @extends ActivityEngineExtensionInterface<PlayerCharacter,RecipeCraftingEngineExtension> */
+readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionInterface
 {
-    private PlayerEngine $playerEngine;
-
     public function __construct(
-        ActivityRepository  $activityRepository,
-        MessageBusInterface $messageBus,
-        PlayerEngine $playerEngine,
-        EventDispatcherInterface $eventDispatcher,
+        //TODO: questa proprietà non è di questo dominio. Rimuoverla
+        private PlayerEngine $playerEngine,
+        private MessageBusInterface $messageBus,
     )
     {
-        parent::__construct($activityRepository, $messageBus, $eventDispatcher);
-        $this->playerEngine = $playerEngine;
     }
 
     public static function getId(): string
@@ -44,11 +35,11 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
 
     /**
      * @psalm-param  PlayerCharacter $subject
-     * @psalm-param   AbstractRecipe $directObject
+     * @psalm-param   RecipeCraftingActivity $activity
      */
-    public function generateSteps(object $subject, object $directObject): iterable
+    public function generateSteps(object $subject, ActivityInterface $activity): iterable
     {
-        yield new ActivityStep($directObject->getCraftingTime());
+        yield new ActivityStep($activity->getRecipe()->getCraftingTime());
     }
 
     /**
@@ -65,6 +56,23 @@ readonly class RecipeCraftingEngine extends AbstractActivityEngine
         }
 
         $this->takeIngredient($event->getSubject(), $activity->getRecipe());
+
+        foreach ($this->generateSteps($event->getSubject(), $activity) as $generatedStep) {
+            $event->getActivityEntity()->addStep($generatedStep);
+        }
+    }
+
+    #[AsEventListener(ActivityStepEndEvent::class)]
+    public function onActivityStepEnd(ActivityStepEndEvent $event): void
+    {
+        $activity = $event->getActivity();
+        if (!$activity instanceof RecipeCraftingActivity) {
+            return;
+        }
+
+        foreach ($activity->getRewards() as $reward) {
+            $this->messageBus->dispatch(new RewardApply($reward, $event->getSubject()));
+        }
     }
 
     /**

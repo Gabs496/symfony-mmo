@@ -52,7 +52,7 @@ class MapController extends AbstractController
             return $this->redirectToRoute('app_map');
         }
 
-        $gameActivity->execute($player, $availableActivity, new ResourceGatheringActivity($availableActivity));
+        $gameActivity->run($player, new ResourceGatheringActivity($availableActivity));
 
         $this->addFlash('success', 'Activity finished');
 
@@ -76,7 +76,7 @@ class MapController extends AbstractController
         $recipe = $recipeCollection->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->execute($user, $recipe, new RecipeCraftingActivity($recipe));
+        $gameActivity->run($user, new RecipeCraftingActivity($recipe));
 
         $this->addFlash('success', 'Activity finished');
 

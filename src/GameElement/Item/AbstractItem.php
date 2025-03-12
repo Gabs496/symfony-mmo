@@ -54,4 +54,9 @@ readonly abstract class AbstractItem extends AbstractGameObject implements ItemI
     {
         return $this->weight;
     }
+
+    public function getIconName(): string
+    {
+        return $this->id;
+    }
 }

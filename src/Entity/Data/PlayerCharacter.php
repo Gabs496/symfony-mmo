@@ -3,7 +3,6 @@
 namespace App\Entity\Data;
 
 use App\Entity\Security\User;
-use App\GameElement\Activity\ActivityInterface;
 use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Map\AbstractMap;
@@ -48,7 +47,7 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
 
     #[ORM\ManyToOne(targetEntity: Activity::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private ?ActivityInterface $currentActivity;
+    private ?Activity $currentActivity;
 
     public function __construct()
     {
@@ -150,25 +149,22 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
         return $this->map;
     }
 
-    /**
-     * @return Activity|null
-     */
-    public function getCurrentActivity(): ?ActivityInterface
+    public function getCurrentActivity(): ?Activity
     {
         return $this->currentActivity;
     }
 
-    public function startActivity(ActivityInterface $activity): void
+    public function startActivity(Activity $activity): void
     {
         $this->currentActivity = $activity;
     }
 
-    public function endActivity(ActivityInterface $activity): void
+    public function endActivity(Activity $activity): void
     {
         $this->currentActivity = null;
     }
 
-    public function isInvolvedInActivity(?ActivityInterface $activity = null): bool
+    public function isInvolvedInActivity(?Activity $activity = null): bool
     {
         if (!$this->currentActivity) {
             return false;
