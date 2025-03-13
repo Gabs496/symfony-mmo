@@ -2,43 +2,68 @@
 
 namespace App\Engine\MapAvailableActivity\Event\Handler;
 
+use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
-use App\GameElement\Activity\Event\ActivityStepEndEvent;
-use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\Repository\Data\MapAvailableActivityRepository;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
 
-readonly class ActivityHandler
+readonly class ActivityHandler implements EventSubscriberInterface
 {
     public function __construct(
         private HubInterface       $hub,
         private Environment        $twig,
         private MapAvailableActivityRepository $mapAvailableActivityRepository,
+        private ActivityEngine     $activityEngine,
     )
     {
     }
 
-    #[AsEventListener(ActivityStartEvent::class)]
-    public function onActivityStart(ActivityStartEvent $event): void
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ActivityStartEvent::class => [
+                ['lockMapAvailableActivity'],
+                ['streamActvityStart'],
+            ],
+            ActivityEndEvent::class => [
+                ['consumeMapAvailableActivity'],
+                ['continueUntillEmpty', -1],
+            ],
+        ];
+    }
+
+    public function lockMapAvailableActivity(ActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }
 
-        $activity->getMapAvailableActivity()->startActivity($event->getActivityEntity());
+        $subject = $event->getSubject();
+        if (!$subject instanceof PlayerCharacter) {
+            return;
+        }
+
+        $mapAvailableActivity = $activity->getMapAvailableActivity();
+        $mapAvailableActivity->startActivity($activity->getEntity());
+        $this->mapAvailableActivityRepository->save($mapAvailableActivity);
     }
 
-    #[AsEventListener(ActivityStepStartEvent::class)]
-    public function onActivityStepStart(ActivityStepStartEvent $event): void
+    public function streamActvityStart(ActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
+            return;
+        }
+
+        $subject = $event->getSubject();
+        if (!$subject instanceof PlayerCharacter) {
             return;
         }
 
@@ -48,8 +73,7 @@ readonly class ActivityHandler
         ));
     }
 
-    #[AsEventListener(ActivityStepEndEvent::class)]
-    public function onActivityStepEnd(ActivityStepEndEvent $event): void
+    public function consumeMapAvailableActivity(ActivityEndEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
@@ -65,14 +89,16 @@ readonly class ActivityHandler
         $this->mapAvailableActivityRepository->save($mapAvailableActivity);
     }
 
-    #[AsEventListener(ActivityEndEvent::class)]
-    public function onActivityEnd(ActivityEndEvent $event): void
+    public function continueUntillEmpty(ActivityEndEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }
 
-        $activity->getMapAvailableActivity()->endActivity($event->getActivityEntity());
+        $mapAvailableActivity = $activity->getMapAvailableActivity();
+        if ($mapAvailableActivity->getQuantity() > 0) {
+            $this->activityEngine->run($event->getSubject(), new ResourceGatheringActivity($mapAvailableActivity));
+        }
     }
 }

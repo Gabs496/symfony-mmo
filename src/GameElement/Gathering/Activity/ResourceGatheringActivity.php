@@ -4,17 +4,17 @@ namespace App\GameElement\Gathering\Activity;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\GameElement\Activity\Activity;
-use App\GameElement\Activity\ActivityInterface;
+use App\GameElement\Activity\BaseActivity;
 use App\GameElement\Gathering\AbstractResource;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Mastery\MasteryReward;
 
 #[Activity(id: 'RESOURCE_GATHERING')]
-readonly class ResourceGatheringActivity implements ActivityInterface
+class ResourceGatheringActivity extends BaseActivity
 {
     private AbstractResource $resource;
     public function __construct(
-        private MapAvailableActivity $mapAvailableActivity,
+        private readonly MapAvailableActivity $mapAvailableActivity,
     )
     {
         $this->resource = $this->mapAvailableActivity->getMapResource()->getResource();

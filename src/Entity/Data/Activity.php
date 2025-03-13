@@ -2,12 +2,8 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Mastery\MasterySet;
 use App\Repository\Data\ActivityRepository;
-use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 //use Symfony\UX\Turbo\Attribute\Broadcast;
@@ -25,24 +21,26 @@ class Activity
     #[ORM\Column(type: 'string')]
     protected string $type;
 
-    /** @var ActivityStep[] */
-    #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
-    protected array $steps = [];
-
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    protected ?DateTimeImmutable $startedAt = null;
-
-    /** @var Collection<int, MapAvailableActivity> */
-    #[ORM\OneToMany(targetEntity: MapAvailableActivity::class, mappedBy: 'involvingActivity')]
-    protected Collection $mapAvailableActivities;
-
     /**
-     * @param string $type
+     * Duration in seconds
      */
-    public function __construct(string $type)
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $duration;
+
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $scheduledAt;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    protected ?float $startedAt = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $completedAt = null;
+
+    public function __construct(string $type, float $duration)
     {
         $this->type = $type;
-        $this->mapAvailableActivities = new ArrayCollection();
+        $this->duration = $duration;
+        $this->scheduledAt = microtime(true);
     }
 
     public function getId(): ?string
@@ -55,62 +53,50 @@ class Activity
         return $this->type;
     }
 
-    public function getSteps(): array
-    {
-        return $this->steps;
-    }
-
-    public function addStep(ActivityStep $step): static
-    {
-        $this->steps[] = $step;
-
-        return $this;
-    }
-
     /** @param MasterySet $masterySet */
     public function applyMasteryPerformance(MasterySet $masterySet)
     {
         // TODO: decidere come applicare le performance delle abilità
     }
 
-    public function getNextStep(): ?ActivityStep
-    {
-        return $this->steps[0] ?? null;
-    }
-
-    public function getStartedAt(): ?DateTimeImmutable
+    public function getStartedAt(): ?float
     {
         return $this->startedAt;
     }
 
-    public function setStartedAt(?DateTimeImmutable $startedAt): void
+    public function setStartedAt(?float $startedAt): void
     {
         $this->startedAt = $startedAt;
     }
 
-    public function progressStep(): void
+    public function getDuration(): float
     {
-        array_shift($this->steps);
+        return $this->duration;
     }
 
-    /** @return Collection<int, MapAvailableActivity> */
-    public function getMapAvailableActivities(): Collection
+    public function setDuration(float $duration): void
     {
-        return $this->mapAvailableActivities;
+        $this->duration = $duration;
     }
 
-    public function setMapAvailableActivities(Collection $mapAvailableActivities): void
+    public function getCompletedAt(): ?float
     {
-        $this->mapAvailableActivities = $mapAvailableActivities;
+        return $this->completedAt;
     }
 
-    public function addMapAvailableActivity(MapAvailableActivity $mapAvailableActivity): static
+    public function setCompletedAt(?float $completedAt): void
     {
-        if (!$this->mapAvailableActivities->contains($mapAvailableActivity)) {
-            $this->mapAvailableActivities->add($mapAvailableActivity);
-            $mapAvailableActivity->setInvolvingActivity($this);
-        }
+        $this->completedAt = $completedAt;
+    }
 
-        return $this;
+    public function getSecondsToFinish(): ?float
+    {
+        $microseconds = bcsub(bcadd($this->scheduledAt, $this->getDurationMicrosecond(), 4), microtime(true), 4);
+        return (float)bcdiv($microseconds, 1000000, 4);
+    }
+
+    private function getDurationMicrosecond(): int
+    {
+        return (int)bcmul($this->duration, 1000000, 0);
     }
 }

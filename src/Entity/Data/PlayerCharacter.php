@@ -45,7 +45,7 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     #[GameObjectReference(AbstractMap::class, objectIdProperty: 'position')]
     private AbstractMap $map;
 
-    #[ORM\ManyToOne(targetEntity: Activity::class)]
+    #[ORM\ManyToOne(targetEntity: Activity::class, cascade: ['all'])]
     #[ORM\JoinColumn(nullable: true)]
     private ?Activity $currentActivity;
 
@@ -159,7 +159,7 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
         $this->currentActivity = $activity;
     }
 
-    public function endActivity(Activity $activity): void
+    public function endCurrentActivity(): void
     {
         $this->currentActivity = null;
     }

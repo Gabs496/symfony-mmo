@@ -18,10 +18,6 @@ class ActivityRepository extends ServiceEntityRepository
 
     public function save(Activity $entity): void
     {
-        foreach ($entity->getSteps() as $step) {
-            $entity->progressStep();
-            $entity->addStep(clone $step);
-        }
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
     }

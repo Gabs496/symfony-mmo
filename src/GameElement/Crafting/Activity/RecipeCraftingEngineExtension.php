@@ -4,10 +4,8 @@ namespace App\GameElement\Crafting\Activity;
 
 use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Activity\ActivityInterface;
-use App\GameElement\Activity\ActivityStep;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
-use App\GameElement\Activity\Event\ActivityStepEndEvent;
+use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
@@ -35,15 +33,6 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
 
     /**
      * @psalm-param  PlayerCharacter $subject
-     * @psalm-param   RecipeCraftingActivity $activity
-     */
-    public function generateSteps(object $subject, ActivityInterface $activity): iterable
-    {
-        yield new ActivityStep($activity->getRecipe()->getCraftingTime());
-    }
-
-    /**
-     * @psalm-param  PlayerCharacter $subject
      * @psalm-param   AbstractRecipe $directObject
      * @throws Throwable
      */
@@ -56,14 +45,11 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
         }
 
         $this->takeIngredient($event->getSubject(), $activity->getRecipe());
-
-        foreach ($this->generateSteps($event->getSubject(), $activity) as $generatedStep) {
-            $event->getActivityEntity()->addStep($generatedStep);
-        }
+        $activity->setDuration($activity->getRecipe()->getCraftingTime());
     }
 
-    #[AsEventListener(ActivityStepEndEvent::class)]
-    public function onActivityStepEnd(ActivityStepEndEvent $event): void
+    #[AsEventListener(ActivityEndEvent::class)]
+    public function onActivityEnd(ActivityEndEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof RecipeCraftingActivity) {

@@ -125,7 +125,6 @@ class MapAvailableActivity implements ConsumableInterface
     public function setInvolvingActivity(?Activity $involvingActivity): void
     {
         $this->involvingActivity = $involvingActivity;
-        $involvingActivity?->addMapAvailableActivity($this);
     }
 
     public function startActivity(Activity $activity): void

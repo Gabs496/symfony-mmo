@@ -6,8 +6,6 @@ use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
-use App\GameElement\Activity\Event\ActivityStepEndEvent;
-use App\GameElement\Activity\Event\ActivityStepStartEvent;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Mercure\HubInterface;
@@ -42,32 +40,13 @@ readonly class ActivityHandler
         if (!$player instanceof PlayerCharacter) {
             return;
         }
-        $player->startActivity($event->getActivityEntity());
-    }
 
-    #[AsEventListener(ActivityStepStartEvent::class)]
-    public function onPlayerActivityStepStart(ActivityStepStartEvent $event): void
-    {
-        $player = $event->getSubject();
-        if (!$player instanceof PlayerCharacter) {
-            return;
-        }
+        $player->startActivity($event->getActivity()->getEntity());
+        $this->playerCharacterRepository->save($player);
+
         $this->hub->publish(new Update(
             'player_current_activity_' . $player->getName(),
             $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()])
-        ));
-    }
-
-    #[AsEventListener(ActivityStepEndEvent::class)]
-    public function onPlayerActivityStepEnd(ActivityStepEndEvent $event): void
-    {
-        if (!$event->getSubject() instanceof PlayerCharacter) {
-            return;
-        }
-        $player = $this->playerCharacterRepository->find($event->getSubject()->getId());
-        $this->hub->publish(new Update(
-            'player_current_activity_' . $player->getName(),
-            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $player->getCurrentActivity()])
         ));
     }
 
@@ -78,6 +57,11 @@ readonly class ActivityHandler
         if (!$player instanceof PlayerCharacter) {
             return;
         }
-        $player->endActivity($event->getActivityEntity());
+        $player->endCurrentActivity();
+
+        $this->hub->publish(new Update(
+            'player_current_activity_' . $player->getName(),
+            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $event->getActivity()->getEntity()])
+        ));
     }
 }
