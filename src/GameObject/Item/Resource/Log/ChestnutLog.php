@@ -5,7 +5,7 @@ namespace App\GameObject\Item\Resource\Log;
 use App\GameElement\Item\AbstractItem;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.item')]
+#[AutoconfigureTag('game.object')]
 readonly class ChestnutLog extends AbstractItem
 {
     public const string ID = 'RESOURCE_LOG_CHESTNUT';

@@ -11,7 +11,7 @@ use App\GameObject\Item\Sword\WoodenSword;
 use App\GameObject\Mastery\Crafting\SwordCrafting;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.recipe')]
+#[AutoconfigureTag('game.object')]
 readonly class SwordWoodenRecipe extends AbstractRecipe
 {
     public const string ID = 'SWORD_WOODEN_RECIPE';

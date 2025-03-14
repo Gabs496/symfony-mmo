@@ -5,7 +5,7 @@ namespace App\GameObject\Map;
 use App\GameElement\Map\AbstractMap;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.map')]
+#[AutoconfigureTag('game.object')]
 readonly class BirthTown extends AbstractMap
 {
     public const string ID = "MAP_BIRT_TOWN";

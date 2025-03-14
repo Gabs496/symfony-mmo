@@ -5,7 +5,7 @@ namespace App\GameObject\Item\Resource\Ore;
 use App\GameElement\Item\AbstractItem;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.item')]
+#[AutoconfigureTag('game.object')]
 readonly class CopperOre extends AbstractItem
 {
     public const string ID = 'RESOURCE_ORE_COPPER';

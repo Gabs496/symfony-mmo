@@ -2,8 +2,6 @@
 
 namespace App\GameElement\NPC;
 
-use App\Engine\Math;
-
 abstract class BaseMobInstance
 {
     protected float $currentHealth;
@@ -20,9 +18,9 @@ abstract class BaseMobInstance
         return $this->mob;
     }
 
-    public function receiveDamage(float $damage): void
+    public function setCurrentHealth(float $currentHealth): void
     {
-        $this->currentHealth = max(Math::sub($this->currentHealth, $damage), 0.0);
+        $this->currentHealth = $currentHealth;
     }
 
     public function getCurrentHealth(): float

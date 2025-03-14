@@ -5,8 +5,8 @@ namespace App\GameElement\Map\Engine;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Game\MapResource;
 use App\GameElement\Activity\Activity;
+use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
-use App\GameElement\Gathering\Engine\ResourceCollection;
 use App\GameElement\Map\AbstractMap;
 use App\Repository\Data\MapAvailableActivityRepository;
 use App\Repository\Game\MapSpawnedMobRepository;
@@ -16,7 +16,7 @@ readonly class MapEngine
 {
     public function __construct(
         private MapAvailableActivityRepository $mapAvailableActivityRepository,
-        private ResourceCollection   $resourceCollection,
+        private GameObjectEngine   $gameObjectEngine,
         private MapSpawnedMobRepository $mapSpawnedMobRepository,
     )
     {
@@ -38,7 +38,7 @@ readonly class MapEngine
 
     private function spawnNewResource(MapResource $mapResource, int $resourceQuantity = 0): void
     {
-        $resource = $this->resourceCollection->get($mapResource->getResourceId());
+        $resource = $this->gameObjectEngine->get($mapResource->getResourceId());
         if (!$resourceQuantity) {
             $freeSpace = $mapResource->getFreeSpace();
             if (!$freeSpace) {

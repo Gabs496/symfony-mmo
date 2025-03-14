@@ -1,4 +1,4 @@
-<div style="width: 3em; height: 3em;" class="position-relative" title="{{ item.name }}">
+<div style="width: 4em; height: 4em;" class="position-relative" title="{{ item.name }}">
     <img src="{{ asset('images/items/' ~ item.id|lower ~ '.png') }}" alt="{{ item.name }}" class="h-100 w-100"/>
     {% if quantity is defined %}
         <span class="badge bg-secondary position-absolute bottom-0 end-0">{{ quantity }}</span>

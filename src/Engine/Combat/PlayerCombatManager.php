@@ -9,6 +9,7 @@ use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Notification\Engine\NotificationEngine;
+use App\GameElement\NPC\BaseMobInstance;
 use App\GameElement\Reward\RewardApply;
 use App\GameObject\Combat\Stat\PhysicalAttackStat;
 use App\GameObject\Combat\Stat\PhysicalDefenseStat;
@@ -115,9 +116,12 @@ class PlayerCombatManager implements EventSubscriberInterface
         $loser = $event->getLoser();
 
         if ($winner instanceof PlayerCharacter) {
-            if ($loser instanceof RewardOnDefeatInterface) {
-                foreach ($loser->getRewardOnDefeats() as $reward) {
-                    $this->messageBus->dispatch(new RewardApply($reward, $winner));
+            if ($loser instanceof BaseMobInstance) {
+                $mob = $loser->getMob();
+                if ($mob instanceof RewardOnDefeatInterface) {
+                    foreach ($mob->getRewardOnDefeats() as $reward) {
+                        $this->messageBus->dispatch(new RewardApply($reward, $winner));
+                    }
                 }
             }
         }

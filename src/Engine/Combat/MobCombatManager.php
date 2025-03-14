@@ -81,7 +81,7 @@ readonly class MobCombatManager implements EventSubscriberInterface
             return;
         }
 
-        $defender->receiveDamage($event->getDamage());
+        $defender->setCurrentHealth(max(Math::sub($defender->getCurrentHealth(), $event->getDamage()), 0.0));
         $this->mapSpawnedMobRepository->save($defender);
 
         $event->setIsDefenderAlive(bccomp($defender->getCurrentHealth(), 0.0, 2) > 0);

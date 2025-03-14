@@ -4,6 +4,6 @@ namespace App\GameElement\Core\GameObject\Exception;
 
 use RuntimeException;
 
-class GameObjectCollectionNotFound extends RuntimeException
+class GameObjectNotFound extends RuntimeException
 {
 }

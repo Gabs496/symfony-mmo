@@ -5,7 +5,7 @@ namespace App\GameObject\Item\Sword;
 use App\GameElement\Item\AbstractItem;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.item')]
+#[AutoconfigureTag('game.object')]
 readonly class WoodenSword extends AbstractItem
 {
     public const string ID = 'EQUIP_SWORD_WOODEN';

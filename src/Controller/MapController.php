@@ -7,8 +7,9 @@ use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Combat\Activity\CombatActivity;
+use App\GameElement\Core\GameObject\GameObjectEngine;
+use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
-use App\GameElement\Crafting\Engine\RecipeCollection;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Map\Engine\MapEngine;
 use App\GameElement\Notification\Engine\NotificationEngine;
@@ -29,7 +30,7 @@ class MapController extends AbstractController
 
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(MapEngine $mapEngine, RecipeCollection $recipeCollection): Response
+    public function home(MapEngine $mapEngine, GameObjectEngine $gameObjectEngine): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
@@ -37,7 +38,7 @@ class MapController extends AbstractController
         return $this->render('map/home.html.twig', [
             'player' => $user,
             'mapAvailableActivities' => $mapEngine->getAvailableActivities($user->getMap()),
-            'recipes' => $recipeCollection->all(),
+            'recipes' => $gameObjectEngine->getByClass(AbstractRecipe::class),
             'spawnedMobs' => $mapEngine->getSpawnedMobs($user->getMap()),
         ]);
     }
@@ -72,9 +73,10 @@ class MapController extends AbstractController
      * @throws \DateMalformedStringException
      */
     #[Route('/craft/{id}', name: 'app_map_craft')]
-    public function craftRecipe(ActivityEngine $gameActivity, RecipeCollection $recipeCollection, string $id, Request $request): Response
+    public function craftRecipe(ActivityEngine $gameActivity, GameObjectEngine $gameObjectEngine, string $id, Request $request): Response
     {
-        $recipe = $recipeCollection->get($id);
+        /** @var AbstractRecipe $recipe */
+        $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
         $gameActivity->run($user, new RecipeCraftingActivity($recipe));
