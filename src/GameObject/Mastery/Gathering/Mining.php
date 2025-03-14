@@ -4,11 +4,11 @@ namespace App\GameObject\Mastery\Gathering;
 
 use App\GameElement\Mastery\MasteryType;
 
-class Mining extends MasteryType
+readonly class Mining extends MasteryType
 {
-    public function getId(): string
+    public function __construct()
     {
-        return 'MINING';
+        parent::__construct('MINING');
     }
 
     public static function getName(): string

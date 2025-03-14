@@ -7,12 +7,13 @@ use App\GameObject\Combat\Stat\PhysicalAttackStat;
 use App\GameObject\Combat\Stat\PhysicalDefenseStat;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 
-class Salamander extends BaseAnimalMob
+readonly class Salamander extends BaseAnimalMob
 {
 
     public function __construct()
     {
         parent::__construct(
+            id: 'SALAMANDER',
             name: 'Salamander',
             maxHealth: 1.0,
             description: 'A small lizard that can spit fire.'

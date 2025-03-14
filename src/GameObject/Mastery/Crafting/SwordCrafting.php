@@ -4,11 +4,11 @@ namespace App\GameObject\Mastery\Crafting;
 
 use App\GameElement\Mastery\MasteryType;
 
-class SwordCrafting extends MasteryType
+readonly class SwordCrafting extends MasteryType
 {
-    public function getId(): string
+    public function __construct()
     {
-        return 'SWORD_CRAFTING';
+        parent::__construct('SWORD_CRAFTING');
     }
 
     public static function getName(): string

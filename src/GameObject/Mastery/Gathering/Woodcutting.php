@@ -4,11 +4,11 @@ namespace App\GameObject\Mastery\Gathering;
 
 use App\GameElement\Mastery\MasteryType;
 
-class Woodcutting extends MasteryType
+readonly class Woodcutting extends MasteryType
 {
-    public function getId(): string
+    public function __construct()
     {
-        return 'WOODCUTTING';
+        parent::__construct('WOODCUTTING');
     }
 
     public static function getName(): string
