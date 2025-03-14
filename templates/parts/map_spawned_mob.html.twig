@@ -1,0 +1,29 @@
+<div class="bg-dark border-primary rounded my-1">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <div style="width: 3em; height: 3em;">
+                <img src="{{ asset('images' ~ entity.icon) }}" alt="{{ entity.name }}" class="h-100">
+            </div>
+        </div>
+        <div class="col">
+            <span class="fw-bold">{{ entity.name }}</span>
+        </div>
+        <div class="col">
+            <div class="d-flex">
+                <div class="small badge bg-white text-black">{{ entity.currentHealth*100 }}</div>
+                <div class="w-100">
+                    {% include 'parts/progressBar.html.twig' with {percentage: entity.currentHealth/entity.maxHealth} %}
+                </div>
+            </div>
+        </div>
+        <div class="col ms-auto">
+            <a href="{{ path('app_map_mob_fight', {id: entity.id}) }}" class="btn btn-primary">{{ 'fight!'|trans|upper }}</a>
+
+            {#            {% if entity.involvedInActivity %}#}
+{#                {% include 'parts/activity.html.twig' with {entity: entity.involvingActivity, id: entity.id} %}#}
+{#            {% else %}#}
+{#                <a href="{{ path('app_map_activity_start', {id: entity.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>#}
+{#            {% endif %}#}
+        </div>
+    </div>
+</div>

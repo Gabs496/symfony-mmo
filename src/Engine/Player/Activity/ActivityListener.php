@@ -28,8 +28,14 @@ readonly class ActivityListener
     {
         $player = $this->playerCharacterRepository->find($event->getPlayerId());
         $this->hub->publish(new Update(
-            'item_bag_fullness_' . $player->getBackpack()->getId(),
-            $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $player->getBackpack()])
+            'player_gui_' . $player->getId(),
+            $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $player->getBackpack()]),
+            true
+        ));
+        $this->hub->publish(new Update(
+            'player_gui_' . $player->getId(),
+            $this->twig->render('item_bag/items_update.stream.html.twig', ['bag' => $player->getBackpack()]),
+            true
         ));
     }
 
@@ -45,8 +51,9 @@ readonly class ActivityListener
         $this->playerCharacterRepository->save($player);
 
         $this->hub->publish(new Update(
-            'player_current_activity_' . $player->getName(),
-            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()])
+            'player_gui_' . $player->getId(),
+            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()]),
+            true
         ));
     }
 
@@ -60,8 +67,9 @@ readonly class ActivityListener
         $player->endCurrentActivity();
 
         $this->hub->publish(new Update(
-            'player_current_activity_' . $player->getName(),
-            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $event->getActivity()->getEntity()])
+            'player_gui_' . $player->getId(),
+            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $event->getActivity()->getEntity()]),
+            true
         ));
     }
 }

@@ -3,13 +3,16 @@
 namespace App\Entity\Game;
 
 use App\GameElement\Core\GameObject\GameObjectReference;
-use App\GameObject\NPC\Mob\BaseMob;
+use App\GameElement\NPC\BaseMob;
+use App\GameElement\NPC\BaseMobInstance;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapSpawnedMobRepository::class)]
-class MapSpawnedMob
+#[Broadcast(topics: ['@="map_spawned_mobs_" ~ entity.getMapId()'], private: true, template: 'map/spawned_mob_list.stream.html.twig')]
+class MapSpawnedMob extends BaseMobInstance
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
@@ -28,12 +31,16 @@ class MapSpawnedMob
     #[ORM\Column(length: 50)]
     private ?string $mobId = null;
 
-    #[GameObjectReference(class: BaseMob::class,objectIdProperty: 'mobId')]
-    private BaseMob $mob;
+    #[ORM\Column(type: 'float')]
+    protected float $currentHealth = 0.0;
 
-    public function __construct()
+    #[GameObjectReference(class: BaseMob::class,objectIdProperty: 'mobId')]
+    protected BaseMob $mob;
+
+    public function __construct(BaseMob $mob)
     {
         $this->id = Uuid::v7();
+        parent::__construct($mob);
     }
 
     public function getId(): ?string

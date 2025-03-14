@@ -24,11 +24,11 @@ class NotificationEngine
      */
     public function success(string $recipeId, string $message): void
     {
-        $this->hub->publish(new Update('notification_' . $recipeId, $this->twig->load('notification/notification.stream.html.twig')->renderBlock('success', ['message' => $message])));
+        $this->hub->publish(new Update('notification_' . $recipeId, $this->twig->load('notification/notification.stream.html.twig')->renderBlock('success', ['message' => $message]), true));
     }
 
     public function danger(string $recipeId, string $message): void
     {
-        $this->hub->publish(new Update('notification_' . $recipeId, $this->twig->load('notification/notification.stream.html.twig')->renderBlock('danger',['message' => $message])));
+        $this->hub->publish(new Update('notification_' . $recipeId, $this->twig->load('notification/notification.stream.html.twig')->renderBlock('danger',['message' => $message]), true));
     }
 }

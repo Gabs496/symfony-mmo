@@ -1,24 +1,8 @@
 {# Learn how to use Turbo Streams: https://github.com/symfony/ux-turbo#broadcast-doctrine-entities-update #}
-{% block create %}
-    <turbo-stream action="append" target="item_bag_items_{{ entity.bag.id }}">
-        <template>
-            <div  id="item_instance_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
-                {% include 'item_bag/item_row.html.twig' %}
-            </div>
-        </template>
-    </turbo-stream>
-{% endblock %}
-
-{% block update %}
-    <turbo-stream action="update" target="item_instance_{{ id }}">
-        <template>
+<turbo-stream action="update" target="item_bag_items_{{ bag.id }}">
+    <template>
+        {% for itemInstance in bag.items%}
             {% include 'item_bag/item_row.html.twig' %}
-        </template>
-    </turbo-stream>
-{% endblock %}
-
-{% block remove %}
-    <turbo-stream action="remove" target="item_instance_{{ id }}">
-        <template></template>
-    </turbo-stream>
-{% endblock %}
+        {% endfor %}
+    </template>
+</turbo-stream>

@@ -22,7 +22,7 @@ abstract class BaseMobInstance
 
     public function receiveDamage(float $damage): void
     {
-        $this->currentHealth = max(Math::sub($this->currentHealth, $damage));
+        $this->currentHealth = max(Math::sub($this->currentHealth, $damage), 0.0);
     }
 
     public function getCurrentHealth(): float
@@ -38,5 +38,10 @@ abstract class BaseMobInstance
     public function getDefensiveStats(): array
     {
         return $this->getMob()->getDefensiveStats();
+    }
+
+    public function getMaxHealth(): float
+    {
+        return $this->getMob()->getMaxHealth();
     }
 }

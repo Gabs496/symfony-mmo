@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
-#[Broadcast(topics: ['@="update_item_bag_" ~ entity?.getBag().getId() ?? "null"'], private: true, template: 'item_bag/items_update.stream.html.twig')]
 class ItemInstance extends AbstractItemInstance
 {
     #[ORM\Id]

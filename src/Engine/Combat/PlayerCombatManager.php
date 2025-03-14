@@ -8,20 +8,26 @@ use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
-use App\GameElement\Mastery\MasteryReward;
+use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
 use App\GameObject\Combat\Stat\PhysicalAttackStat;
 use App\GameObject\Combat\Stat\PhysicalDefenseStat;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Twig\Environment;
 
 class PlayerCombatManager implements EventSubscriberInterface
 {
     public function __construct(
         protected PlayerCharacterRepository $playerCharacterRepository,
         protected MessageBusInterface $messageBus,
+        protected HubInterface $hub,
+        protected Environment $twig,
+        protected NotificationEngine $notificationEngine,
     )
     {
     }
@@ -83,12 +89,22 @@ class PlayerCombatManager implements EventSubscriberInterface
     public function receiveDamage(CombatDamageInflictedEvent $event): void
     {
         $defender = $event->getDefender();
-        if (!$defender instanceof PlayerCharacter) {
-            return;
+        if ($defender instanceof PlayerCharacter) {
+            $defender->setCurrentHealth(max(Math::sub($defender->getCurrentHealth(), $event->getDamage()), 0.0));
+            $this->playerCharacterRepository->save($defender);
+            $this->notificationEngine->danger($defender->getId(), 'You have received ' . $event->getDamage() . ' damage');
+            $this->hub->publish(new Update('player_gui_' . $defender->getId(),
+                $this->twig->load('parts/player_health.stream.html.twig')->renderBlock('update', ['player' => $defender]),
+                true
+            ));
         }
 
-        $defender->setCurrentHealth(max(Math::sub($defender->getCurrentHealth(), $event->getDamage()), 0.0));
-        $this->playerCharacterRepository->save($defender);
+        $attacker = $event->getAttacker();
+        if ($attacker instanceof PlayerCharacter) {
+            $this->notificationEngine->success($attacker->getId(), 'You have inflicted ' . $event->getDamage() . ' damage');
+        }
+
+
 
         $event->setIsDefenderAlive(bccomp($defender->getCurrentHealth(), 0.0, 2) > 0);
     }

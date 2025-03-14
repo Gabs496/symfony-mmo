@@ -6,7 +6,9 @@ use App\GameElement\Mastery\MasteryReward;
 use App\GameObject\Combat\Stat\PhysicalAttackStat;
 use App\GameObject\Combat\Stat\PhysicalDefenseStat;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('game.object')]
 readonly class Salamander extends BaseAnimalMob
 {
 

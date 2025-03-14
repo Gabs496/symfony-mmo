@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
+use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Combat\Activity\CombatActivity;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
@@ -37,6 +38,7 @@ class MapController extends AbstractController
             'player' => $user,
             'mapAvailableActivities' => $mapEngine->getAvailableActivities($user->getMap()),
             'recipes' => $recipeCollection->all(),
+            'spawnedMobs' => $mapEngine->getSpawnedMobs($user->getMap()),
         ]);
     }
 
@@ -76,6 +78,22 @@ class MapController extends AbstractController
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
         $gameActivity->run($user, new RecipeCraftingActivity($recipe));
+
+        $this->addFlash('success', 'Activity finished');
+
+        if ($request->headers->get('Turbo-Frame')) {
+            $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+            return new Response();
+        }
+        return $this->redirectToRoute('app_map');
+    }
+
+    #[Route('/mob-fight/{id}', name: 'app_map_mob_fight')]
+    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapSpawnedMob $mapSpawnedMob): Response
+    {
+        /** @var PlayerCharacter $player */
+        $player = $this->getUser();
+        $gameActivity->run($player, new CombatActivity($player, $mapSpawnedMob));
 
         $this->addFlash('success', 'Activity finished');
 

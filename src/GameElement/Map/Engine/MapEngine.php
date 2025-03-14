@@ -9,6 +9,7 @@ use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Engine\ResourceCollection;
 use App\GameElement\Map\AbstractMap;
 use App\Repository\Data\MapAvailableActivityRepository;
+use App\Repository\Game\MapSpawnedMobRepository;
 use Random\RandomException;
 
 readonly class MapEngine
@@ -16,6 +17,7 @@ readonly class MapEngine
     public function __construct(
         private MapAvailableActivityRepository $mapAvailableActivityRepository,
         private ResourceCollection   $resourceCollection,
+        private MapSpawnedMobRepository $mapSpawnedMobRepository,
     )
     {
     }
@@ -69,5 +71,10 @@ readonly class MapEngine
     public function getAvailableActivities(AbstractMap $map)
     {
         return $this->mapAvailableActivityRepository->findBy(['mapId' => $map->getId()]);
+    }
+
+    public function getSpawnedMobs(AbstractMap $map)
+    {
+        return $this->mapSpawnedMobRepository->findBy(['mapId' => $map->getId()]);
     }
 }

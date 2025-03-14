@@ -17,6 +17,11 @@
                 <div class="nav--item">
                     {{ 'player'|trans|upper }}: {{ app.user.name }}
                 </div>
+                <div class="nav--item w-25">
+                    <div id="player_health_{{ app.user.id }}">
+                        {% include 'parts/player_health.stream.html.twig' with {player: app.user} %}
+                    </div>
+                </div>
             </div>
             <div class="p-2">
                 {% block main %}{% endblock %}
@@ -27,8 +32,6 @@
             {{ custom_turbo_stream_listen('notification_' ~ app.user.id) }}
     >
     </turbo-frame>
-    <turbo-frame id="player_current_activity" class="position-fixed bottom-0 w-100"
-            {{ custom_turbo_stream_listen('player_current_activity_' ~ app.user.name) }}
-    >
-    </turbo-frame>
+    <div id="player_current_activity" class="position-fixed bottom-0 w-100">
+    </div>
 {% endblock %}

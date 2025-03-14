@@ -69,7 +69,8 @@ readonly class ActivityHandler implements EventSubscriberInterface
 
         $mapAvailableActivity = $activity->getMapAvailableActivity();
         $this->hub->publish(new Update(['mapAvailableActivities_' . $mapAvailableActivity->getMapId()],
-            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapAvailableActivity, 'id' => $mapAvailableActivity->getId()])
+            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapAvailableActivity, 'id' => $mapAvailableActivity->getId()]),
+        true
         ));
     }
 

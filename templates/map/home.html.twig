@@ -1,8 +1,6 @@
 {% extends 'layout.html.twig' %}
 
 {% block main %}
-{#    <div {{ custom_turbo_stream_listen('playerActivity') }}></div>#}
-    <div {{ custom_turbo_stream_listen('update_item_bag_' ~ player.backpack.id) }}></div>
     <div class="row">
         <div class="col-lg-4">
             <div class="card">
@@ -32,17 +30,26 @@
                 <div class="card-header bg-info">
                     {{ 'backpack'|trans|capitalize }}
                     <div>
-                        <turbo-frame class="progress" id="item_bag_fullness_{{ player.backpack.id }}" {{ custom_turbo_stream_listen('item_bag_fullness_' ~ player.backpack.id) }}>
-                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ player.backpack.fullness*100 }}%;"></div>
+                        <turbo-frame class="progress" id="item_bag_fullness_{{ player.backpack.id }}">
+                            {% include 'item_bag/space.stream.html.twig' with {bag: player.backpack} %}
                         </turbo-frame>
                     </div>
                 </div>
                 <div class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.backpack.id }}">
-                    {% for entity in player.backpack.items %}
-                        {% set id = entity.id %}
-                        {{ block('create', 'item_bag/items_update.stream.html.twig') }}
-                    {% endfor %}
+                    {% include 'item_bag/items_update.stream.html.twig' with {bag: player.backpack} %}
                 </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info">
+                    {{ 'mobs'|trans|capitalize }}
+                </div>
+                <turbo-frame class="card-body" id="map_spawned_mobs" {{ custom_turbo_stream_listen('map_spawned_mobs_' ~ player.position) }}>
+                    {% for entity in spawnedMobs %}
+                        {% set id = entity.id %}
+                        {{ block('create', 'map/spawned_mob_list.stream.html.twig') }}
+                    {% endfor %}
+                </turbo-frame>
             </div>
         </div>
     </div>
