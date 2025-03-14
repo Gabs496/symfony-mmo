@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Player\Event\Handler;
+namespace App\Engine\Player\Activity;
 
 use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Entity\Data\PlayerCharacter;
@@ -12,7 +12,7 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
 
-readonly class ActivityHandler
+readonly class ActivityListener
 {
     public function __construct(
         private HubInterface $hub,

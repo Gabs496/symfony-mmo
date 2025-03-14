@@ -5,9 +5,9 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.3",
+        "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "ext-bcmath": "*",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.3",
@@ -20,6 +20,7 @@
         "symfony/console": "7.1.*",
         "symfony/doctrine-messenger": "7.1.*",
         "symfony/dotenv": "7.1.*",
+        "symfony/event-dispatcher": "7.1.*",
         "symfony/expression-language": "7.1.*",
         "symfony/flex": "^2",
         "symfony/form": "7.1.*",

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Engine\ActivityEngine;
+use App\GameElement\Combat\Activity\CombatActivity;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Crafting\Engine\RecipeCollection;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
@@ -14,7 +15,6 @@ use App\Repository\Data\MapAvailableActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
@@ -68,7 +68,6 @@ class MapController extends AbstractController
 
     /**
      * @throws \DateMalformedStringException
-     * @throws ExceptionInterface
      */
     #[Route('/craft/{id}', name: 'app_map_craft')]
     public function craftRecipe(ActivityEngine $gameActivity, RecipeCollection $recipeCollection, string $id, Request $request): Response

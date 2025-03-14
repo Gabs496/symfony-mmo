@@ -6,21 +6,21 @@ use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\BaseActivity;
 
 #[Activity(id: 'COMBAT')]
-class CombatBaseActivity extends BaseActivity
+class CombatActivity extends BaseActivity
 {
     public function __construct(
-        private readonly string $firstOpponent,
-        private readonly string $secondOpponent,
+        private readonly object $firstOpponent,
+        private readonly object $secondOpponent,
     )
     {
     }
 
-    public function getFirstOpponent(): string
+    public function getFirstOpponent(): object
     {
         return $this->firstOpponent;
     }
 
-    public function getSecondOpponent(): string
+    public function getSecondOpponent(): object
     {
         return $this->secondOpponent;
     }

@@ -10,4 +10,9 @@ class PhysicalDefense extends MasteryType
     {
         return 'DEFENSE';
     }
+
+    public function getMinimumExperience(): float
+    {
+        return 0.001;
+    }
 }

@@ -85,18 +85,18 @@ abstract class AbstractItemBag
         $items = iterator_to_array($this->items);
         return array_reduce($items,
             fn($carry, AbstractItemInstance $instance)
-                => (float)bcadd($carry, bcmul($instance->getItem()->getWeight(), $instance->getQuantity(), 4), 4),
+                => (float)bcadd($carry, bcmul($instance->getItem()->getWeight(), $instance->getQuantity(), 2), 2),
             0.0
         );
     }
 
     public function getFullness(): float
     {
-        return (float)bcdiv($this->getOccupedSpace(), $this->size, 4);
+        return (float)bcdiv($this->getOccupedSpace(), $this->size, 2);
     }
 
     public function isFull(): bool
     {
-        return bccomp($this->getOccupedSpace(), $this->size, 4) >= 0;
+        return bccomp($this->getOccupedSpace(), $this->size, 2) >= 0;
     }
 }

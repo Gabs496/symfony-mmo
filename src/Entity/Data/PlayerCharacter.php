@@ -49,6 +49,9 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Activity $currentActivity;
 
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $currentHealth = 1.0;
+
     public function __construct()
     {
         $this->masterySet = new MasterySet();
@@ -171,5 +174,15 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
         }
 
         return $this->currentActivity === $activity;
+    }
+
+    public function getCurrentHealth(): float
+    {
+        return $this->currentHealth;
+    }
+
+    public function setCurrentHealth(float $currentHealth): void
+    {
+        $this->currentHealth = $currentHealth;
     }
 }

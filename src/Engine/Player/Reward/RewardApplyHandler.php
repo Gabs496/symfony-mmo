@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Player\Event\Handler;
+namespace App\Engine\Player\Reward;
 
 use App\Engine\Player\PlayerEngine;
 use App\Entity\Data\ItemInstance;
