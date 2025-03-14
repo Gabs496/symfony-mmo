@@ -6,8 +6,13 @@ use App\GameElement\Mastery\MasteryType;
 
 class Mining extends MasteryType
 {
-    public function __toString(): string
+    public function getId(): string
     {
         return 'MINING';
+    }
+
+    public static function getName(): string
+    {
+        return 'Mining';
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\GameObject\Mastery\Combat;
 
-use App\GameElement\Mastery\MasteryType;
-
-class PhysicalAttack extends MasteryType
+readonly class PhysicalAttack extends BaseCombatMastery
 {
-    public function __toString(): string
+
+    public function __construct()
     {
-        return 'ATTACK';
+        parent::__construct('PHYSICAL_ATTACK');
+    }
+
+    public static function getName(): string
+    {
+        return "Physical Attack";
     }
 }

@@ -27,15 +27,8 @@ class CombatDamageCalculateEvent extends Event
         return $this->defensiveStats;
     }
 
-    /**
-     * @throws DamageNotCalculatedException
-     */
     public function getDamage(): float
     {
-        if ($this->damage === null) {
-            throw new DamageNotCalculatedException(sprintf("Damage not calculated: check if %s event has been listened", self::class));
-        }
-
         return $this->damage;
     }
 

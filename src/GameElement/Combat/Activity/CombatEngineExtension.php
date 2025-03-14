@@ -10,6 +10,7 @@ use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
+use App\GameElement\Combat\Exception\DamageNotCalculatedException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -68,6 +69,9 @@ class CombatEngineExtension implements EventSubscriberInterface
         $this->activityEngine->run($opponentA, new CombatActivity($opponentA, $opponentB));
     }
 
+    /**
+     * @throws DamageNotCalculatedException
+     */
     protected function attack(object $attacker, object $defender, EventDispatcherInterface $eventDispatcher): CombatDamageInflictedEvent
     {
         $offensiveStats = new CombatOffensiveStatsCalculateEvent($attacker, $defender);
@@ -80,6 +84,10 @@ class CombatEngineExtension implements EventSubscriberInterface
             $defensiveStats->getStats()
         );
         $eventDispatcher->dispatch($damageCalculation);
+
+        if ($damageCalculation->getDamage() === null) {
+            throw new DamageNotCalculatedException(sprintf("Damage not calculated: check if %s event has been listened", self::class));
+        }
 
         $damageEvent = new CombatDamageInflictedEvent(
             $attacker,

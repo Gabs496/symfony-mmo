@@ -2,13 +2,14 @@
 
 namespace App\GameElement\Crafting;
 
+use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\RewardInterface;
 
-abstract readonly class AbstractRecipe
+abstract readonly class AbstractRecipe extends AbstractGameObject
 {
     public function __construct(
-        protected string $id,
+        string $id,
         protected string $name,
         protected string $description,
         /** @var RecipeIngredient[] */
@@ -22,11 +23,7 @@ abstract readonly class AbstractRecipe
 
     )
     {
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
+        parent::__construct($id);
     }
 
     public function getName(): string

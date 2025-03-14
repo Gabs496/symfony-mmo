@@ -6,8 +6,13 @@ use App\GameElement\Mastery\MasteryType;
 
 class SwordCrafting extends MasteryType
 {
-    public function __toString(): string
+    public function getId(): string
     {
         return 'SWORD_CRAFTING';
+    }
+
+    public static function getName(): string
+    {
+        return 'Sword Crafting';
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\GameObject\Mastery\Combat;
 
-use App\GameElement\Mastery\MasteryType;
-
-class MaxHealth extends MasteryType
+readonly class MaxHealth extends BaseCombatMastery
 {
-    public function __toString(): string
+
+    public function __construct()
     {
-        return 'HEALTH';
+        parent::__construct('MAX_HEALTH');
+    }
+
+    public static function getName(): string
+    {
+        return 'Max Health';
     }
 }

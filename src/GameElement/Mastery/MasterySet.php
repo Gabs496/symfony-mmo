@@ -27,7 +27,7 @@ class MasterySet
 
     private function createMastery(MasteryType $masteryType): Mastery
     {
-        $mastery = new Mastery($masteryType, $masteryType->getMinimumExperience());
+        $mastery = new Mastery($masteryType, 0.0);
         $this->addMastery($mastery);
         return $mastery;
     }

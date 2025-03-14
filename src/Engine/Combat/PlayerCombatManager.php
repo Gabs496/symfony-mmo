@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Engine\Player\Combat;
+namespace App\Engine\Combat;
 
+use App\Engine\Math;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
@@ -9,13 +10,14 @@ use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Mastery\MasteryReward;
 use App\GameElement\Reward\RewardApply;
-use App\GameObject\Combat\Stat\PhysicalAttack;
-use App\GameObject\Combat\Stat\PhysicalDefense;
+use App\GameObject\Combat\Stat\PhysicalAttackStat;
+use App\GameObject\Combat\Stat\PhysicalDefenseStat;
+use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class CombatListener implements EventSubscriberInterface
+class PlayerCombatManager implements EventSubscriberInterface
 {
     public function __construct(
         protected PlayerCharacterRepository $playerCharacterRepository,
@@ -29,6 +31,7 @@ class CombatListener implements EventSubscriberInterface
         return [
             CombatOffensiveStatsCalculateEvent::class => [
                 ['calculateBaseAttack', 0],
+                ['calculateBonusAttack', 0],
             ],
             CombatDefensiveStatsCalculateEvent::class => [
                 ['calculateBaseDefense', 0],
@@ -49,7 +52,22 @@ class CombatListener implements EventSubscriberInterface
             return;
         }
 
-        $event->increase(PhysicalAttack::class, $attacker->getMasteryExperience(new \App\GameObject\Mastery\Combat\PhysicalAttack()));
+        $event->increase(PhysicalAttackStat::class, $attacker->getMasteryExperience(new PhysicalAttack()));
+    }
+
+    public function calculateBonusAttack(CombatOffensiveStatsCalculateEvent $event): void
+    {
+        $attacker = $event->getAttacker();
+        if (!$attacker instanceof PlayerCharacter) {
+            return;
+        }
+
+        foreach ($event->getStats()->getStats() as $stat) {
+            $maximimumBonus = Math::mul($stat->getValue(), 0.1);
+            $percentage = bcmul(rand(1, 100), 0.01, 2);
+            $event->increase($stat::class, Math::mul($maximimumBonus, $percentage));
+
+        }
     }
 
     public function calculateBaseDefense(CombatDefensiveStatsCalculateEvent $event): void
@@ -59,7 +77,7 @@ class CombatListener implements EventSubscriberInterface
             return;
         }
 
-        $event->increase(PhysicalDefense::class, $defender->getMasteryExperience(new \App\GameObject\Mastery\Combat\PhysicalDefense()));
+        $event->increase(PhysicalDefenseStat::class, 0.0);
     }
 
     public function receiveDamage(CombatDamageInflictedEvent $event): void
@@ -69,7 +87,7 @@ class CombatListener implements EventSubscriberInterface
             return;
         }
 
-        $defender->setCurrentHealth(max($defender->getCurrentHealth() - $event->getDamage(), 0.0));
+        $defender->setCurrentHealth(max(Math::sub($defender->getCurrentHealth(), $event->getDamage()), 0.0));
         $this->playerCharacterRepository->save($defender);
 
         $event->setIsDefenderAlive(bccomp($defender->getCurrentHealth(), 0.0, 2) > 0);
@@ -81,8 +99,11 @@ class CombatListener implements EventSubscriberInterface
         $loser = $event->getLoser();
 
         if ($winner instanceof PlayerCharacter) {
-            $this->messageBus->dispatch(new RewardApply(new MasteryReward(new \App\GameObject\Mastery\Combat\PhysicalAttack(), 0.1), $winner));
-            $this->messageBus->dispatch(new RewardApply(new MasteryReward(new \App\GameObject\Mastery\Combat\PhysicalDefense(), 0.01), $winner));
+            if ($loser instanceof RewardOnDefeatInterface) {
+                foreach ($loser->getRewardOnDefeats() as $reward) {
+                    $this->messageBus->dispatch(new RewardApply($reward, $winner));
+                }
+            }
         }
     }
 }

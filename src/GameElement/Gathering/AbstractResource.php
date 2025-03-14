@@ -2,13 +2,14 @@
 
 namespace App\GameElement\Gathering;
 
+use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Item\AbstractItem;
 use App\GameElement\Mastery\MasteryType;
 
-readonly class AbstractResource
+readonly class AbstractResource extends AbstractGameObject
 {
     public function __construct(
-        private string      $id,
+        string      $id,
         private string      $name,
         private float       $difficulty,
         private MasteryType $involvedMastery,
@@ -16,7 +17,7 @@ readonly class AbstractResource
         private float       $gatheringTime,
     )
     {
-
+        parent::__construct($id);
     }
 
     public function getId(): string

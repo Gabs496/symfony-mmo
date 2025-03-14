@@ -1,0 +1,38 @@
+<?php
+
+namespace App\GameObject\NPC\Mob\Animal;
+
+use App\GameElement\Mastery\MasteryReward;
+use App\GameObject\Combat\Stat\PhysicalAttackStat;
+use App\GameObject\Combat\Stat\PhysicalDefenseStat;
+use App\GameObject\Mastery\Combat\PhysicalAttack;
+
+class Salamander extends BaseAnimalMob
+{
+
+    public function __construct()
+    {
+        parent::__construct(
+            name: 'Salamander',
+            maxHealth: 1.0,
+            description: 'A small lizard that can spit fire.'
+        );
+    }
+
+    /** @inheritDoc */
+    public function getCombatStats(): array
+    {
+        return [
+            new PhysicalDefenseStat(0.0),
+            new PhysicalAttackStat(0.01),
+        ];
+    }
+
+    /** @inheritDoc */
+    public function getRewardOnDefeats(): array
+    {
+        return [
+            new MasteryReward(new PhysicalAttack(), 0.01),
+        ];
+    }
+}

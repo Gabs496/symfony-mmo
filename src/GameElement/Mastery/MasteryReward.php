@@ -2,10 +2,10 @@
 
 namespace App\GameElement\Mastery;
 
-use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Reward\RewardInterface;
 use App\GameElement\Reward\RewardNotificationInterface;
 
+//TODO: maybe it could be an implementation concept
 readonly class MasteryReward implements RewardInterface, RewardNotificationInterface
 {
     public function __construct(
@@ -26,16 +26,11 @@ readonly class MasteryReward implements RewardInterface, RewardNotificationInter
 
     public function getName(): string
     {
-        return strtolower($this->type->__toString()) . ' experience';
+        return strtolower($this->type->getName()) . ' experience';
     }
 
     public function getQuantity(): float
     {
         return $this->experience;
-    }
-
-    public function getSubject(): AbstractCharacter
-    {
-        return $this->subject;
     }
 }

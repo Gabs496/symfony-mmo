@@ -2,10 +2,13 @@
 
 namespace App\GameElement\Mastery;
 
-abstract class MasteryType
+use App\GameElement\Core\GameObject\AbstractGameObject;
+
+abstract readonly class MasteryType extends AbstractGameObject
 {
-    public function getMinimumExperience(): float
+    public static abstract function getName(): string;
+    public function __toString(): string
     {
-        return 0.1;
+        return static::getId();
     }
 }
