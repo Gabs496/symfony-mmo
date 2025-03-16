@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Data\MapAvailableActivity;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
+use App\Entity\Game\MapSpawnedResource;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Combat\Activity\CombatActivity;
 use App\GameElement\Core\GameObject\GameObjectEngine;
@@ -13,7 +13,7 @@ use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Map\Engine\MapEngine;
 use App\GameElement\Notification\Engine\NotificationEngine;
-use App\Repository\Data\MapAvailableActivityRepository;
+use App\Repository\Game\MapSpawnedResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,33 +37,33 @@ class MapController extends AbstractController
 
         return $this->render('map/home.html.twig', [
             'player' => $user,
-            'mapAvailableActivities' => $mapEngine->getAvailableActivities($user->getMap()),
+            'spawnedResources' => $mapEngine->getSpawnedResources($user->getMap()),
             'recipes' => $gameObjectEngine->getByClass(AbstractRecipe::class),
             'spawnedMobs' => $mapEngine->getSpawnedMobs($user->getMap()),
         ]);
     }
 
-    #[Route('/activity/start/{id}', name: 'app_map_activity_start')]
-    public function startActivity(NotificationEngine $notificationEngine, MapAvailableActivity $availableActivity, ActivityEngine $gameActivity, MapAvailableActivityRepository $repository, Request $request): Response
+    #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
+    public function startActivity(NotificationEngine $notificationEngine, MapSpawnedResource $spawnedResource, ActivityEngine $gameActivity, MapSpawnedResourceRepository $mapSpawnedResourceRepository, Request $request): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        //TODO: controllare se il giocatore è nella mappa giusta
-        if ($availableActivity->isEmpty()) {
-            $repository->remove($availableActivity);
-            $notificationEngine->danger($player->getId(), 'Activity is not available');
+        //TODO: check if player is on the same map as the resource
+        if ($spawnedResource->isEmpty()) {
+            $mapSpawnedResourceRepository->remove($spawnedResource);
+            $notificationEngine->danger($player->getId(), 'Resource is empty');
             return $this->redirectToRoute('app_map');
         }
 
-        $gameActivity->run($player, new ResourceGatheringActivity($availableActivity));
+        $gameActivity->run($player, new ResourceGatheringActivity($spawnedResource));
 
         $this->addFlash('success', 'Activity finished');
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
             return $this->renderBlock('map/MapAvailableActivity.stream.html.twig', 'remove', [
-                'entity' => $availableActivity,
-                'id' => $availableActivity->getId(),
+                'entity' => $spawnedResource,
+                'id' => $spawnedResource->getId(),
             ]);
         }
         return $this->redirectToRoute('app_map');

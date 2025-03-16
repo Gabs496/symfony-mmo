@@ -2,11 +2,13 @@
 
 namespace App\GameObject\Map;
 
-use App\GameElement\Map\AbstractMap;
+use App\GameElement\MapResource\MapResourceSpawn;
+use App\GameObject\Gathering\LogChestnut;
+use App\GameObject\Gathering\OreCopper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('game.object')]
-readonly class BirthTown extends AbstractMap
+readonly class BirthTown extends AbstractBaseMap
 {
     public const string ID = "MAP_BIRT_TOWN";
 
@@ -18,5 +20,13 @@ readonly class BirthTown extends AbstractMap
             coordinateX: 0.0,
             coordinateY: 0.0
         );
+    }
+
+    public function getSpawningResources(): array
+    {
+        return [
+            new MapResourceSpawn(LogChestnut::ID, 100, 5, 25),
+            new MapResourceSpawn(OreCopper::ID, 100, 5, 15),
+        ];
     }
 }

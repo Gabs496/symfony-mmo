@@ -49,4 +49,9 @@ readonly class AbstractResource extends AbstractGameObject
     {
         return $this->gatheringTime;
     }
+
+    public function getIcon(): string
+    {
+        return '/resource_gathering/' . strtolower($this->id) . '.png';
+    }
 }

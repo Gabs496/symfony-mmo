@@ -4,7 +4,7 @@ namespace App\GameElement\Activity;
 
 use DateTimeImmutable;
 
-abstract class BaseActivity
+abstract class AbstractActivity
 {
     /**
      * Duration in seconds

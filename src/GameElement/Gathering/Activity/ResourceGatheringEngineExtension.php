@@ -5,7 +5,6 @@ namespace App\GameElement\Gathering\Activity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
-use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Reward\RewardApply;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -13,7 +12,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface
 {
     public function __construct(
-        private GameObjectEngine     $gameObjectEngine,
         private MessageBusInterface $messageBus,
     )
     {
@@ -27,7 +25,7 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
             return;
         }
 
-        $resource = $this->gameObjectEngine->get($activity->getMapAvailableActivity()->getMapResource()->getResourceId());
+        $resource = $activity->getMapSpawnInstance()->getResource();
         $activity->setDuration($resource->getGatheringTime());
     }
 

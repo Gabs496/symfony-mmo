@@ -1,10 +1,10 @@
 <?php
 
-namespace App\GameObject\NPC\Mob;
+namespace App\GameObject\Mob;
 
-use App\Engine\Combat\RewardOnDefeatInterface;
+use App\GameElement\Mob\AbstractMob;
 
-abstract readonly class BaseMob extends \App\GameElement\NPC\BaseMob implements RewardOnDefeatInterface
+abstract readonly class AbstractBaseMob extends AbstractMob
 {
     protected string $icon;
 

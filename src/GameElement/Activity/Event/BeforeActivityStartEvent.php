@@ -2,18 +2,18 @@
 
 namespace App\GameElement\Activity\Event;
 
-use App\GameElement\Activity\BaseActivity;
+use App\GameElement\Activity\AbstractActivity;
 
 readonly class BeforeActivityStartEvent
 {
     public function __construct(
-        private BaseActivity $activity,
-        private object       $subject,
+        private AbstractActivity $activity,
+        private object           $subject,
     )
     {
     }
 
-    public function getActivity(): BaseActivity
+    public function getActivity(): AbstractActivity
     {
         return $this->activity;
     }

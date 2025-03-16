@@ -3,10 +3,10 @@
 namespace App\GameElement\Combat\Activity;
 
 use App\GameElement\Activity\Activity;
-use App\GameElement\Activity\BaseActivity;
+use App\GameElement\Activity\AbstractActivity;
 
 #[Activity(id: 'COMBAT')]
-class CombatActivity extends BaseActivity
+class CombatActivity extends AbstractActivity
 {
     public function __construct(
         private readonly object $firstOpponent,

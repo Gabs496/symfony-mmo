@@ -6,7 +6,7 @@ use App\Engine\Math;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
-use App\GameElement\NPC\BaseMobInstance;
+use App\GameElement\Mob\AbstractMobInstance;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -38,7 +38,7 @@ readonly class MobCombatManager implements EventSubscriberInterface
     public function calculateBaseAttack(CombatOffensiveStatsCalculateEvent $event): void
     {
         $attacker = $event->getAttacker();
-        if (!$attacker instanceof BaseMobInstance) {
+        if (!$attacker instanceof AbstractMobInstance) {
             return;
         }
 
@@ -50,7 +50,7 @@ readonly class MobCombatManager implements EventSubscriberInterface
     public function calculateBonusAttack(CombatOffensiveStatsCalculateEvent $event): void
     {
         $attacker = $event->getAttacker();
-        if (!$attacker instanceof BaseMobInstance) {
+        if (!$attacker instanceof AbstractMobInstance) {
             return;
         }
 
@@ -65,7 +65,7 @@ readonly class MobCombatManager implements EventSubscriberInterface
     public function calculateBaseDefense(CombatDefensiveStatsCalculateEvent $event): void
     {
         $defender = $event->getDefender();
-        if (!$defender instanceof BaseMobInstance) {
+        if (!$defender instanceof AbstractMobInstance) {
             return;
         }
 
@@ -77,7 +77,7 @@ readonly class MobCombatManager implements EventSubscriberInterface
     public function receiveDamage(CombatDamageInflictedEvent $event): void
     {
         $defender = $event->getDefender();
-        if (!$defender instanceof BaseMobInstance) {
+        if (!$defender instanceof AbstractMobInstance) {
             return;
         }
 

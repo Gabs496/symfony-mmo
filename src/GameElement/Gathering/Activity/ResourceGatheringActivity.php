@@ -2,22 +2,22 @@
 
 namespace App\GameElement\Gathering\Activity;
 
-use App\Entity\Data\MapAvailableActivity;
 use App\GameElement\Activity\Activity;
-use App\GameElement\Activity\BaseActivity;
+use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Gathering\AbstractResource;
 use App\GameElement\Item\Reward\ItemReward;
+use App\GameElement\MapResource\AbstractMapSpawnInstance;
 use App\GameElement\Mastery\MasteryReward;
 
 #[Activity(id: 'RESOURCE_GATHERING')]
-class ResourceGatheringActivity extends BaseActivity
+class ResourceGatheringActivity extends AbstractActivity
 {
     private AbstractResource $resource;
     public function __construct(
-        private readonly MapAvailableActivity $mapAvailableActivity,
+        private readonly AbstractMapSpawnInstance $spawnInstance,
     )
     {
-        $this->resource = $this->mapAvailableActivity->getMapResource()->getResource();
+        $this->resource = $this->spawnInstance->getResource();
     }
 
     public function getResource(): AbstractResource
@@ -25,9 +25,9 @@ class ResourceGatheringActivity extends BaseActivity
         return $this->resource;
     }
 
-    public function getMapAvailableActivity(): MapAvailableActivity
+    public function getMapSpawnInstance(): AbstractMapSpawnInstance
     {
-        return $this->mapAvailableActivity;
+        return $this->spawnInstance;
     }
 
     public function getRewards(): iterable

@@ -3,7 +3,7 @@
 namespace App\GameElement\Activity\Engine;
 
 use App\Entity\Data\Activity;
-use App\GameElement\Activity\BaseActivity;
+use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
@@ -26,7 +26,7 @@ readonly class ActivityEngine
     /**
      * @throws \DateMalformedStringException|Exception
      */
-    public function run(object $subject, BaseActivity $type): void
+    public function run(object $subject, AbstractActivity $type): void
     {
         try {
             $this->eventDispatcher->dispatch(new BeforeActivityStartEvent($type, $subject));
@@ -63,7 +63,7 @@ readonly class ActivityEngine
         }
     }
 
-    protected function waitForActivityFinish(BaseActivity $activity): void
+    protected function waitForActivityFinish(AbstractActivity $activity): void
     {
         $seconds = floor($activity->getDuration());
         $microseconds = (int)bcmul(bcsub($activity->getDuration(), $seconds, 4), 1000000, 0);
@@ -71,7 +71,7 @@ readonly class ActivityEngine
         usleep($microseconds);
     }
 
-    public static function getId(BaseActivity $activity)
+    public static function getId(AbstractActivity $activity)
     {
         $reflectionClass = new ReflectionClass($activity);
         foreach ($reflectionClass->getAttributes(\App\GameElement\Activity\Activity::class) as $attribute) {

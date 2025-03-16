@@ -2,11 +2,11 @@
     <div class="row align-items-center">
         <div class="col-auto">
             <div style="width: 3em; height: 3em;">
-                <img src="{{ asset('images' ~ entity.icon) }}" alt="{{ entity.name }}" class="h-100">
+                <img src="{{ asset('images' ~ entity.resource.icon) }}" alt="{{ entity.resource.name }}" class="h-100">
             </div>
         </div>
         <div class="col">
-            <span class="fw-bold">{{ entity.name }}</span>
+            <span class="fw-bold">{{ entity.resource.name }}</span>
         </div>
         <div class="col">
             <span>{{ 'quantity'|trans|lower }}:</span>
@@ -16,7 +16,7 @@
             {% if entity.involvedInActivity %}
                 {% include 'parts/activity.html.twig' with {entity: entity.involvingActivity, id: entity.id} %}
             {% else %}
-                <a href="{{ path('app_map_activity_start', {id: entity.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>
+                <a href="{{ path('app_map_resource_gather', {id: entity.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>
             {% endif %}
         </div>
     </div>

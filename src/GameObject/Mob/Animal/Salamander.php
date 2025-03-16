@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\NPC\Mob\Animal;
+namespace App\GameObject\Mob\Animal;
 
 use App\GameElement\Mastery\MasteryReward;
 use App\GameObject\Combat\Stat\PhysicalAttackStat;
@@ -9,7 +9,7 @@ use App\GameObject\Mastery\Combat\PhysicalAttack;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('game.object')]
-readonly class Salamander extends BaseAnimalMob
+readonly class Salamander extends BaseAnimalBaseMob
 {
 
     public function __construct()

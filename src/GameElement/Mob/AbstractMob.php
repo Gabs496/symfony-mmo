@@ -1,13 +1,14 @@
 <?php
 
-namespace App\GameElement\NPC;
+namespace App\GameElement\Mob;
 
-use App\GameElement\Combat\Stats\BaseStat;
+use App\GameElement\Combat\Stats\AbstractStat;
 use App\GameElement\Combat\Stats\DefensiveStat;
 use App\GameElement\Combat\Stats\OffensiveStat;
 use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Reward\RewardInterface;
 
-abstract readonly class BaseMob extends AbstractGameObject
+abstract readonly class AbstractMob extends AbstractGameObject
 {
     public function __construct(
         string $id,
@@ -19,17 +20,20 @@ abstract readonly class BaseMob extends AbstractGameObject
         parent::__construct($id);
     }
 
-    /** @return BaseStat[] */
+    /** @return AbstractStat[] */
     public abstract function getCombatStats(): array;
+
+    /** @return RewardInterface[] */
+    public abstract function getRewardOnDefeats(): array;
 
     public function getOffensiveStats(): array
     {
-        return array_filter($this->getCombatStats(), fn(BaseStat $stat) => $stat instanceof OffensiveStat);
+        return array_filter($this->getCombatStats(), fn(AbstractStat $stat) => $stat instanceof OffensiveStat);
     }
 
     public function getDefensiveStats(): array
     {
-        return array_filter($this->getCombatStats(), fn(BaseStat $stat) => !$stat instanceof DefensiveStat);
+        return array_filter($this->getCombatStats(), fn(AbstractStat $stat) => !$stat instanceof DefensiveStat);
     }
 
     public function getName(): string

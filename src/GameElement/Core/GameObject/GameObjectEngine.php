@@ -10,6 +10,9 @@ use Doctrine\ORM\Events;
 use ReflectionObject;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
+/**
+ * @template T
+ */
 #[AsDoctrineListener(event: Events::postLoad)]
 class GameObjectEngine
 {
@@ -53,7 +56,8 @@ class GameObjectEngine
     }
 
     /**
-     * @return AbstractGameObject[]
+     * @param class-string<T> $class
+     * @return T[]
      */
     public function getByClass(string $class): array
     {

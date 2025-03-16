@@ -3,7 +3,7 @@
 namespace App\GameElement\Combat\Event;
 
 use App\GameElement\Combat\StatCollection;
-use App\GameElement\Combat\Stats\BaseStat;
+use App\GameElement\Combat\Stats\AbstractStat;
 use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class CombatCalculateStatsEvent extends Event
@@ -28,7 +28,7 @@ abstract class CombatCalculateStatsEvent extends Event
         return $this;
     }
 
-    public function getStat(string $statId): BaseStat
+    public function getStat(string $statId): AbstractStat
     {
         return $this->stats->getStat($statId);
     }

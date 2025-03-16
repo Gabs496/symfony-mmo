@@ -2,13 +2,13 @@
 
 namespace App\GameElement\Combat;
 
-use App\GameElement\Combat\Stats\BaseStat;
+use App\GameElement\Combat\Stats\AbstractStat;
 use InvalidArgumentException;
 
 class StatCollection
 {
     public function __construct(
-        /** @var BaseStat[] */
+        /** @var AbstractStat[] */
         private array $stats = []
     )
     {
@@ -27,7 +27,7 @@ class StatCollection
     {
         $newStat = new $statId(max($value, 0.0));
 
-        if (!$newStat instanceof BaseStat) {
+        if (!$newStat instanceof AbstractStat) {
             throw new InvalidArgumentException('Invalid stat class: ' . $statId);
         }
 
@@ -43,7 +43,7 @@ class StatCollection
         return $this;
     }
 
-    public function getStat(string $statId): BaseStat
+    public function getStat(string $statId): AbstractStat
     {
         foreach ($this->stats as $baseStat) {
             if ($baseStat::class === $statId) {

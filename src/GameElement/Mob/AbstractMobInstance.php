@@ -1,19 +1,19 @@
 <?php
 
-namespace App\GameElement\NPC;
+namespace App\GameElement\Mob;
 
-abstract class BaseMobInstance
+abstract class AbstractMobInstance
 {
     protected float $currentHealth;
 
     public function __construct(
-        protected BaseMob $mob,
+        protected AbstractMob $mob,
     )
     {
         $this->currentHealth = $mob->getMaxHealth();
     }
 
-    public function getMob(): BaseMob
+    public function getMob(): AbstractMob
     {
         return $this->mob;
     }

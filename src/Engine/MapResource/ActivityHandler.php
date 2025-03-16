@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Engine\MapAvailableActivity\Event\Handler;
+namespace App\Engine\MapResource;
 
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
-use App\Repository\Data\MapAvailableActivityRepository;
+use App\Repository\Game\MapSpawnedResourceRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -18,8 +18,8 @@ readonly class ActivityHandler implements EventSubscriberInterface
     public function __construct(
         private HubInterface       $hub,
         private Environment        $twig,
-        private MapAvailableActivityRepository $mapAvailableActivityRepository,
         private ActivityEngine     $activityEngine,
+        private MapSpawnedResourceRepository $mapSpawnedResourceRepository,
     )
     {
     }
@@ -28,17 +28,17 @@ readonly class ActivityHandler implements EventSubscriberInterface
     {
         return [
             ActivityStartEvent::class => [
-                ['lockMapAvailableActivity'],
+                ['lockMapSpawnedResourceActivity'],
                 ['streamActvityStart'],
             ],
             ActivityEndEvent::class => [
-                ['consumeMapAvailableActivity'],
+                ['consumeMapSpawnedResourceActivity'],
                 ['continueUntillEmpty', -1],
             ],
         ];
     }
 
-    public function lockMapAvailableActivity(ActivityStartEvent $event): void
+    public function lockMapSpawnedResourceActivity(ActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
@@ -50,9 +50,9 @@ readonly class ActivityHandler implements EventSubscriberInterface
             return;
         }
 
-        $mapAvailableActivity = $activity->getMapAvailableActivity();
-        $mapAvailableActivity->startActivity($activity->getEntity());
-        $this->mapAvailableActivityRepository->save($mapAvailableActivity);
+        $mapSpawnedResource = $activity->getMapSpawnInstance();
+        $mapSpawnedResource->startActivity($activity->getEntity());
+        $this->mapSpawnedResourceRepository->save($mapSpawnedResource);
     }
 
     public function streamActvityStart(ActivityStartEvent $event): void
@@ -67,27 +67,27 @@ readonly class ActivityHandler implements EventSubscriberInterface
             return;
         }
 
-        $mapAvailableActivity = $activity->getMapAvailableActivity();
-        $this->hub->publish(new Update(['mapAvailableActivities_' . $mapAvailableActivity->getMapId()],
-            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapAvailableActivity, 'id' => $mapAvailableActivity->getId()]),
+        $mapSpawnedResource = $activity->getMapSpawnInstance();
+        $this->hub->publish(new Update(['mapAvailableActivities_' . $mapSpawnedResource->getMapId()],
+            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapSpawnedResource, 'id' => $mapSpawnedResource->getId()]),
         true
         ));
     }
 
-    public function consumeMapAvailableActivity(ActivityEndEvent $event): void
+    public function consumeMapSpawnedResourceActivity(ActivityEndEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
             return;
         }
 
-        $mapAvailableActivity = $activity->getMapAvailableActivity();
-        $mapAvailableActivity->consume(1);
-        if ($mapAvailableActivity->isEmpty()) {
-            $this->mapAvailableActivityRepository->remove($mapAvailableActivity);
+        $mapSpawnedResource = $activity->getMapSpawnInstance();
+        $mapSpawnedResource->consume(1);
+        if ($mapSpawnedResource->isEmpty()) {
+            $this->mapSpawnedResourceRepository->remove($mapSpawnedResource);
             return;
         }
-        $this->mapAvailableActivityRepository->save($mapAvailableActivity);
+        $this->mapSpawnedResourceRepository->save($mapSpawnedResource);
     }
 
     public function continueUntillEmpty(ActivityEndEvent $event): void
@@ -97,9 +97,9 @@ readonly class ActivityHandler implements EventSubscriberInterface
             return;
         }
 
-        $mapAvailableActivity = $activity->getMapAvailableActivity();
-        if ($mapAvailableActivity->getQuantity() > 0) {
-            $this->activityEngine->run($event->getSubject(), new ResourceGatheringActivity($mapAvailableActivity));
+        $mapSpawnedResource = $activity->getMapSpawnInstance();
+        if ($mapSpawnedResource->getQuantity() > 0) {
+            $this->activityEngine->run($event->getSubject(), new ResourceGatheringActivity($mapSpawnedResource));
         }
     }
 }
