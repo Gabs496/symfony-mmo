@@ -25,4 +25,4 @@
 ###< symfony/asset-mapper ###
 
 /.idea/
-.compose.override.yaml
+/compose.override.yaml
