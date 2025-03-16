@@ -1,8 +1,0 @@
-services:
-###> doctrine/doctrine-bundle ###
-  database:
-    ports: !reset
-      - "10000:3306"
-    expose:
-      - "3306"
-###< doctrine/doctrine-bundle ###
