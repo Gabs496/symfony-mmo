@@ -13,9 +13,11 @@
         {% endblock %}
     </head>
     <body>
+        {% if app.user %}
         <turbo-stream
                 {{ custom_turbo_stream_listen('player_gui_' ~ app.user.id) }}
         ></turbo-stream>
+        {% endif %}
         {% block body %}{% endblock %}
     </body>
 </html>
