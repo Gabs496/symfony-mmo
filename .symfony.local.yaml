@@ -2,9 +2,9 @@
 http:
   preferred_port: 8000
 workers:
-  docker_compose_up:
-    cmd: [ 'sudo', 'docker' , 'compose', 'up']
-    watch: ['docker-compose.yml', 'docker-compose.override.yml']
+#  docker_compose_up:
+#    cmd: [ 'sudo', 'docker' , 'compose', 'up']
+#    watch: ['docker-compose.yml', 'docker-compose.override.yml']
   messenger_consume_async: ~
   # Start scheduler that will generate resources in maps
   messenger_consume_scheduler_game_map_resource_fullfill:

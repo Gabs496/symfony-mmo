@@ -21,15 +21,12 @@ Then:
     ```
     git clone git@github.com:Gabs496/symfony-mmo.git
     cd symfony-mmo
-    symfony server:start -d
+    docker-compose up -d
     bin/console doctrine:database:create
     bin/console doctrine:migrations:migrate
     ```
-    IMPORTANT: the command `symfony server:start -d` execute at the same time:
-    - `sudo docker-compose up -d`
-    - a few workers  
-   For more information, read the `symfony.local.yaml` file
-3.connect to http://localhost:8000 (or create your own proxy domain with Symfony Web Server)
+3. launch app with `symfony server:start -d`
+4. connect to http://localhost:8000 (or create your own proxy domain with Symfony Web Server)
    
 
 After you need to manually create (this will be made automatically in future):
