@@ -13,6 +13,18 @@ services:
       - '3306'
     volumes:
       - symfony-mmo-db:/var/lib/mysql
-  # Names our volume
+  mercure:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      MERCURE_PUBLISHER_JWT_KEY: '12345678901234567890123456789012'
+      MERCURE_SUBSCRIBER_JWT_KEY: '12345678901234567890123456789012'
+      SERVER_NAME: ':80'
+    # Uncomment the following line to enable the development mode
+#    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
+    ports:
+      - '3000:80'
+    expose:
+      - '3000'
 volumes:
   symfony-mmo-db:
