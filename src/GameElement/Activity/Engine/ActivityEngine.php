@@ -9,7 +9,6 @@ use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityDurationNotSetException;
 use App\Repository\Data\ActivityRepository;
-use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 
@@ -23,44 +22,35 @@ readonly class ActivityEngine
     {
     }
 
-    /**
-     * @throws \DateMalformedStringException|Exception
-     */
     public function run(object $subject, AbstractActivity $type): void
     {
-        try {
-            $this->eventDispatcher->dispatch(new BeforeActivityStartEvent($type, $subject));
+        $this->eventDispatcher->dispatch(new BeforeActivityStartEvent($type, $subject));
 
-            if ($type->getDuration() === null) {
-                throw new ActivityDurationNotSetException($type);
-            }
-
-            $activityEntity = (new Activity(ActivityEngine::getId($type), $type->getDuration()));
-            $this->activityRepository->save($activityEntity);
-            $type->setEntity($activityEntity);
-            $type->start();
-
-            $this->eventDispatcher->dispatch(new ActivityStartEvent($type, $subject));
-
-            $activityEntity->setStartedAt(microtime(true));
-            $this->activityRepository->save($activityEntity);
-
-            $this->waitForActivityFinish($type);
-
-            $activityEntity = $this->activityRepository->find($activityEntity->getId());
-            if (!$activityEntity instanceof Activity) {
-                return;
-            }
-
-            $activityEntity->setCompletedAt(microtime(true));
-            $this->activityRepository->save($activityEntity);
-
-            $this->eventDispatcher->dispatch(new ActivityEndEvent($type, $subject));
-
-        } catch (Exception $e)
-        {
-            throw $e;
+        if ($type->getDuration() === null) {
+            throw new ActivityDurationNotSetException($type);
         }
+
+        $activityEntity = (new Activity(ActivityEngine::getId($type), $type->getDuration()));
+        $this->activityRepository->save($activityEntity);
+        $type->setEntity($activityEntity);
+        $type->start();
+
+        $this->eventDispatcher->dispatch(new ActivityStartEvent($type, $subject));
+
+        $activityEntity->setStartedAt(microtime(true));
+        $this->activityRepository->save($activityEntity);
+
+        $this->waitForActivityFinish($type);
+
+        $activityEntity = $this->activityRepository->find($activityEntity->getId());
+        if (!$activityEntity instanceof Activity) {
+            return;
+        }
+
+        $activityEntity->setCompletedAt(microtime(true));
+        $this->activityRepository->save($activityEntity);
+
+        $this->eventDispatcher->dispatch(new ActivityEndEvent($type, $subject));
     }
 
     protected function waitForActivityFinish(AbstractActivity $activity): void

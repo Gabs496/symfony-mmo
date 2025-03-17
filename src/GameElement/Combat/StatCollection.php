@@ -31,14 +31,7 @@ class StatCollection
             throw new InvalidArgumentException('Invalid stat class: ' . $statId);
         }
 
-        foreach ($this->stats as $i => $stat) {
-            if ($stat::class === $statId) {
-                $this->stats[$i] = $newStat;
-                return $this;
-            }
-        }
-
-        $this->stats[] = $newStat;
+        $this->stats[$statId] = $newStat;
 
         return $this;
     }

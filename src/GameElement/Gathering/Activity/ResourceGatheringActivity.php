@@ -6,7 +6,7 @@ use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Gathering\AbstractResource;
 use App\GameElement\Item\Reward\ItemReward;
-use App\GameElement\MapResource\AbstractMapSpawnInstance;
+use App\GameElement\MapResource\AbstractMapResourceSpawnInstance;
 use App\GameElement\Mastery\MasteryReward;
 
 #[Activity(id: 'RESOURCE_GATHERING')]
@@ -14,7 +14,7 @@ class ResourceGatheringActivity extends AbstractActivity
 {
     private AbstractResource $resource;
     public function __construct(
-        private readonly AbstractMapSpawnInstance $spawnInstance,
+        private readonly AbstractMapResourceSpawnInstance $spawnInstance,
     )
     {
         $this->resource = $this->spawnInstance->getResource();
@@ -25,7 +25,7 @@ class ResourceGatheringActivity extends AbstractActivity
         return $this->resource;
     }
 
-    public function getMapSpawnInstance(): AbstractMapSpawnInstance
+    public function getMapSpawnInstance(): AbstractMapResourceSpawnInstance
     {
         return $this->spawnInstance;
     }

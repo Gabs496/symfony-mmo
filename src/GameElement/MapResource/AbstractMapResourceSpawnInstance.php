@@ -4,7 +4,7 @@ namespace App\GameElement\MapResource;
 
 use App\GameElement\Gathering\AbstractResource;
 
-class AbstractMapSpawnInstance
+abstract class AbstractMapResourceSpawnInstance
 {
     public function __construct(
         protected AbstractResource $resource,

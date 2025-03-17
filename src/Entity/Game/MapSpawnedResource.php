@@ -5,7 +5,7 @@ namespace App\Entity\Game;
 use App\Entity\Data\Activity;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Gathering\AbstractResource;
-use App\GameElement\MapResource\AbstractMapSpawnInstance;
+use App\GameElement\MapResource\AbstractMapResourceSpawnInstance;
 use App\GameObject\Map\AbstractBaseMap;
 use App\Interface\ConsumableInterface;
 use App\Repository\Game\MapSpawnedResourceRepository;
@@ -14,7 +14,7 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapSpawnedResourceRepository::class)]
 #[Broadcast(topics: ['@="mapAvailableActivities_" ~ entity.getMapId()'], private: true, template: 'map/MapAvailableActivity.stream.html.twig')]
-class MapSpawnedResource extends AbstractMapSpawnInstance implements ConsumableInterface
+class MapSpawnedResource extends AbstractMapResourceSpawnInstance implements ConsumableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
