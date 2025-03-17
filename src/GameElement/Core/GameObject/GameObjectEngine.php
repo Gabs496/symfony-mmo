@@ -43,6 +43,7 @@ class GameObjectEngine
 
     public function get(string $id): AbstractGameObject
     {
+        //TODO: try to optimize it
         foreach ($this->gameObjectCollection as $gameObject) {
             if (!$gameObject instanceof AbstractGameObject) {
                 throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
@@ -62,6 +63,7 @@ class GameObjectEngine
     public function getByClass(string $class): array
     {
         $result = [];
+        //TODO: try to optimize it
         foreach ($this->gameObjectCollection as $gameObject) {
             if (!$gameObject instanceof AbstractGameObject) {
                 throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));

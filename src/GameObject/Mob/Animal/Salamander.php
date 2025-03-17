@@ -11,11 +11,11 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('game.object')]
 readonly class Salamander extends BaseAnimalBaseMob
 {
-
+    public const string ID = "MOB_SALAMANDER";
     public function __construct()
     {
         parent::__construct(
-            id: 'SALAMANDER',
+            id: 'MOB_SALAMANDER',
             name: 'Salamander',
             maxHealth: 1.0,
             description: 'A small lizard that can spit fire.'

@@ -50,4 +50,9 @@ abstract readonly class AbstractMob extends AbstractGameObject
     {
         return $this->maxHealth;
     }
+
+    public function getIcon(): string
+    {
+        return '/mob/' . strtolower($this->id) . '.png';
+    }
 }

@@ -38,6 +38,7 @@ class StatCollection
 
     public function getStat(string $statId): AbstractStat
     {
+        //TODO: use array key
         foreach ($this->stats as $baseStat) {
             if ($baseStat::class === $statId) {
                 return $baseStat;

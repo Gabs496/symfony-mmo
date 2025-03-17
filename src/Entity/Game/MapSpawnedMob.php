@@ -5,6 +5,7 @@ namespace App\Entity\Game;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Mob\AbstractMob;
 use App\GameElement\Mob\AbstractMobInstance;
+use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -22,14 +23,8 @@ class MapSpawnedMob extends AbstractMobInstance
     #[ORM\Column(length: 50)]
     private ?string $mapId = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $icon = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
     #[ORM\Column(length: 50)]
-    private ?string $mobId = null;
+    private string $mobId;
 
     #[ORM\Column(type: 'float')]
     protected float $currentHealth = 0.0;
@@ -37,9 +32,15 @@ class MapSpawnedMob extends AbstractMobInstance
     #[GameObjectReference(class: AbstractMob::class,objectIdProperty: 'mobId')]
     protected AbstractMob $mob;
 
-    public function __construct(AbstractMob $mob)
+    #[GameObjectReference(class: AbstractBaseMap::class,objectIdProperty: 'mapId')]
+    protected AbstractBaseMap $map;
+
+    public function __construct(AbstractBaseMap $map, AbstractMob $mob)
     {
         $this->id = Uuid::v7();
+        $this->map = $map;
+        $this->mapId = $map->getId();
+        $this->mobId = $mob->getId();
         parent::__construct($mob);
     }
 
@@ -63,30 +64,6 @@ class MapSpawnedMob extends AbstractMobInstance
     public function setMapId(string $mapId): static
     {
         $this->mapId = $mapId;
-
-        return $this;
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(string $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
 
         return $this;
     }

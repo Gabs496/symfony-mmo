@@ -64,6 +64,7 @@ readonly class ActivityEngine
     public static function getId(AbstractActivity $activity)
     {
         $reflectionClass = new ReflectionClass($activity);
+        //TODO: cache it (Need to modify Activity class)
         foreach ($reflectionClass->getAttributes(\App\GameElement\Activity\Activity::class) as $attribute) {
             return $attribute->getArguments()['id'];
         }

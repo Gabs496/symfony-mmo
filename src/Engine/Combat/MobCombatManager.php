@@ -5,6 +5,7 @@ namespace App\Engine\Combat;
 use App\Engine\Math;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
+use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Mob\AbstractMobInstance;
 use App\Repository\Game\MapSpawnedMobRepository;
@@ -31,6 +32,9 @@ readonly class MobCombatManager implements EventSubscriberInterface
             ],
             CombatDamageInflictedEvent::class => [
                 ['receiveDamage', 0],
+            ],
+            CombatFinishEvent::class => [
+                ['clearMapMobIfDefeated', 0],
             ],
         ];
     }
@@ -85,5 +89,15 @@ readonly class MobCombatManager implements EventSubscriberInterface
         $this->mapSpawnedMobRepository->save($defender);
 
         $event->setIsDefenderAlive(bccomp($defender->getCurrentHealth(), 0.0, 2) > 0);
+    }
+
+    public function clearMapMobIfDefeated(CombatFinishEvent $event): void
+    {
+        $loser = $event->getLoser();
+        if (!$loser instanceof AbstractMobInstance) {
+            return;
+        }
+
+        $this->mapSpawnedMobRepository->remove($loser);
     }
 }

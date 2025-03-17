@@ -10,3 +10,6 @@ workers:
   messenger_consume_scheduler_game_map_resource_fullfill:
     cmd: [ 'symfony', 'console', 'messenger:consume', 'scheduler_game_map_resource_fullfill' ]
     watch: ['config', 'src', 'templates', 'vendor']
+  messenger_consume_scheduler_game_map_mob_fullfill:
+    cmd: [ 'symfony', 'console', 'messenger:consume', 'scheduler_game_map_mob_fullfill' ]
+    watch: [ 'config', 'src', 'templates', 'vendor' ]

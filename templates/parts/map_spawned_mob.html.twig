@@ -2,11 +2,11 @@
     <div class="row align-items-center">
         <div class="col-auto">
             <div style="width: 7em; height: 7em;">
-                <img src="{{ asset('images' ~ entity.icon) }}" alt="{{ entity.name }}" class="h-100">
+                <img src="{{ asset('images' ~ entity.mob.icon) }}" alt="{{ entity.mob.name }}" class="h-100">
             </div>
         </div>
         <div class="col">
-            <span class="fw-bold">{{ entity.name }}</span>
+            <span class="fw-bold">{{ entity.mob.name }}</span>
         </div>
         <div class="col">
             <div class="d-flex">
