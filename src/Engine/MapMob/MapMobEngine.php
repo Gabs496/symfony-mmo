@@ -56,18 +56,18 @@ readonly class MapMobEngine
         $this->mapSpawnedMobRepository->save($instance);
     }
 
-    public function hasFreeSpace(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): bool
+    private function hasFreeSpace(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): bool
     {
 
         return $this->getFreeSpace($map, $mapMobSpawn) > 0;
     }
 
-    public function getFreeSpace(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): int
+    private function getFreeSpace(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): int
     {
         return $mapMobSpawn->getMaxAvailability() - $this->getSpaceTaken($map, $mapMobSpawn);
     }
 
-    public function getSpaceTaken(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): int
+    private function getSpaceTaken(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): int
     {
         $spots = $this->mapSpawnedMobRepository->findBy(['mapId' => $map->getId(), 'mobId' => $mapMobSpawn->getMobId()]);
         return (new ArrayCollection($spots))->reduce(function (int $carry) {

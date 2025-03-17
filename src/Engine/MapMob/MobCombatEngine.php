@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Combat;
+namespace App\Engine\MapMob;
 
 use App\Engine\Math;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
@@ -11,7 +11,7 @@ use App\GameElement\Mob\AbstractMobInstance;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-readonly class MobCombatManager implements EventSubscriberInterface
+readonly class MobCombatEngine implements EventSubscriberInterface
 {
 
     public function __construct(

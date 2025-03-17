@@ -120,7 +120,6 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
 
     public function eraseCredentials(): void
     {
-        return;
     }
 
     public function getUserIdentifier(): string
