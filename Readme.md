@@ -1,4 +1,5 @@
 # Symfony MMO
+![Schermata del 2025-03-17 18-30-22](https://github.com/user-attachments/assets/7a9e7420-128a-4869-93c8-f298ba6829bc)
 
 Please, if you like this project, follow me on Patreon: your follow will be a motivation for me 😃
 Link: [Click here to follow](https://patreon.com/user?u=99509619)
