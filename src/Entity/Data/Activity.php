@@ -53,12 +53,6 @@ class Activity
         return $this->type;
     }
 
-    /** @param MasterySet $masterySet */
-    public function applyMasteryPerformance(MasterySet $masterySet)
-    {
-        // TODO: decidere come applicare le performance delle abilità
-    }
-
     public function getStartedAt(): ?float
     {
         return $this->startedAt;

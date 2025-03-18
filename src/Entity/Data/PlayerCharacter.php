@@ -31,6 +31,9 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     #[ORM\OneToOne(targetEntity: BackpackItemBag::class, inversedBy: 'player', cascade: ['persist', 'remove'])]
     protected BackpackItemBag $backpack;
 
+    #[ORM\OneToOne(targetEntity: EquippedItemBag::class, inversedBy: 'player', cascade: ['persist', 'remove'])]
+    protected EquippedItemBag $equipment;
+
     #[ORM\Column(type: 'json_document', nullable: true, options: ['jsonb' => true])]
     private MasterySet $masterySet;
 
@@ -56,6 +59,7 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     {
         $this->masterySet = new MasterySet();
         $this->backpack = new BackpackItemBag($this);
+        $this->equipment = new EquippedItemBag($this);
     }
 
     public function getId(): ?string
@@ -130,6 +134,11 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface
     public function getBackpack(): BackpackItemBag
     {
         return $this->backpack;
+    }
+
+    public function getEquipment(): EquippedItemBag
+    {
+        return $this->equipment;
     }
 
     public function cloneMasterySet(): MasterySet

@@ -15,7 +15,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 #[ORM\InheritanceType(value: 'SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\DiscriminatorMap([ItemBagType::BACKPACK->value => BackpackItemBag::class])]
+#[ORM\DiscriminatorMap([
+    ItemBagType::BACKPACK->value => BackpackItemBag::class,
+    ItemBagType::EQUIPMENT->value => EquippedItemBag::class,
+])]
 #[ORM\Entity(repositoryClass: ItemInstanceBagRepository::class)]
 abstract class ItemBag extends AbstractItemBag
 {

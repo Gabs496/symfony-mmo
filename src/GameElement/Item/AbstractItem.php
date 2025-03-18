@@ -3,17 +3,15 @@
 namespace App\GameElement\Item;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Item\AvailableAction\AbstractAvailableAction;
 
-readonly abstract class AbstractItem extends AbstractGameObject implements ItemInterface
+readonly abstract class AbstractItem extends AbstractGameObject
 {
     public function __construct(
         string $id,
         protected string $name,
         protected string $description = '',
-        protected bool $equippable = false,
-        protected bool $consumable = false,
         protected bool $stackable = false,
-        protected float $maxCondition = 0.0,
         protected float $weight = 100.0,
     )
     {
@@ -30,24 +28,9 @@ readonly abstract class AbstractItem extends AbstractGameObject implements ItemI
         return $this->description;
     }
 
-    public function isEquippable(): bool
-    {
-        return $this->equippable;
-    }
-
-    public function isConsumable(): bool
-    {
-        return $this->consumable;
-    }
-
     public function isStackable(): bool
     {
         return $this->stackable;
-    }
-
-    public function getMaxCondition(): float
-    {
-        return $this->maxCondition;
     }
 
     public function getWeight(): float
@@ -55,8 +38,6 @@ readonly abstract class AbstractItem extends AbstractGameObject implements ItemI
         return $this->weight;
     }
 
-    public function getIconName(): string
-    {
-        return $this->id;
-    }
+    /** @return AbstractAvailableAction[] */
+    public abstract function getAvailableActions(): array;
 }

@@ -6,10 +6,11 @@ use App\GameElement\Mastery\MasteryReward;
 use App\GameObject\Combat\Stat\PhysicalAttackStat;
 use App\GameObject\Combat\Stat\PhysicalDefenseStat;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
+use App\GameObject\Mob\AbstractBaseAnimalMob;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('game.object')]
-readonly class Salamander extends BaseAnimalBaseMob
+readonly class Salamander extends AbstractBaseAnimalMob
 {
     public const string ID = "MOB_SALAMANDER";
     public function __construct()
@@ -17,7 +18,7 @@ readonly class Salamander extends BaseAnimalBaseMob
         parent::__construct(
             id: 'MOB_SALAMANDER',
             name: 'Salamander',
-            maxHealth: 1.0,
+            maxHealth: 0.10,
             description: 'A small lizard that can spit fire.'
         );
     }

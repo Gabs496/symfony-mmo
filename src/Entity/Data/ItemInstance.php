@@ -8,7 +8,6 @@ use App\GameElement\Item\AbstractItemBag;
 use App\GameElement\Item\AbstractItemInstance;
 use App\Repository\Data\ItemInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
 class ItemInstance extends AbstractItemInstance

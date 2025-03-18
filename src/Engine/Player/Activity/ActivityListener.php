@@ -2,7 +2,6 @@
 
 namespace App\Engine\Player\Activity;
 
-use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
@@ -21,22 +20,6 @@ readonly class ActivityListener
     )
     {
 
-    }
-
-    #[AsEventListener(PlayerBackpackUpdateEvent::class)]
-    public function onPlayerBackpackUpdated(PlayerBackpackUpdateEvent $event): void
-    {
-        $player = $this->playerCharacterRepository->find($event->getPlayerId());
-        $this->hub->publish(new Update(
-            'player_gui_' . $player->getId(),
-            $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $player->getBackpack()]),
-            true
-        ));
-        $this->hub->publish(new Update(
-            'player_gui_' . $player->getId(),
-            $this->twig->render('item_bag/items_update.stream.html.twig', ['bag' => $player->getBackpack()]),
-            true
-        ));
     }
 
     #[AsEventListener(ActivityStartEvent::class)]

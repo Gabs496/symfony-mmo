@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player\Reward;
 
-use App\Engine\Player\PlayerEngine;
+use App\Engine\Player\Item\PlayerItemEngine;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
@@ -19,7 +19,8 @@ readonly class RewardApplyHandler
 {
     public function __construct(
         private PlayerCharacterRepository $repository,
-        private PlayerEngine              $playerEngine,
+        //TODO: remove from this domain
+        private PlayerItemEngine              $playerEngine,
         private NotificationEngine $notificationEngine,
     )
     {
@@ -34,7 +35,7 @@ readonly class RewardApplyHandler
 
         $playerCharacter = $this->repository->find($recipe->getId());
         if (!$playerCharacter instanceof PlayerCharacter) {
-            //TODO: scrivere un log o eseguire qualcosa
+            //TODO: write log or execute something
             return;
         }
 

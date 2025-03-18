@@ -70,6 +70,7 @@ abstract class AbstractItemBag
         return false;
     }
 
+    /** @return AbstractItemInstance[] */
     public function getItems(): iterable
     {
         return $this->items;

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Crafting\Activity;
 
-use App\Engine\Player\PlayerEngine;
+use App\Engine\Player\Item\PlayerItemEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
 use App\GameElement\Activity\Event\ActivityEndEvent;
@@ -19,8 +19,8 @@ use Throwable;
 readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionInterface
 {
     public function __construct(
-        //TODO: questa proprietà non è di questo dominio. Rimuoverla
-        private PlayerEngine $playerEngine,
+        //TODO: remove PlayerItemEngine from this domain
+        private PlayerItemEngine $playerEngine,
         private MessageBusInterface $messageBus,
     )
     {
