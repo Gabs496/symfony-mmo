@@ -2,8 +2,6 @@
 
 namespace App\GameElement\Item;
 
-use App\Entity\Data\ItemInstance;
-
 abstract class AbstractItemInstance
 {
     protected int $quantity = 1;
@@ -58,12 +56,12 @@ abstract class AbstractItemInstance
         return $this;
     }
 
-    public static function createFrom(AbstractItem $item, int $quantity = 1): ItemInstance
+    public static function createFrom(AbstractItem $item, int $quantity = 1): AbstractItemInstance
     {
         $currentClass = static::class;
         return (new $currentClass($item))
             ->setQuantity($quantity)
             ->setWear(1.0)
-            ;
+        ;
     }
 }

@@ -6,7 +6,6 @@ use App\GameElement\Item\AbstractItem;
 use App\GameElement\Item\AbstractItemBag;
 use App\GameElement\Item\AbstractItemInstance;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
-use App\GameElement\Item\ItemBagType;
 use App\Repository\Data\ItemInstanceBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,10 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 #[ORM\InheritanceType(value: 'SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\DiscriminatorMap([
-    ItemBagType::BACKPACK->value => BackpackItemBag::class,
-    ItemBagType::EQUIPMENT->value => EquippedItemBag::class,
-])]
 #[ORM\Entity(repositoryClass: ItemInstanceBagRepository::class)]
 abstract class ItemBag extends AbstractItemBag
 {
