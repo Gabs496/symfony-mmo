@@ -1,5 +1,8 @@
 # Symfony MMO
 
+Please, if you like this project, follow me on Patreon: your follow will be a motivation for me 😃
+Link: [Click here to follow](https://patreon.com/user?u=99509619)
+
 ## How to install and run (Linux)
 
 Requirements:
