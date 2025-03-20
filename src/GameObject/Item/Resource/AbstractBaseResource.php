@@ -7,10 +7,22 @@ use App\GameElement\Item\AvailableAction\Drop;
 
 readonly abstract class AbstractBaseResource extends AbstractItem
 {
-    public function getAvailableActions(): array
+    public function __construct(
+        string $id,
+        string $name,
+        string $description,
+        float $weight,
+    )
     {
-        return [
-            new Drop(),
-        ];
+        parent::__construct(
+            id: $id,
+            name: $name,
+            description: $description,
+            stackable: true,
+            weight: $weight,
+            availableActions: [
+                new Drop()
+            ]
+        );
     }
 }

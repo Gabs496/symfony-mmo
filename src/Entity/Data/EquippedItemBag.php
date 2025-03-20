@@ -2,7 +2,7 @@
 
 namespace App\Entity\Data;
 
-use App\GameObject\Item\Equipment\AbstractBaseEquipmentInstance;
+use App\GameElement\ItemEquiment\AbstractItemEquipmentInstance;
 use Doctrine\ORM\Mapping\Entity;
 
 #[Entity]
@@ -13,7 +13,7 @@ class EquippedItemBag extends ItemBag
         parent::__construct($player, 1.0);
     }
 
-    /** @return AbstractBaseEquipmentInstance[] */
+    /** @return AbstractItemEquipmentInstance[] */
     public function getItems(): iterable
     {
         return parent::getItems();

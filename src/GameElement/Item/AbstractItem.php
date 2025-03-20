@@ -13,6 +13,8 @@ readonly abstract class AbstractItem extends AbstractGameObject
         protected string $description = '',
         protected bool $stackable = false,
         protected float $weight = 100.0,
+        /** @var AbstractAvailableAction[] $availableActions */
+        protected array $availableActions = []
     )
     {
         parent::__construct($id);
@@ -38,6 +40,8 @@ readonly abstract class AbstractItem extends AbstractGameObject
         return $this->weight;
     }
 
-    /** @return AbstractAvailableAction[] */
-    public abstract function getAvailableActions(): array;
+    public function getAvailableActions(): array
+    {
+        return $this->availableActions;
+    }
 }

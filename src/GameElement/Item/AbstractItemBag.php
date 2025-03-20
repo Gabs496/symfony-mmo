@@ -7,7 +7,7 @@ use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 
 abstract class AbstractItemBag
 {
-    /** @var AbstractItemInstance[] $items */
+    /** @var ItemInstanceInterface[] $items */
     protected iterable $items;
 
     protected function __construct(
@@ -20,7 +20,7 @@ abstract class AbstractItemBag
     /**
      * @throws MaxBagSizeReachedException
      */
-    public function addItem(AbstractItemInstance $itemInstance): void
+    public function addItem(ItemInstanceInterface $itemInstance): void
     {
         if ($this->isFull()) {
             throw new MaxBagSizeReachedException();
@@ -42,7 +42,7 @@ abstract class AbstractItemBag
     /**
      * @throws ItemQuantityNotAvailableException
      */
-    public function extract(AbstractItem $item, int $quantity): AbstractItemInstance
+    public function extract(AbstractItem $item, int $quantity): ItemInstanceInterface
     {
         foreach ($this->items as $itemInstance) {
             if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {
@@ -70,7 +70,7 @@ abstract class AbstractItemBag
         return false;
     }
 
-    /** @return AbstractItemInstance[] */
+    /** @return ItemInstanceInterface[] */
     public function getItems(): iterable
     {
         return $this->items;
@@ -85,7 +85,7 @@ abstract class AbstractItemBag
     {
         $items = iterator_to_array($this->items);
         return array_reduce($items,
-            fn($carry, AbstractItemInstance $instance)
+            fn($carry, $instance)
                 => (float)bcadd($carry, bcmul($instance->getItem()->getWeight(), $instance->getQuantity(), 2), 2),
             0.0
         );

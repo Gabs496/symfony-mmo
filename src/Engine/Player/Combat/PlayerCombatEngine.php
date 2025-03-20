@@ -10,6 +10,7 @@ use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Combat\Stats\DefensiveStat;
 use App\GameElement\Combat\Stats\OffensiveStat;
+use App\GameElement\ItemEquiment\AbstractItemEquipmentInstance;
 use App\GameElement\Mob\AbstractMobInstance;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
@@ -73,8 +74,9 @@ class PlayerCombatEngine implements EventSubscriberInterface
             return;
         }
 
-        foreach ($attacker->getEquipment()->getItems() as $item) {
-            foreach ($item->getCombatStatModifiers() as $stat) {
+        /** @var AbstractItemEquipmentInstance $itemInstance */
+        foreach ($attacker->getEquipment()->getItems() as $itemInstance) {
+            foreach ($itemInstance->getCombatStatModifiers() as $stat) {
                 if ($stat instanceof OffensiveStat) {
                     $event->increase($stat::class, $stat->getValue());
                 }
@@ -114,8 +116,9 @@ class PlayerCombatEngine implements EventSubscriberInterface
             return;
         }
 
-        foreach ($defender->getEquipment()->getItems() as $item) {
-            foreach ($item->getCombatStatModifiers() as $stat) {
+        foreach ($defender->getEquipment()->getItems() as $itemInstance) {
+            /** @var AbstractItemEquipmentInstance $itemInstance */
+            foreach ($itemInstance->getCombatStatModifiers() as $stat) {
                 if ($stat instanceof DefensiveStat) {
                     $event->increase($stat::class, $stat->getValue());
                 }

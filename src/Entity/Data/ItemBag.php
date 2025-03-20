@@ -4,8 +4,8 @@ namespace App\Entity\Data;
 
 use App\GameElement\Item\AbstractItem;
 use App\GameElement\Item\AbstractItemBag;
-use App\GameElement\Item\AbstractItemInstance;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
+use App\GameElement\Item\ItemInstanceInterface;
 use App\Repository\Data\ItemInstanceBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -58,7 +58,7 @@ abstract class ItemBag extends AbstractItemBag
     /**
      * @throws ItemQuantityNotAvailableException
      */
-    public function extract(AbstractItem $item, int $quantity): AbstractItemInstance
+    public function extract(AbstractItem $item, int $quantity): ItemInstanceInterface
     {
         foreach ($this->items as $key => $itemInstance) {
             if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {

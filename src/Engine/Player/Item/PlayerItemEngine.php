@@ -6,8 +6,9 @@ use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\AbstractItem;
-use App\GameElement\Item\AbstractItemInstance;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
+use App\GameElement\Item\ItemInstanceInterface;
+use App\GameElement\ItemEquiment\AbstractItemEquipment;
 use App\GameObject\Item\Equipment\AbstractBaseEquipment;
 use App\Repository\Data\PlayerCharacterRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -36,15 +37,15 @@ readonly class PlayerItemEngine
         $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
     }
 
-    public function takeItem(PlayerCharacter $player, AbstractItem $item, int $quantity): AbstractItemInstance
+    public function takeItem(PlayerCharacter $player, AbstractItem $item, int $quantity): ItemInstanceInterface
     {
         $item = $player->getBackpack()->extract($item, $quantity);
         $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
         return $item;
     }
 
-    //TODO: change the logic. Need to pass AbstractItemInstance
-    public function equip(AbstractBaseEquipment $equipment, PlayerCharacter $player): void
+    //TODO: change the logic. Need to pass ItemInstanceInterface
+    public function equip(AbstractItemEquipment $equipment, PlayerCharacter $player): void
     {
         if ($player->getEquipment()->isFull()) {
             return;
