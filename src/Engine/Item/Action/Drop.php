@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\Item\AvailableAction;
+namespace App\Engine\Item\Action;
 
 readonly class Drop extends AbstractAvailableAction
 {

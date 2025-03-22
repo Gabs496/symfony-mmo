@@ -11,7 +11,7 @@
         </div>
         <div class="col">
             <div class="d-flex">
-                <div class="small badge bg-white text-black">{{ entity.currentHealth*100 }}</div>
+                <div class="small badge bg-white text-black">{{ math_stat_view(entity.currentHealth) }}</div>
                 <div class="w-100">
                     {% include 'parts/progressBar.html.twig' with {percentage: entity.currentHealth/entity.maxHealth} %}
                 </div>

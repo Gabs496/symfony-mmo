@@ -9,7 +9,6 @@ use RuntimeException;
  * @method string getDescription()
  * @method bool isStackable()
  * @method float getWeight()
- * @method array getAvailableActions()
  */
 trait ItemInstanceTrait
 {
@@ -48,6 +47,16 @@ trait ItemInstanceTrait
         return (new $currentClass($item))
             ->setQuantity($quantity)
         ;
+    }
+
+    public function merge(ItemInstanceInterface $itemInstance): void
+    {
+        if (!$this->isInstanceOf($itemInstance->getItem())) {
+            throw new RuntimeException(sprintf('Cannot merge different items: "%s" and "%s"', $this->getItem()::class, $itemInstance->getItem()::class));
+        }
+
+        $this->quantity += $itemInstance->getQuantity();
+        unset($itemInstance);
     }
 
     public function __call(string $name, array $arguments)

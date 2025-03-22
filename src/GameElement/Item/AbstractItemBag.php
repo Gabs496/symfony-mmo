@@ -39,35 +39,68 @@ abstract class AbstractItemBag
         $this->items[] = $itemInstance;
     }
 
+    public function findAndExtract(AbstractItem $item, int $quantity = 1): ItemInstanceInterface
+    {
+        if (!$this->has($item, $quantity)) {
+            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getName(), $quantity));
+        }
+
+        $newInstance = null;
+        foreach ($this->items as $itemInstance) {
+            if ($itemInstance->isInstanceOf($item)) {
+                $extractedInstance = $this->extract($itemInstance, $quantity);
+                if ($newInstance) {
+                    $newInstance->merge($extractedInstance);
+                } else {
+                    $newInstance = $extractedInstance;
+                }
+            }
+        }
+
+        return $newInstance;
+    }
+
     /**
      * @throws ItemQuantityNotAvailableException
      */
-    public function extract(AbstractItem $item, int $quantity): ItemInstanceInterface
+    public function extract(ItemInstanceInterface $itemInstance, int $quantity = 0): ItemInstanceInterface
     {
-        foreach ($this->items as $itemInstance) {
-            if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {
-                $itemInstance->setQuantity($itemInstance->getQuantity() - $quantity);
-                $extracted = clone $itemInstance;
+        foreach ($this->items as $key => $itemInstanceInBag) {
+            if ($itemInstanceInBag == $itemInstance) {
+                $itemInstanceInBag->setQuantity($itemInstanceInBag->getQuantity() - $quantity);
+                $extracted = clone $itemInstanceInBag;
                 $extracted->setQuantity($quantity);
-                if ($itemInstance->getQuantity() <= 0) {
-                    unset($itemInstance);
+                if ($itemInstanceInBag->getQuantity() <= 0) {
+                    unset($this->items[$key]);
                 }
                 return $extracted;
             }
         }
 
-        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getName(), $quantity));
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $itemInstance->getItem()->getName(), $quantity));
     }
 
     public function has(AbstractItem $item, int $quantity = 1): bool
     {
+        return $this->getQuantity($item) >= $quantity;
+    }
+
+    public function getQuantity(AbstractItem $item): int
+    {
+        return array_reduce((array)$this->find($item), fn($carry, $instance)
+                => $carry + $instance->getQuantity(),
+            0
+        );
+    }
+
+    /** @return ItemInstanceInterface[] */
+    public function find(AbstractItem $item): iterable
+    {
         foreach ($this->items as $itemInstance) {
-            if ($itemInstance->isInstanceOf($item) && $itemInstance->getQuantity() >= $quantity) {
-                return true;
+            if ($itemInstance->isInstanceOf($item)) {
+                yield $itemInstance;
             }
         }
-
-        return false;
     }
 
     /** @return ItemInstanceInterface[] */

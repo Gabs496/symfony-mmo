@@ -2,21 +2,18 @@
 
 namespace App\GameElement\ItemEquiment;
 
-use App\GameElement\Combat\Stats\AbstractStat;
 use App\GameElement\Item\AbstractItem;
-use App\GameElement\Item\AvailableAction\Drop;
-use App\GameElement\ItemEquiment\AvailableAction\Equip;
 
 readonly abstract class AbstractItemEquipment extends AbstractItem
 {
+    use ItemEquipmentTrait;
+
     public function __construct(
         string          $id,
         string          $name,
         string          $description,
-        float           $weight,
-        /** @var AbstractStat[] */
-        protected array $combatStatModifiers,
-        protected float $maxCondition,
+        array $combatStatModifiers,
+        float $maxCondition,
     )
     {
         parent::__construct(
@@ -24,22 +21,10 @@ readonly abstract class AbstractItemEquipment extends AbstractItem
             name: $name,
             description: $description,
             stackable: false,
-            weight: $weight,
-            availableActions: [
-                new Drop(),
-                new Equip(),
-            ]
         );
+        $this->combatStatModifiers = $combatStatModifiers;
+        $this->maxCondition = $maxCondition;
     }
 
-    /** @return AbstractStat[] */
-    public function getCombatStatModifiers(): array
-    {
-        return $this->combatStatModifiers;
-    }
 
-    public function getMaxCondition(): float
-    {
-        return $this->maxCondition;
-    }
 }

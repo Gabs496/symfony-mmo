@@ -35,9 +35,22 @@
                         </turbo-frame>
                     </div>
                 </div>
-                <div class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.backpack.id }}">
+                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.backpack.id }}">
                     {% include 'item_bag/items_update.stream.html.twig' with {bag: player.backpack} %}
+                </turbo-frame>
+            </div>
+            <div class="card">
+                <div class="card-header bg-info">
+                    {{ 'equipped items'|trans|capitalize }}
+                    <div>
+                        <turbo-frame class="progress" id="item_bag_fullness_{{ player.equipment.id }}">
+                            {% include 'item_bag/space.stream.html.twig' with {bag: player.equipment} %}
+                        </turbo-frame>
+                    </div>
                 </div>
+                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_items_{{ player.equipment.id }}">
+                    {% include 'item_bag/items_update.stream.html.twig' with {bag: player.equipment} %}
+                </turbo-frame>
             </div>
 
             <div class="card">

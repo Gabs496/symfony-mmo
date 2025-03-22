@@ -16,6 +16,12 @@ class ItemInstanceRepository extends ServiceEntityRepository
         parent::__construct($registry, ItemInstance::class);
     }
 
+    public function save(ItemInstance $itemInstance): void
+    {
+        $this->getEntityManager()->persist($itemInstance);
+        $this->_em->flush();
+    }
+
 //    /**
 //     * @return ItemInstance[] Returns an array of ItemInstance objects
 //     */

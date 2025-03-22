@@ -140,7 +140,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
     {
         $defender = $event->getDefender();
         if ($defender instanceof PlayerCharacter) {
-            $this->notificationEngine->danger($defender->getId(), 'You have received ' . $event->getDamage() . ' damage');
+            $this->notificationEngine->danger($defender->getId(), 'You have received ' . Math::getStatViewValue($event->getDamage()) . ' damage');
             $this->hub->publish(new Update('player_gui_' . $defender->getId(),
                 $this->twig->load('parts/player_health.stream.html.twig')->renderBlock('update', ['player' => $defender]),
                 true
@@ -149,7 +149,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
 
         $attacker = $event->getAttacker();
         if ($attacker instanceof PlayerCharacter) {
-            $this->notificationEngine->success($attacker->getId(), 'You have inflicted ' . $event->getDamage() . ' damage');
+            $this->notificationEngine->success($attacker->getId(), 'You have inflicted ' . Math::getStatViewValue($event->getDamage()) . ' damage');
         }
     }
 

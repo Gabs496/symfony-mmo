@@ -2,10 +2,9 @@
 
 namespace App\GameObject\Item\Resource;
 
-use App\GameElement\Item\AbstractItem;
-use App\GameElement\Item\AvailableAction\Drop;
+use App\GameObject\Item\AbstractBaseItem;
 
-readonly abstract class AbstractBaseResource extends AbstractItem
+readonly abstract class AbstractBaseResource extends AbstractBaseItem
 {
     public function __construct(
         string $id,
@@ -20,9 +19,6 @@ readonly abstract class AbstractBaseResource extends AbstractItem
             description: $description,
             stackable: true,
             weight: $weight,
-            availableActions: [
-                new Drop()
-            ]
         );
     }
 }

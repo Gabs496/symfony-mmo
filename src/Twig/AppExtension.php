@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Engine\Math;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\UX\StimulusBundle\Helper\StimulusHelper;
 use Symfony\UX\StimulusBundle\Twig\StimulusTwigExtension;
@@ -22,6 +23,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('custom_turbo_stream_listen', [$this, 'renderTurboStreamListen'], ['is_safe' => ['html_attr']]),
+            new TwigFunction('math_stat_view', [$this, 'renderMathStatView']),
         ];
     }
 
@@ -32,5 +34,10 @@ class AppExtension extends AbstractExtension
             'custom_turbo_stream',
             ['hub' => $this->hub->getPublicUrl(), 'topic' => $topic, 'token' => $this->hub->getFactory()->create([$topic], [$topic])]
         );
+    }
+
+    public function renderMathStatView(string $value): string
+    {
+        return Math::getStatViewValue($value);
     }
 }

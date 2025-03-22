@@ -1,8 +1,6 @@
 <?php
 
-namespace App\GameElement\ItemEquiment\AvailableAction;
-
-use App\GameElement\Item\AvailableAction\AbstractAvailableAction;
+namespace App\Engine\Item\Action;
 
 readonly class Equip extends AbstractAvailableAction
 {

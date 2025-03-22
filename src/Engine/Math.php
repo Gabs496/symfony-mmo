@@ -7,6 +7,11 @@ class Math
     public const int SCALE = 4;
     public const int ROUND = 2;
 
+    public static function getStatViewValue(string $value): string
+    {
+        return number_format(round(bcmul($value, 100, self::SCALE)));
+    }
+
     public static function add(string $a, string $b, bool $round = true): string
     {
         $result = bcadd($a, $b, self::SCALE);

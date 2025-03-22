@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Mastery;
 
+use App\Engine\Math;
 use App\GameElement\Reward\RewardInterface;
 use App\GameElement\Reward\RewardNotificationInterface;
 
@@ -31,6 +32,6 @@ readonly class MasteryReward implements RewardInterface, RewardNotificationInter
 
     public function getQuantity(): float
     {
-        return $this->experience;
+        return Math::getStatViewValue($this->experience);
     }
 }

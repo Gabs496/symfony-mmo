@@ -40,6 +40,8 @@ class CombatEngineExtension implements EventSubscriberInterface
             return;
         }
 
+        //TODO: check if both opponents are alive
+
         //TODO: Implement combat round duration calculation
         $event->getActivity()->setDuration(1.0);
     }

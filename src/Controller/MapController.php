@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Engine\Item\ItemActionEngine;
+use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
 use App\Entity\Game\MapSpawnedResource;
@@ -98,6 +100,20 @@ class MapController extends AbstractController
         $gameActivity->run($player, new CombatActivity($player, $mapSpawnedMob));
 
         $this->addFlash('success', 'Activity finished');
+
+        if ($request->headers->get('Turbo-Frame')) {
+            $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+            return new Response();
+        }
+        return $this->redirectToRoute('app_map');
+    }
+
+    #[Route('/item_action_perform/{id}/{action}', name: 'app_map_item_action_perform')]
+    public function itemActionPerform(ItemInstance $itemInstance, string $action, ItemActionEngine $itemActionEngine, Request $request): Response
+    {
+        /** @var PlayerCharacter $player */
+        $player = $this->getUser();
+        $itemActionEngine->performItemAction($player, new $action(), $itemInstance, [$player]);
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

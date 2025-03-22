@@ -2,16 +2,16 @@
 
 namespace App\GameElement\Item\Event;
 
-use App\GameElement\Item\AbstractItem;
-use App\GameElement\Item\AvailableAction\AbstractAvailableAction;
+use App\Engine\Item\Action\AbstractAvailableAction;
+use App\GameElement\Item\ItemInstanceInterface;
 
 class ItemActionPerformedEvent
 {
     public function __construct(
-        protected object $performer,
+        protected object                  $performer,
         protected AbstractAvailableAction $action,
-        protected AbstractItem $item,
-        protected array $targets = [],
+        protected ItemInstanceInterface   $itemInstance,
+        protected array                   $targets = [],
     )
     {
 
@@ -27,9 +27,9 @@ class ItemActionPerformedEvent
         return $this->action;
     }
 
-    public function getItem(): AbstractItem
+    public function getItemInstance(): ItemInstanceInterface
     {
-        return $this->item;
+        return $this->itemInstance;
     }
 
     public function getTargets(): array

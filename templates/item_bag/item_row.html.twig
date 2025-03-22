@@ -1,3 +1,12 @@
 <div class="bg-dark border-primary rounded m-1">
-    {% include 'item/item.widget.html.twig' with {item: itemInstance.item, quantity: itemInstance.quantity} %}
+    <div class="dropdown">
+        <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
+            {% include 'item/item.widget.html.twig' with {item: itemInstance.item, quantity: itemInstance.quantity} %}
+        </a>
+        <div class="dropdown-menu border">
+            {% for action in itemActionEngine.availableActions(itemInstance) %}
+            <a class="dropdown-item" href="{{ path('app_map_item_action_perform', {id: itemInstance.id, action: constant('class', action)}) }}">{{ action.verb }}</a>
+            {% endfor %}
+        </div>
+    </div>
 </div>
