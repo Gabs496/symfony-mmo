@@ -35,7 +35,7 @@ class ItemInstance implements ItemInstanceInterface
     protected int $quantity = 1;
 
     #[ORM\Column(type: 'float')]
-    protected float $wear;
+    protected float $wear = 0.0;
 
     #[GameObjectReference(AbstractItem::class, objectIdProperty: 'itemId')]
     protected AbstractItem $item;
