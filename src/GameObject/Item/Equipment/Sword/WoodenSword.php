@@ -3,7 +3,7 @@
 namespace App\GameObject\Item\Equipment\Sword;
 
 use App\GameObject\Combat\Stat\PhysicalAttackStat;
-use App\GameObject\Item\AbstractBaseItemEquipment;
+use App\GameObject\Item\Equipment\AbstractBaseItemEquipment;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('game.object')]
