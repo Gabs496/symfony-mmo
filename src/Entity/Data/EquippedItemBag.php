@@ -21,7 +21,9 @@ class EquippedItemBag extends ItemBag
      */
     public function getOccupedSpace(): float
     {
-        return 0.0;
+        return (float)$this->items->reduce(function(int $carry, ItemInstance $item) {
+            return $carry + $item->getQuantity();
+        }, 0);
     }
 
     public function isFull(): bool
