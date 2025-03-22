@@ -41,14 +41,6 @@ trait ItemInstanceTrait
         return $this;
     }
 
-    public static function createFrom(AbstractItem $item, int $quantity = 1): self
-    {
-        $currentClass = static::class;
-        return (new $currentClass($item))
-            ->setQuantity($quantity)
-        ;
-    }
-
     public function merge(ItemInstanceInterface $itemInstance): void
     {
         if (!$this->isInstanceOf($itemInstance->getItem())) {

@@ -2,11 +2,13 @@
 
 namespace App\GameObject\Item;
 
+use App\Entity\Data\ItemInstance;
 use App\GameElement\Item\AbstractItem;
+use App\GameElement\Item\ItemInstanceInterface;
 use App\GameElement\ItemWeight\ItemWithWeightInterface;
 use App\GameElement\ItemWeight\ItemWithWeightTrait;
 
-readonly class AbstractBaseItem extends AbstractItem implements ItemWithWeightInterface
+readonly abstract class AbstractBaseItem extends AbstractItem implements ItemWithWeightInterface
 {
     use ItemWithWeightTrait;
 
@@ -26,4 +28,7 @@ readonly class AbstractBaseItem extends AbstractItem implements ItemWithWeightIn
         );
         $this->weight = $weight;
     }
+
+    /** @return ItemInstance */
+    public abstract function createInstance(): ItemInstanceInterface;
 }

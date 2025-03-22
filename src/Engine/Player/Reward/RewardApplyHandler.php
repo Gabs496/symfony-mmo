@@ -3,7 +3,6 @@
 namespace App\Engine\Player\Reward;
 
 use App\Engine\Player\Item\PlayerItemEngine;
-use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Item\Reward\ItemReward;
@@ -11,6 +10,7 @@ use App\GameElement\Mastery\MasteryReward;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
 use App\GameElement\Reward\RewardNotificationInterface;
+use App\GameObject\Item\AbstractBaseItem;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -46,14 +46,14 @@ readonly class RewardApplyHandler
 
         if ($reward instanceof ItemReward) {
             try {
-                $this->playerEngine->giveItem($playerCharacter, ItemInstance::createFrom($reward->getItem(), $reward->getQuantity()));
+                /** @var AbstractBaseItem $item */
+                $item = $reward->getItem();
+                $this->playerEngine->giveItem($playerCharacter, $item->createInstance());
             } catch (MaxBagSizeReachedException $e) {
                 $this->notificationEngine->danger($playerCharacter->getId(), 'Your bag is full, you cannot receive the item.');
                 return;
             }
         }
-
-        $this->repository->save($playerCharacter);
 
         if ($reward instanceof RewardNotificationInterface) {
             $this->notificationEngine->success($playerCharacter->getId(), sprintf('+%s %s', $reward->getQuantity(), $reward->getName()));

@@ -2,6 +2,7 @@
 
 namespace App\GameObject\Item\Resource;
 
+use App\Entity\Data\ItemInstance;
 use App\GameObject\Item\AbstractBaseItem;
 
 readonly abstract class AbstractBaseResource extends AbstractBaseItem
@@ -20,5 +21,10 @@ readonly abstract class AbstractBaseResource extends AbstractBaseItem
             stackable: true,
             weight: $weight,
         );
+    }
+
+    public function createInstance(): ItemInstance
+    {
+        return new ItemInstance($this);
     }
 }
