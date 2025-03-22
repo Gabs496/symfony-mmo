@@ -2,21 +2,18 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\ItemEquiment\AbstractItemEquipmentInstance;
+use App\GameElement\ItemEquiment\ItemEquipmentInstanceInterface;
 use Doctrine\ORM\Mapping\Entity;
 
+/**
+ * @method ItemEquipmentInstanceInterface[] getItems()
+ */
 #[Entity]
 class EquippedItemBag extends ItemBag
 {
     public function __construct(PlayerCharacter $player)
     {
         parent::__construct($player, 1.0);
-    }
-
-    /** @return AbstractItemEquipmentInstance[] */
-    public function getItems(): iterable
-    {
-        return parent::getItems();
     }
 
     /**

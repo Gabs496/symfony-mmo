@@ -19,24 +19,14 @@ readonly class Salamander extends AbstractBaseAnimalMob
             id: 'MOB_SALAMANDER',
             name: 'Salamander',
             maxHealth: 0.10,
-            description: 'A small lizard that can spit fire.'
+            description: 'A small lizard that can spit fire.',
+            combatStats: [
+                new PhysicalDefenseStat(0.0),
+                new PhysicalAttackStat(0.01),
+            ],
+            rewardOnDefeats: [
+                new MasteryReward(new PhysicalAttack(), 0.01),
+            ]
         );
-    }
-
-    /** @inheritDoc */
-    public function getCombatStats(): array
-    {
-        return [
-            new PhysicalDefenseStat(0.0),
-            new PhysicalAttackStat(0.01),
-        ];
-    }
-
-    /** @inheritDoc */
-    public function getRewardOnDefeats(): array
-    {
-        return [
-            new MasteryReward(new PhysicalAttack(), 0.01),
-        ];
     }
 }

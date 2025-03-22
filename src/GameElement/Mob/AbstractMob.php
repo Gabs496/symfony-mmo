@@ -15,16 +15,26 @@ abstract readonly class AbstractMob extends AbstractGameObject
         protected string $name,
         protected float $maxHealth,
         protected string $description,
+        /** @var AbstractStat[] */
+        protected array $combatStats = [],
+        /** @var RewardInterface[] */
+        protected array $rewardOnDefeats = []
     )
     {
         parent::__construct($id);
     }
 
     /** @return AbstractStat[] */
-    public abstract function getCombatStats(): array;
+    public function getCombatStats(): array
+    {
+        return $this->combatStats;
+    }
 
     /** @return RewardInterface[] */
-    public abstract function getRewardOnDefeats(): array;
+    public function getRewardOnDefeats(): array
+    {
+        return $this->rewardOnDefeats;
+    }
 
     public function getOffensiveStats(): array
     {

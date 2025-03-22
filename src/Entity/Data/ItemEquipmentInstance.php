@@ -4,14 +4,16 @@ namespace App\Entity\Data;
 
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Combat\Stats\AbstractStat;
-use App\GameElement\ItemEquiment\AbstractItemEquipmentInstance;
+use App\GameElement\ItemEquiment\AbstractItemEquipment;
+use App\GameElement\ItemEquiment\ItemEquipmentInstanceInterface;
 use Doctrine\ORM\Mapping\Entity;
 
+/**
+ * @property AbstractItemEquipment $item
+ */
 #[Entity]
-class ItemEquipmentInstance extends ItemInstance
+class ItemEquipmentInstance extends ItemInstance implements ItemEquipmentInstanceInterface
 {
-    use AbstractItemEquipmentInstance;
-
     public function getCombatStatModifiers(): array
     {
         $statCollection = new StatCollection($this->item->getCombatStatModifiers());

@@ -5,11 +5,11 @@ namespace App\GameElement\Item;
 use RuntimeException;
 
 /**
- * @method getName(): string
- * @method getDescription(): string
- * @method isStackable(): bool
- * @method getWeight(): float
- * @method getAvailableActions(): array
+ * @method string getName()
+ * @method string getDescription()
+ * @method bool isStackable()
+ * @method float getWeight()
+ * @method array getAvailableActions()
  */
 trait ItemInstanceTrait
 {
