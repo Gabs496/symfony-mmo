@@ -7,6 +7,7 @@ use App\GameElement\MapResource\MapResourceSpawn;
 use App\GameObject\Gathering\LogChestnut;
 use App\GameObject\Gathering\OreCopper;
 use App\GameObject\Mob\Animal\Salamander;
+use App\GameObject\Mob\Animal\Sbinsol;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('game.object')]
@@ -36,6 +37,7 @@ readonly class BirthTown extends AbstractBaseMap
     {
         return [
             new MapMobSpawn(Salamander::ID, 10, 5),
+            new MapMobSpawn(Sbinsol::ID, 3, 17),
         ];
     }
 }
