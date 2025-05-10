@@ -1,0 +1,24 @@
+<?php
+
+namespace App\GameElement\Item\Component;
+
+use App\GameElement\Core\GameComponent\AbstractGameComponent;
+
+class ItemWeightComponent extends AbstractGameComponent
+{
+    public function __construct(
+        protected float $weight = 0.0,
+    )
+    {
+    }
+
+    public function getWeight(): float
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(float $weight): void
+    {
+        $this->weight = $weight;
+    }
+}

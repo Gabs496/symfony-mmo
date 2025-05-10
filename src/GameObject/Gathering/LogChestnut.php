@@ -3,7 +3,7 @@
 namespace App\GameObject\Gathering;
 
 use App\GameElement\Gathering\AbstractResource;
-use App\GameObject\Item\Resource\Log\ChestnutLog;
+use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
 use App\GameObject\Mastery\Gathering\Woodcutting;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -19,7 +19,7 @@ readonly class LogChestnut extends AbstractResource
             name: 'Chestnut Log',
             difficulty: 0.5,
             involvedMastery: new Woodcutting(),
-            rewardItem: new ChestnutLog(),
+            rewardItem: new ChestnutLogPrototype(),
             gatheringTime: 1.5,
         );
     }

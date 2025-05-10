@@ -2,12 +2,8 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\ItemEquiment\ItemEquipmentInstanceInterface;
 use Doctrine\ORM\Mapping\Entity;
 
-/**
- * @method ItemEquipmentInstanceInterface[] getItems()
- */
 #[Entity]
 class EquippedItemBag extends ItemBag
 {

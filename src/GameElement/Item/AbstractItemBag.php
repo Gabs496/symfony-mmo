@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Item;
 
+use App\GameElement\Item\Component\ItemWeightComponent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 
@@ -26,7 +27,7 @@ abstract class AbstractItemBag
             throw new MaxBagSizeReachedException();
         }
 
-        $item = $itemInstance->getItem();
+        $item = $itemInstance->getItemPrototype();
         if ($item->isStackable()) {
             foreach ($this->getItems() as $existingItem) {
                 if ($existingItem->isInstanceOf($item)) {
@@ -39,7 +40,7 @@ abstract class AbstractItemBag
         $this->items[] = $itemInstance;
     }
 
-    public function findAndExtract(AbstractItem $item, int $quantity = 1): ItemInstanceInterface
+    public function findAndExtract(AbstractItemPrototype $item, int $quantity = 1): ItemInstanceInterface
     {
         if (!$this->has($item, $quantity)) {
             throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getName(), $quantity));
@@ -77,30 +78,32 @@ abstract class AbstractItemBag
             }
         }
 
-        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $itemInstance->getItem()->getName(), $quantity));
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $itemInstance->getItemPrototype()->getName(), $quantity));
     }
 
-    public function has(AbstractItem $item, int $quantity = 1): bool
+    public function has(AbstractItemPrototype $item, int $quantity = 1): bool
     {
         return $this->getQuantity($item) >= $quantity;
     }
 
-    public function getQuantity(AbstractItem $item): int
+    public function getQuantity(AbstractItemPrototype $item): int
     {
-        return array_reduce((array)$this->find($item), fn($carry, $instance)
-                => $carry + $instance->getQuantity(),
-            0
+        $instances = $this->find($item);
+        return array_reduce($instances, fn($carry, $instance)
+                => $carry + $instance->getQuantity(), 0
         );
     }
 
     /** @return ItemInstanceInterface[] */
-    public function find(AbstractItem $item): iterable
+    public function find(AbstractItemPrototype $item): array
     {
+        $instances = [];
         foreach ($this->items as $itemInstance) {
             if ($itemInstance->isInstanceOf($item)) {
-                yield $itemInstance;
+                $instances[] = $itemInstance;
             }
         }
+        return $instances;
     }
 
     /** @return ItemInstanceInterface[] */
@@ -118,8 +121,8 @@ abstract class AbstractItemBag
     {
         $items = iterator_to_array($this->items);
         return array_reduce($items,
-            fn($carry, $instance)
-                => (float)bcadd($carry, bcmul($instance->getItem()->getWeight(), $instance->getQuantity(), 2), 2),
+            fn($carry, AbstractItemInstance $instance)
+                => (float)bcadd($carry, bcmul($instance->getItemPrototype()->getComponent(ItemWeightComponent::class)->getWeight(), $instance->getQuantity(), 2), 2),
             0.0
         );
     }

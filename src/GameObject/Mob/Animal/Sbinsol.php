@@ -2,11 +2,11 @@
 
 namespace App\GameObject\Mob\Animal;
 
+use App\GameElement\Combat\Stats\PhysicalAttackStat;
+use App\GameElement\Combat\Stats\PhysicalDefenseStat;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Mastery\MasteryReward;
-use App\GameObject\Combat\Stat\PhysicalAttackStat;
-use App\GameObject\Combat\Stat\PhysicalDefenseStat;
-use App\GameObject\Item\Equipment\Sword\WoodenSword;
+use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -31,7 +31,7 @@ readonly class Sbinsol extends AbstractBaseAnimalMob
             ],
             rewardOnDefeats: [
                 new MasteryReward(new PhysicalAttack(), 0.01),
-                new ItemReward(new WoodenSword(), 1),
+                new ItemReward(new WoodenSwordPrototype(), 1),
             ]
         );
     }

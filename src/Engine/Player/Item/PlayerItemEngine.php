@@ -6,10 +6,10 @@ use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
 use App\Engine\Player\Event\PlayerEquipmentUpdateEvent;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Item\AbstractItem;
+use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Item\ItemInstanceInterface;
-use App\GameElement\ItemEquiment\ItemEquipmentInstanceInterface;
+use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -44,10 +44,10 @@ readonly class PlayerItemEngine
         $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
     }
 
-    public function takeItem(PlayerCharacter $player, AbstractItem|ItemInstanceInterface $itemInstance, int $quantity): ItemInstanceInterface
+    public function  takeItem(PlayerCharacter $player, AbstractItemPrototype|ItemInstanceInterface $itemInstance, int $quantity): ItemInstanceInterface
     {
         $baseBag = $player->getBackpack();
-        if ($itemInstance instanceof AbstractItem) {
+        if ($itemInstance instanceof AbstractItemPrototype) {
             $itemInstance = $baseBag->findAndExtract($itemInstance, $quantity);
         } else {
             $itemInstance = $baseBag->extract($itemInstance, $quantity);
@@ -56,9 +56,11 @@ readonly class PlayerItemEngine
         return $itemInstance;
     }
 
-    public function equip(ItemEquipmentInstanceInterface $itemInstance, PlayerCharacter $player): void
+    public function equip(ItemInstance $itemInstance, PlayerCharacter $player): void
     {
-        /** @var ItemInstance|ItemEquipmentInstanceInterface $equipment */
+        if (!$itemInstance->hasComponent(ItemEquipmentComponent::class)) {
+            return;
+        }
         $equipment = $this->takeItem($player, $itemInstance, 1);
 
         try {
@@ -74,8 +76,12 @@ readonly class PlayerItemEngine
         $this->eventDispatcher->dispatch(new PlayerEquipmentUpdateEvent($player->getId()));
     }
 
-    public function unequip(ItemEquipmentInstanceInterface $itemInstance, PlayerCharacter $player): void
+    public function unequip(ItemInstance $itemInstance, PlayerCharacter $player): void
     {
+        if (!$itemInstance->hasComponent(ItemEquipmentComponent::class)) {
+            return;
+        }
+
         $equipment = $player->getEquipment()->extract($itemInstance, 1);
         $player->getBackpack()->addItem($equipment);
         $equipment->setBag($player->getBackpack());

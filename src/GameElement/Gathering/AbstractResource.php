@@ -3,18 +3,18 @@
 namespace App\GameElement\Gathering;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
-use App\GameElement\Item\AbstractItem;
+use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Mastery\MasteryType;
 
 readonly class AbstractResource extends AbstractGameObject
 {
     public function __construct(
-        string      $id,
-        private string      $name,
-        private float       $difficulty,
-        private MasteryType $involvedMastery,
-        private AbstractItem      $rewardItem,
-        private float       $gatheringTime,
+        string                        $id,
+        private string                $name,
+        private float                 $difficulty,
+        private MasteryType           $involvedMastery,
+        private AbstractItemPrototype $rewardItem,
+        private float                 $gatheringTime,
     )
     {
         parent::__construct($id);
@@ -40,7 +40,7 @@ readonly class AbstractResource extends AbstractGameObject
         return $this->involvedMastery;
     }
 
-    public function getRewardItem(): AbstractItem
+    public function getRewardItem(): AbstractItemPrototype
     {
         return $this->rewardItem;
     }

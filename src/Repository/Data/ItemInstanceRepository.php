@@ -3,6 +3,7 @@
 namespace App\Repository\Data;
 
 use App\Entity\Data\ItemInstance;
+use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -11,15 +12,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ItemInstanceRepository extends ServiceEntityRepository
 {
+    use SaveEntityTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ItemInstance::class);
-    }
-
-    public function save(ItemInstance $itemInstance): void
-    {
-        $this->getEntityManager()->persist($itemInstance);
-        $this->_em->flush();
     }
 
 //    /**

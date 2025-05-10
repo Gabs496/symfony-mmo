@@ -3,7 +3,7 @@
 namespace App\GameObject\Gathering;
 
 use App\GameElement\Gathering\AbstractResource;
-use App\GameObject\Item\Resource\Ore\CopperOre;
+use App\GameObject\Item\Resource\Ore\CopperOrePrototype;
 use App\GameObject\Mastery\Gathering\Mining;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -19,7 +19,7 @@ readonly class OreCopper extends AbstractResource
             name: 'Copper Ore',
             difficulty: 0.5,
             involvedMastery: new Mining(),
-            rewardItem: new CopperOre(),
+            rewardItem: new CopperOrePrototype(),
             gatheringTime: 1.5
         );
     }

@@ -2,32 +2,31 @@
 
 namespace App\GameElement\Item;
 
+use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
 use RuntimeException;
 
-/**
- * @method string getName()
- * @method string getDescription()
- * @method bool isStackable()
- * @method float getWeight()
- */
 trait ItemInstanceTrait
 {
+    use GameComponentOwnerTrait;
+
+    protected ?AbstractItemPrototype $itemPrototype = null;
     protected int $quantity = 1;
 
-    public function __construct(
-        // TODO: try to make it readonly
-        protected AbstractItem $item,
-    )
+    public function isInstanceOf(AbstractItemPrototype $item): bool
     {
-    }
-    public function isInstanceOf(AbstractItem $item): bool
-    {
-        return $this->item->getId() === $item->getId();
+        return $this->itemPrototype::class === $item::class;
     }
 
-    public function getItem(): AbstractItem
+    public function getItemPrototype(): AbstractItemPrototype
     {
-        return $this->item;
+        return $this->itemPrototype;
+    }
+
+    public function setItemPrototype(?AbstractItemPrototype $itemPrototype): self
+    {
+        $this->itemPrototype = $itemPrototype;
+
+        return $this;
     }
 
     public function getQuantity(): int
@@ -43,16 +42,11 @@ trait ItemInstanceTrait
 
     public function merge(ItemInstanceInterface $itemInstance): void
     {
-        if (!$this->isInstanceOf($itemInstance->getItem())) {
-            throw new RuntimeException(sprintf('Cannot merge different items: "%s" and "%s"', $this->getItem()::class, $itemInstance->getItem()::class));
+        if (!$this->isInstanceOf($itemInstance->getItemPrototype())) {
+            throw new RuntimeException(sprintf('Cannot merge different items: "%s" and "%s"', $this->getItemPrototype()::class, $itemInstance->getItemPrototype()::class));
         }
 
         $this->quantity += $itemInstance->getQuantity();
         unset($itemInstance);
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->item->$name(...$arguments);
     }
 }

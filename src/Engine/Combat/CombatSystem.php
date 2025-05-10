@@ -4,8 +4,8 @@ namespace App\Engine\Combat;
 
 use App\Engine\Math;
 use App\GameElement\Combat\Event\CombatDamageCalculateEvent;
-use App\GameObject\Combat\Stat\PhysicalAttackStat;
-use App\GameObject\Combat\Stat\PhysicalDefenseStat;
+use App\GameElement\Combat\Stats\PhysicalAttackStat;
+use App\GameElement\Combat\Stats\PhysicalDefenseStat;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 class CombatSystem

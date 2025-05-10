@@ -3,30 +3,22 @@
 namespace App\Entity\Data;
 
 use App\GameElement\Core\GameObject\GameObjectReference;
-use App\GameElement\Item\AbstractItem;
 use App\GameElement\Item\AbstractItemBag;
-use App\GameElement\Item\ItemInstanceTrait;
-use App\GameElement\Item\AbstractItemInstanceProperty;
-use App\GameElement\Item\Exception\ItemInstancePropertyNotSetException;
-use App\GameElement\Item\ItemInstanceInterface;
+use App\GameElement\Item\AbstractItemInstance;
+use App\GameElement\Item\AbstractItemPrototype;
+use App\GameObject\Item\AbstractBaseItemPrototype;
 use App\Repository\Data\ItemInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\InheritanceType(value: 'SINGLE_TABLE')]
-#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
-class ItemInstance implements ItemInstanceInterface
-{
-    use ItemInstanceTrait;
 
+#[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
+class ItemInstance extends AbstractItemInstance
+{
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
-
-    #[ORM\Column(length: 50)]
-    protected string $itemId;
 
     #[ORM\ManyToOne(targetEntity: ItemBag::class, inversedBy: 'items')]
     protected ?AbstractItemBag $bag = null;
@@ -34,29 +26,19 @@ class ItemInstance implements ItemInstanceInterface
     #[ORM\Column(type: 'integer')]
     protected int $quantity = 1;
 
-    #[ORM\Column(type: 'float')]
-    protected float $wear = 0.0;
-
-    #[GameObjectReference(AbstractItem::class, objectIdProperty: 'itemId')]
-    protected AbstractItem $item;
-
     #[ORM\Column(type: 'json_document', nullable: false)]
-    protected array $properties = [];
+    protected array $components = [];
 
-    public function __construct(AbstractItem $item)
-    {
-        $this->item = $item;
-        $this->itemId = $item->getId();
-    }
+    #[ORM\Column(length: 50)]
+    protected string $itemPrototypeId;
+
+    /** @var AbstractBaseItemPrototype|null  */
+    #[GameObjectReference(AbstractBaseItemPrototype::class, objectIdProperty: 'itemPrototypeId')]
+    protected ?AbstractItemPrototype $itemPrototype = null;
 
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getItemId(): string
-    {
-        return $this->itemId;
     }
 
     public function getBag(): ?AbstractItemBag
@@ -64,19 +46,11 @@ class ItemInstance implements ItemInstanceInterface
         return $this->bag;
     }
 
-    public function setBag(?AbstractItemBag $bag): void
+    public function setBag(?AbstractItemBag $bag): ItemInstance
     {
         $this->bag = $bag;
-    }
 
-    public function getWear(): float
-    {
-        return $this->wear;
-    }
-
-    public function setWear(float $wear): void
-    {
-        $this->wear = $wear;
+        return $this;
     }
 
     public function addQuantity(int $quantity): static
@@ -85,23 +59,28 @@ class ItemInstance implements ItemInstanceInterface
         return $this;
     }
 
-    public function get(string $propertyName): AbstractItemInstanceProperty
+    public function getItemPrototypeId(): string
     {
-        if (!isset($this->properties[$propertyName])) {
-            throw new ItemInstancePropertyNotSetException(sprintf('Property %s not found in item instance %s', $propertyName, $this::class));
-        }
-
-        return $this->properties[$propertyName];
+        return $this->itemPrototypeId;
     }
 
-    public function set(AbstractItemInstanceProperty $property): self
+    public function setItemPrototypeId(string $itemPrototypeId): ItemInstance
     {
-        $this->properties[$property::class] = $property;
+        $this->itemPrototypeId = $itemPrototypeId;
+
         return $this;
     }
 
-    public function getProperties(): array
+    /** @deprecated Use {@link ItemInstance::getItemPrototype()} */
+    public function getItem(): AbstractItemPrototype
     {
-        return $this->properties;
+        return $this->getItemPrototype();
+    }
+
+    public function setComponents(array $components): ItemInstance
+    {
+        $this->components = $components;
+
+        return $this;
     }
 }

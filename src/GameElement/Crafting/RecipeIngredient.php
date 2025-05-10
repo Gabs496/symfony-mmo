@@ -2,18 +2,18 @@
 
 namespace App\GameElement\Crafting;
 
-use App\GameElement\Item\AbstractItem;
+use App\GameElement\Item\AbstractItemPrototype;
 
 readonly class RecipeIngredient
 {
     public function __construct(
-        private AbstractItem $item,
-        private int          $quantity
+        private AbstractItemPrototype $item,
+        private int                   $quantity
     )
     {
     }
 
-    public function getItem(): AbstractItem
+    public function getItem(): AbstractItemPrototype
     {
         return $this->item;
     }

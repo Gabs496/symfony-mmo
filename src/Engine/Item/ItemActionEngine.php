@@ -13,7 +13,7 @@ use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\Event\ItemActionPerformedEvent;
 use App\GameElement\Item\ItemInstanceInterface;
-use App\GameElement\ItemEquiment\ItemEquipmentInstanceInterface;
+use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -31,7 +31,7 @@ class ItemActionEngine
         $bag = $itemInstance->getBag();
 
         $actions = [];
-        if ($itemInstance instanceof ItemEquipmentInstanceInterface) {
+        if ($itemInstance->hasComponent(ItemEquipmentComponent::class)) {
             if ($bag instanceOf BackpackItemBag) {
                 $actions[] = new Equip();
             }
@@ -69,7 +69,7 @@ class ItemActionEngine
 
         if ($target instanceof PlayerCharacter) {
             $itemInstance = $event->getItemInstance();
-            if (!$itemInstance instanceof ItemEquipmentInstanceInterface) {
+            if (!$itemInstance->hasComponent(ItemEquipmentComponent::class)) {
                 throw new RuntimeException('Invalid item type for equip action');
             }
             $this->playerItemEngine->equip($itemInstance, $target);
@@ -86,7 +86,7 @@ class ItemActionEngine
 
         if ($target instanceof PlayerCharacter) {
             $itemInstance = $event->getItemInstance();
-            if (!$itemInstance instanceof ItemEquipmentInstanceInterface) {
+            if (!$itemInstance->hasComponent(ItemEquipmentComponent::class)) {
                 throw new RuntimeException('Invalid item type for unequip action');
             }
             $this->playerItemEngine->unequip($itemInstance, $target);

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Combat\Stats;
 
-readonly class OffensiveStat extends AbstractStat
+abstract readonly class OffensiveStat extends AbstractStat
 {
 
 }

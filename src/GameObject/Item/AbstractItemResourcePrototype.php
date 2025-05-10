@@ -1,11 +1,8 @@
 <?php
 
-namespace App\GameObject\Item\Resource;
+namespace App\GameObject\Item;
 
-use App\Entity\Data\ItemInstance;
-use App\GameObject\Item\AbstractBaseItem;
-
-readonly abstract class AbstractBaseResource extends AbstractBaseItem
+abstract readonly class AbstractItemResourcePrototype extends AbstractBaseItemPrototype
 {
     public function __construct(
         string $id,
@@ -21,10 +18,5 @@ readonly abstract class AbstractBaseResource extends AbstractBaseItem
             stackable: true,
             weight: $weight,
         );
-    }
-
-    public function createInstance(): ItemInstance
-    {
-        return new ItemInstance($this);
     }
 }

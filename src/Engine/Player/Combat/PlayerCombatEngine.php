@@ -10,11 +10,11 @@ use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Combat\Stats\DefensiveStat;
 use App\GameElement\Combat\Stats\OffensiveStat;
-use App\GameElement\ItemEquiment\ItemEquipmentInstanceInterface;
+use App\GameElement\Combat\Stats\PhysicalAttackStat;
+use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Mob\AbstractMobInstance;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
-use App\GameObject\Combat\Stat\PhysicalAttackStat;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -75,7 +75,9 @@ class PlayerCombatEngine implements EventSubscriberInterface
         }
 
         foreach ($attacker->getEquipment()->getItems() as $itemInstance) {
-            foreach ($itemInstance->getCombatStatModifiers() as $stat) {
+            /** @var ItemEquipmentComponent $equipmentComponent */
+            $equipmentComponent = $itemInstance->getComponent(ItemEquipmentComponent::class);
+            foreach ($equipmentComponent->getItemStatComponent()->getStats() as $stat) {
                 if ($stat instanceof OffensiveStat) {
                     $event->increase($stat::class, $stat->getValue());
                 }
@@ -116,8 +118,9 @@ class PlayerCombatEngine implements EventSubscriberInterface
         }
 
         foreach ($defender->getEquipment()->getItems() as $itemInstance) {
-            /** @var ItemEquipmentInstanceInterface $itemInstance */
-            foreach ($itemInstance->getCombatStatModifiers() as $stat) {
+            /** @var ItemEquipmentComponent $equipmentComponent */
+            $equipmentComponent = $itemInstance->getComponent(ItemEquipmentComponent::class);
+            foreach ($equipmentComponent->getItemStatComponent()->getStats() as $stat) {
                 if ($stat instanceof DefensiveStat) {
                     $event->increase($stat::class, $stat->getValue());
                 }
