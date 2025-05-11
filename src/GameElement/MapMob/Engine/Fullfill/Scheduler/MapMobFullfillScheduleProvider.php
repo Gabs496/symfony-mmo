@@ -44,7 +44,7 @@ class MapMobFullfillScheduleProvider implements ScheduleProviderInterface
             $spawningMobs = $map->getSpawningMobs();
             foreach ($spawningMobs as $spawningMob) {
                 $message = new MapMobFullfill($spawningMob, $map);
-                $recurringMessage = RecurringMessage::every($spawningMob->getSpawnFrequency() . ' seconds', $message);
+                $recurringMessage = RecurringMessage::every('5 seconds', $message);
                 $schedule->add($recurringMessage);
             }
         }

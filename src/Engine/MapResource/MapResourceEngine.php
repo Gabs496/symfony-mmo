@@ -28,15 +28,15 @@ readonly class MapResourceEngine
         $this->resourceFullfill($event->getMap(), $event->getMapResourceSpawn());
     }
 
-    public function resourceFullfill(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn, bool $full = false): void
+    public function resourceFullfill(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn): void
     {
 
         if (!$this->hasFreeSpace($map, $mapResourceSpawn)) {
             return;
         }
 
-        $this->spawnNewResource($map, $mapResourceSpawn);
-        while ($full && $this->hasFreeSpace($map, $mapResourceSpawn)) {
+        $randomNumber = bcdiv(random_int(0, 1000000000), 1000000000, 9);
+        if (bccomp($randomNumber, $mapResourceSpawn->getSpawnRate(), 9) !== 1) {
             $this->spawnNewResource($map, $mapResourceSpawn);
         }
     }

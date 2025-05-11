@@ -44,7 +44,7 @@ class MapResourceFullfillScheduleProvider implements ScheduleProviderInterface
             $spawningResources = $map->getSpawningResources();
             foreach ($spawningResources as $spawningResource) {
                 $message = new MapResourceFullfill($spawningResource, $map);
-                $recurringMessage = RecurringMessage::every($spawningResource->getSpotSpawnFrequency() . ' seconds', $message);
+                $recurringMessage = RecurringMessage::every('5 seconds', $message);
                 $schedule->add($recurringMessage);
             }
         }

@@ -27,15 +27,15 @@ readonly class MapMobEngine
         $this->mobFullfill($event->getMap(), $event->getMapMobSpawn());
     }
 
-    private function mobFullfill(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn, bool $full = false): void
+    private function mobFullfill(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): void
     {
 
         if (!$this->hasFreeSpace($map, $mapMobSpawn)) {
             return;
         }
 
-        $this->spawnNewMob($map, $mapMobSpawn);
-        while ($full && $this->hasFreeSpace($map, $mapMobSpawn)) {
+        $randomNumber = bcdiv(random_int(0, 1000000000), 1000000000, 9);
+        if (bccomp($randomNumber, $mapMobSpawn->getSpawnRate(), 9) !== 1) {
             $this->spawnNewMob($map, $mapMobSpawn);
         }
     }

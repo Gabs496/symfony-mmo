@@ -18,7 +18,7 @@ readonly class Salamander extends AbstractBaseAnimalMob
         parent::__construct(
             id: self::ID,
             name: 'Salamander',
-            maxHealth: 0.5,
+            maxHealth: 0.1,
             description: 'A small lizard that can spit fire.',
             combatStats: [
                 new PhysicalDefenseStat(0.0),

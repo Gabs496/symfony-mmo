@@ -7,7 +7,7 @@ readonly class MapMobSpawn
     public function __construct(
         private string $mobId,
         private int    $maxAvailability,
-        private int    $spawnFrequency,
+        private float  $spawnRate,
     )
     {
     }
@@ -22,8 +22,8 @@ readonly class MapMobSpawn
         return $this->maxAvailability;
     }
 
-    public function getSpawnFrequency(): int
+    public function getSpawnRate(): float
     {
-        return $this->spawnFrequency;
+        return $this->spawnRate;
     }
 }

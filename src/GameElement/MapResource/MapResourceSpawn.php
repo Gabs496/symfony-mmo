@@ -8,7 +8,7 @@ readonly class MapResourceSpawn
         private string $resourceId,
         private int    $maxGlobalAvailability,
         private int    $maxSpotAvailability,
-        private int    $spotSpawnFrequency
+        private float  $spawnRate,
     )
     {
     }
@@ -28,8 +28,8 @@ readonly class MapResourceSpawn
         return $this->maxSpotAvailability;
     }
 
-    public function getSpotSpawnFrequency(): int
+    public function getSpawnRate(): float
     {
-        return $this->spotSpawnFrequency;
+        return $this->spawnRate;
     }
 }

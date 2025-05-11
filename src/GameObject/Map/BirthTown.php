@@ -28,16 +28,16 @@ readonly class BirthTown extends AbstractBaseMap
     public function getSpawningResources(): array
     {
         return [
-            new MapResourceSpawn(LogChestnut::ID, 100, 5, 25),
-            new MapResourceSpawn(OreCopper::ID, 100, 5, 15),
+            new MapResourceSpawn(LogChestnut::ID, 100, 5, 0.2),
+            new MapResourceSpawn(OreCopper::ID, 100, 5, 0.333),
         ];
     }
 
     public function getSpawningMobs(): array
     {
         return [
-            new MapMobSpawn(Salamander::ID, 10, 5),
-            new MapMobSpawn(Sbinsol::ID, 3, 17),
+            new MapMobSpawn(Salamander::ID, 10, 0.5),
+            new MapMobSpawn(Sbinsol::ID, 3, 0.25),
         ];
     }
 }
