@@ -22,6 +22,8 @@ readonly class MapResourceEngine
     {
 
     }
+
+    /** TODO: try to create a common engine to manage map fullfill */
     #[AsEventListener(MapResourceFullfill::class)]
     public function mapFullfill(MapResourceFullfill $event): void
     {

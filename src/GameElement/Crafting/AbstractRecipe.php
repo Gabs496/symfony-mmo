@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Crafting;
 
+use App\Engine\Player\Reward\ItemReward;
 use App\GameElement\Core\GameObject\AbstractGameObject;
-use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\RewardInterface;
 
 abstract readonly class AbstractRecipe extends AbstractGameObject

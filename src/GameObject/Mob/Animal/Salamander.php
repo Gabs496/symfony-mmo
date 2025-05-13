@@ -2,9 +2,9 @@
 
 namespace App\GameObject\Mob\Animal;
 
+use App\Engine\Player\Reward\MasteryReward;
 use App\GameElement\Combat\Stats\PhysicalAttackStat;
 use App\GameElement\Combat\Stats\PhysicalDefenseStat;
-use App\GameElement\Mastery\MasteryReward;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;

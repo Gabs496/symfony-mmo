@@ -2,12 +2,12 @@
 
 namespace App\GameElement\Gathering\Activity;
 
-use App\GameElement\Activity\Activity;
+use App\Engine\Player\Reward\ItemReward;
+use App\Engine\Player\Reward\MasteryReward;
 use App\GameElement\Activity\AbstractActivity;
+use App\GameElement\Activity\Activity;
 use App\GameElement\Gathering\AbstractResource;
-use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\MapResource\AbstractMapResourceSpawnInstance;
-use App\GameElement\Mastery\MasteryReward;
 
 #[Activity(id: 'RESOURCE_GATHERING')]
 class ResourceGatheringActivity extends AbstractActivity

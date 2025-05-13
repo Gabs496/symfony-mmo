@@ -6,7 +6,7 @@ use App\Engine\Item\Action\AbstractAvailableAction;
 use App\Engine\Item\Action\Drop;
 use App\Engine\Item\Action\Equip;
 use App\Engine\Item\Action\Unequip;
-use App\Engine\Player\Item\PlayerItemEngine;
+use App\Engine\Player\PlayerItemEngine;
 use App\Entity\Data\BackpackItemBag;
 use App\Entity\Data\EquippedItemBag;
 use App\Entity\Data\ItemInstance;

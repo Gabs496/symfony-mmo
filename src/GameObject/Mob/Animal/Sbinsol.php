@@ -2,10 +2,10 @@
 
 namespace App\GameObject\Mob\Animal;
 
+use App\Engine\Player\Reward\ItemReward;
+use App\Engine\Player\Reward\MasteryReward;
 use App\GameElement\Combat\Stats\PhysicalAttackStat;
 use App\GameElement\Combat\Stats\PhysicalDefenseStat;
-use App\GameElement\Item\Reward\ItemReward;
-use App\GameElement\Mastery\MasteryReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
