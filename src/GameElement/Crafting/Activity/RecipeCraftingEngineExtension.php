@@ -2,15 +2,15 @@
 
 namespace App\GameElement\Crafting\Activity;
 
-use App\Engine\Player\Item\PlayerItemEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Crafting\AbstractRecipe;
-use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
-use App\GameElement\Notification\Exception\UserNotificationException;
+use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
 use App\GameElement\Reward\RewardApply;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
@@ -19,9 +19,8 @@ use Throwable;
 readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionInterface
 {
     public function __construct(
-        //TODO: remove PlayerItemEngine from this domain
-        private PlayerItemEngine $playerEngine,
         private MessageBusInterface $messageBus,
+        private EventDispatcherInterface $eventDispatcher,
     )
     {
     }
@@ -44,7 +43,11 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
             return;
         }
 
-        $this->takeIngredient($event->getSubject(), $activity->getRecipe());
+        $takeIngredientEvent = new BeforeCraftingTakeIngredientEvent($event->getSubject(), $activity->getRecipe());
+        $this->eventDispatcher->dispatch($takeIngredientEvent);
+        if (!$takeIngredientEvent->isProcessed()) {
+            throw new RuntimeException("Crafting activity not started, ingredient not taken. Must add listener to " . BeforeCraftingTakeIngredientEvent::class . ' and be sure to execute "setProcessed()" after taking the ingredients.');
+        }
         $activity->setDuration($activity->getRecipe()->getCraftingTime());
     }
 
@@ -58,22 +61,6 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
 
         foreach ($activity->getRewards() as $reward) {
             $this->messageBus->dispatch(new RewardApply($reward, $event->getSubject()));
-        }
-    }
-
-    /**
-     * @psalm-param  PlayerCharacter $subject
-     * @psalm-param   AbstractRecipe $directObject
-     * @throws UserNotificationException
-     */
-    private function takeIngredient(object $subject, object $directObject): void
-    {
-        try {
-            foreach ($directObject->getIngredients() as $ingredient) {
-                $this->playerEngine->takeItem($subject, $ingredient->getItem(), $ingredient->getQuantity());
-            }
-        } catch (ItemQuantityNotAvailableException $e) {
-            throw new UserNotificationException($subject->getId(),'Recipe ingredients not availables');
         }
     }
 }

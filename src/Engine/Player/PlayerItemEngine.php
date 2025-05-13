@@ -44,7 +44,7 @@ readonly class PlayerItemEngine
         $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
     }
 
-    public function  takeItem(PlayerCharacter $player, AbstractItemPrototype|ItemInstanceInterface $itemInstance, int $quantity): ItemInstanceInterface
+    public function takeItem(PlayerCharacter $player, AbstractItemPrototype|ItemInstanceInterface $itemInstance, int $quantity): ItemInstanceInterface
     {
         $baseBag = $player->getBackpack();
         if ($itemInstance instanceof AbstractItemPrototype) {
