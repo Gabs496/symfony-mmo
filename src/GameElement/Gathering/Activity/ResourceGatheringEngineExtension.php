@@ -25,7 +25,7 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
             return;
         }
 
-        $resource = $activity->getMapSpawnInstance()->getResource();
+        $resource = $activity->getResource();
         $activity->setDuration($resource->getGatheringTime());
     }
 

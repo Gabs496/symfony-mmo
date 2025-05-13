@@ -12,14 +12,21 @@ framework:
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
-            game_event:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+            game_reward:
+                dsn: '%env(MESSENGER_AMQP_TRANSPORT_DSN)%'
                 options:
-                    use_notify: true
-                    check_delayed_interval: 60000
+#                    queue_name: game_reward
+#                    use_notify: true
+#                    check_delayed_interval: 60000
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
+            game_activity:
+                dsn: '%env(MESSENGER_AMQP_TRANSPORT_DSN)%'
+                options:
+#                    queue_name: game_activity
+                retry_strategy:
+                    max_retries: 0
             failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 
@@ -32,7 +39,8 @@ framework:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: async
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
-            App\GameElement\Reward\RewardApply: game_event
+            App\GameElement\Reward\RewardApply: game_reward
+            App\GameElement\Activity\Message\ActivityTimeout: game_activity
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async

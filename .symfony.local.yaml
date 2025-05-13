@@ -7,6 +7,12 @@ workers:
 #    watch: ['docker-compose.yml', 'docker-compose.override.yml']
   messenger_consume_async: ~
   # Start scheduler that will generate resources in maps
+  messenger_consume_game_reward:
+    cmd: [ 'symfony', 'console', 'messenger:consume', 'game_reward' ]
+    watch: [ 'config', 'src', 'templates', 'vendor' ]
+  messenger_consume_game_activity:
+    cmd: [ 'symfony', 'console', 'messenger:consume', 'game_activity', '--sleep', '0.05' ]
+    watch: [ 'config', 'src', 'templates', 'vendor' ]
   messenger_consume_scheduler_game_map_resource_fullfill:
     cmd: [ 'symfony', 'console', 'messenger:consume', 'scheduler_game_map_resource_fullfill' ]
     watch: ['config', 'src', 'templates', 'vendor']

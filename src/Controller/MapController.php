@@ -46,7 +46,7 @@ class MapController extends AbstractController
     }
 
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
-    public function startActivity(NotificationEngine $notificationEngine, MapSpawnedResource $spawnedResource, ActivityEngine $gameActivity, MapSpawnedResourceRepository $mapSpawnedResourceRepository, Request $request): Response
+    public function startGathering(NotificationEngine $notificationEngine, MapSpawnedResource $spawnedResource, ActivityEngine $gameActivity, MapSpawnedResourceRepository $mapSpawnedResourceRepository, Request $request): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
@@ -57,33 +57,23 @@ class MapController extends AbstractController
             return $this->redirectToRoute('app_map');
         }
 
-        $gameActivity->run($player, new ResourceGatheringActivity($spawnedResource));
-
-        $this->addFlash('success', 'Activity finished');
+        $gameActivity->run(new \App\Engine\PlayerCharacter($player->getId()), new ResourceGatheringActivity($spawnedResource->getResource(), $spawnedResource->getId()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-            return $this->renderBlock('map/MapAvailableActivity.stream.html.twig', 'remove', [
-                'entity' => $spawnedResource,
-                'id' => $spawnedResource->getId(),
-            ]);
+            return new Response();
         }
         return $this->redirectToRoute('app_map');
     }
 
-    /**
-     * @throws \DateMalformedStringException
-     */
     #[Route('/craft/{id}', name: 'app_map_craft')]
-    public function craftRecipe(ActivityEngine $gameActivity, GameObjectEngine $gameObjectEngine, string $id, Request $request): Response
+    public function startCraftingRecipe(ActivityEngine $gameActivity, GameObjectEngine $gameObjectEngine, string $id, Request $request): Response
     {
         /** @var AbstractRecipe $recipe */
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->run($user, new RecipeCraftingActivity($recipe));
-
-        $this->addFlash('success', 'Activity finished');
+        $gameActivity->run(new \App\Engine\PlayerCharacter($user->getId()), new RecipeCraftingActivity($recipe));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -97,9 +87,8 @@ class MapController extends AbstractController
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $gameActivity->run($player, new CombatActivity($player, $mapSpawnedMob));
-
-        $this->addFlash('success', 'Activity finished');
+        $playerCharacter = new \App\Engine\PlayerCharacter($player->getId());
+        $gameActivity->run($playerCharacter, new CombatActivity($playerCharacter, $mapSpawnedMob));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

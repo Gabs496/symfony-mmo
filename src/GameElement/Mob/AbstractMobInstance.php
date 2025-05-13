@@ -2,6 +2,8 @@
 
 namespace App\GameElement\Mob;
 
+use App\GameElement\Combat\Stats\OffensiveStat;
+
 abstract class AbstractMobInstance
 {
     protected float $currentHealth;
@@ -28,6 +30,7 @@ abstract class AbstractMobInstance
         return $this->currentHealth;
     }
 
+    /** @return OffensiveStat[] */
     public function getOffensiveStats(): array
     {
         return $this->getMob()->getOffensiveStats();

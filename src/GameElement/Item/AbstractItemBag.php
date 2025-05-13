@@ -9,13 +9,12 @@ use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 abstract class AbstractItemBag
 {
     /** @var ItemInstanceInterface[] $items */
-    protected iterable $items;
+    protected iterable $items = [];
 
     protected function __construct(
         protected float $size
     )
     {
-        $this->items = [];
     }
 
     /**

@@ -5,7 +5,7 @@ namespace App\Engine\Player;
 use App\Engine\Item\ItemInstantiator;
 use App\Engine\Player\Reward\ItemReward;
 use App\Engine\Player\Reward\MasteryReward;
-use App\Entity\Data\PlayerCharacter;
+use App\Engine\PlayerCharacter;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
@@ -33,31 +33,30 @@ readonly class RewardApplyEngine
             return;
         }
 
-        $playerCharacter = $this->repository->find($recipe->getId());
-        if (!$playerCharacter instanceof PlayerCharacter) {
-            //TODO: write log or execute something
+        $playerEntity = $this->repository->find($recipe->getId());
+        if (!$playerEntity instanceof \App\Entity\Data\PlayerCharacter) {
             return;
         }
 
         $reward = $rewardApplication->getReward();
         if ($reward instanceof MasteryReward) {
-            $playerCharacter->increaseMasteryExperience($reward->getType(), $reward->getExperience());
-            $this->repository->save($playerCharacter);
+            $playerEntity->increaseMasteryExperience($reward->getType(), $reward->getExperience());
+            $this->repository->save($playerEntity);
         }
 
         if ($reward instanceof ItemReward) {
             try {
                 /** @var AbstractBaseItemPrototype $item */
                 $item = $reward->getItem();
-                $this->playerEngine->giveItem($playerCharacter, $this->instantiator->createFrom($item, $reward->getQuantity()));
+                $this->playerEngine->giveItem($playerEntity, $this->instantiator->createFrom($item, $reward->getQuantity()));
             } catch (MaxBagSizeReachedException $e) {
-                $this->notificationEngine->danger($playerCharacter->getId(), 'Your bag is full, you cannot receive the item.');
+                $this->notificationEngine->danger($playerEntity->getId(), 'Your bag is full, you cannot receive the item.');
                 return;
             }
         }
 
         if ($reward instanceof RewardNotificationInterface) {
-            $this->notificationEngine->success($playerCharacter->getId(), sprintf('+%s %s', $reward->getQuantity(), $reward->getName()));
+            $this->notificationEngine->success($playerEntity->getId(), sprintf('+%s %s', $reward->getQuantity(), $reward->getName()));
         }
     }
 }

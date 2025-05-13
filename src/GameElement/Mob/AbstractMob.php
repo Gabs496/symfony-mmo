@@ -36,6 +36,7 @@ abstract readonly class AbstractMob extends AbstractGameObject
         return $this->rewardOnDefeats;
     }
 
+    /** @return OffensiveStat[] */
     public function getOffensiveStats(): array
     {
         return array_filter($this->getCombatStats(), fn(AbstractStat $stat) => $stat instanceof OffensiveStat);

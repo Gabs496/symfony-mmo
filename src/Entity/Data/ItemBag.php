@@ -25,7 +25,7 @@ abstract class ItemBag extends AbstractItemBag
 
     /** @var Collection<int, ItemInstance> */
     #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    protected iterable $items;
+    protected iterable $items = [];
 
     #[ORM\Column(type: 'float')]
     protected float $size;

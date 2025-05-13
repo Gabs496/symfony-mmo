@@ -3,23 +3,21 @@
 namespace App\Engine\MapResource;
 
 use App\Entity\Data\PlayerCharacter;
+use App\Entity\Game\MapSpawnedResource;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
+use App\Repository\Data\ActivityRepository;
 use App\Repository\Game\MapSpawnedResourceRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Twig\Environment;
 
 readonly class ActivityHandler implements EventSubscriberInterface
 {
     public function __construct(
-        private HubInterface       $hub,
-        private Environment        $twig,
         private ActivityEngine     $activityEngine,
         private MapSpawnedResourceRepository $mapSpawnedResourceRepository,
+        private ActivityRepository  $activityRepository,
     )
     {
     }
@@ -29,7 +27,7 @@ readonly class ActivityHandler implements EventSubscriberInterface
         return [
             ActivityStartEvent::class => [
                 ['lockMapSpawnedResourceActivity'],
-                ['streamActvityStart'],
+//                ['streamActvityStart'],
             ],
             ActivityEndEvent::class => [
                 ['consumeMapSpawnedResourceActivity'],
@@ -45,34 +43,30 @@ readonly class ActivityHandler implements EventSubscriberInterface
             return;
         }
 
-        $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
-            return;
-        }
-
-        $mapSpawnedResource = $activity->getMapSpawnInstance();
-        $mapSpawnedResource->startActivity($activity->getEntity());
+        $mapSpawnedResource = $this->mapSpawnedResourceRepository->find($activity->getResourceInstanceId());
+        $activityEntity = $this->activityRepository->find($event->getActivity()->getEntityId());
+        $mapSpawnedResource->startActivity($activityEntity);
         $this->mapSpawnedResourceRepository->save($mapSpawnedResource);
     }
 
-    public function streamActvityStart(ActivityStartEvent $event): void
-    {
-        $activity = $event->getActivity();
-        if (!$activity instanceof ResourceGatheringActivity) {
-            return;
-        }
-
-        $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
-            return;
-        }
-
-        $mapSpawnedResource = $activity->getMapSpawnInstance();
-        $this->hub->publish(new Update(['mapAvailableActivities_' . $mapSpawnedResource->getMapId()],
-            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapSpawnedResource, 'id' => $mapSpawnedResource->getId()]),
-        true
-        ));
-    }
+//    public function streamActvityStart(ActivityStartEvent $event): void
+//    {
+//        $activity = $event->getActivity();
+//        if (!$activity instanceof ResourceGatheringActivity) {
+//            return;
+//        }
+//
+//        $subject = $event->getSubject();
+//        if (!$subject instanceof PlayerCharacter) {
+//            return;
+//        }
+//
+//        $mapSpawnedResource = $this->mapSpawnedResourceRepository->find($activity->getResourceInstanceId());
+//        $this->hub->publish(new Update(['mapAvailableActivities_' . $mapSpawnedResource->getMapId()],
+//            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapSpawnedResource, 'id' => $mapSpawnedResource->getId()]),
+//        true
+//        ));
+//    }
 
     public function consumeMapSpawnedResourceActivity(ActivityEndEvent $event): void
     {
@@ -81,8 +75,11 @@ readonly class ActivityHandler implements EventSubscriberInterface
             return;
         }
 
-        $mapSpawnedResource = $activity->getMapSpawnInstance();
-        $mapSpawnedResource->consume(1);
+        $mapSpawnedResource = $this->mapSpawnedResourceRepository->find($activity->getResourceInstanceId());
+        $mapSpawnedResource
+            ->consume(1)
+            ->endActivity()
+        ;
         if ($mapSpawnedResource->isEmpty()) {
             $this->mapSpawnedResourceRepository->remove($mapSpawnedResource);
             return;
@@ -97,9 +94,14 @@ readonly class ActivityHandler implements EventSubscriberInterface
             return;
         }
 
-        $mapSpawnedResource = $activity->getMapSpawnInstance();
+        $mapSpawnedResource = $this->mapSpawnedResourceRepository->find($activity->getResourceInstanceId());
+        if (!$mapSpawnedResource instanceof MapSpawnedResource) {
+            return;
+        }
+
+        // TODO: move to PlayerGatheringEngine
         if ($mapSpawnedResource->getQuantity() > 0) {
-            $this->activityEngine->run($event->getSubject(), new ResourceGatheringActivity($mapSpawnedResource));
+            $this->activityEngine->run($event->getSubject(), new ResourceGatheringActivity($activity->getResource(), $mapSpawnedResource->getId()));
         }
     }
 }

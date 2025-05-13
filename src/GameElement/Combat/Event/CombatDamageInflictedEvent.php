@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Combat\Event;
 
+use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\StatCollection;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -10,21 +11,21 @@ class CombatDamageInflictedEvent extends Event
     protected bool $isDefenderAlive = true;
 
     public function __construct(
-        private readonly object $attacker,
-        private readonly float  $damage,
-        private readonly object $defender,
-        private readonly StatCollection $attackerStats,
-        private readonly StatCollection $defenderStats,
+        private readonly CombatOpponentInterface $attacker,
+        private readonly float                   $damage,
+        private readonly CombatOpponentInterface $defender,
+        private readonly StatCollection          $attackerStats,
+        private readonly StatCollection          $defenderStats,
     )
     {
     }
 
-    public function getAttacker(): object
+    public function getAttacker(): CombatOpponentInterface
     {
         return $this->attacker;
     }
 
-    public function getDefender(): object
+    public function getDefender(): CombatOpponentInterface
     {
         return $this->defender;
     }

@@ -11,6 +11,7 @@ use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapSpawnedResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Random\RandomException;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 readonly class MapResourceEngine
@@ -39,16 +40,19 @@ readonly class MapResourceEngine
 
         $randomNumber = bcdiv(random_int(0, 1000000000), 1000000000, 9);
         if (bccomp($randomNumber, $mapResourceSpawn->getSpawnRate(), 9) !== 1) {
-            $this->spawnNewResource($map, $mapResourceSpawn);
+            try {
+                $this->spawnNewResource($map, $mapResourceSpawn);
+            } catch (RuntimeException $e) {}
         }
     }
 
-    private function spawnNewResource(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn, int $resourceQuantity = 0): void
+    private function spawnNewResource(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn, int $resourceQuantity = 0): MapSpawnedResource
     {
         if (!$resourceQuantity) {
             $freeSpace = $this->getFreeSpace($map, $mapResourceSpawn);
             if (!$freeSpace) {
-                return;
+                //TODO: throw specific exception
+                throw new RuntimeException('Map is full of resource ' . $mapResourceSpawn->getResourceId());
             }
 
             try {
@@ -70,6 +74,8 @@ readonly class MapResourceEngine
             $resourceQuantity
         ));
         $this->mapSpawnedResourceRepository->save($instance);
+
+        return $instance;
     }
 
     public function hasFreeSpace(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn): bool

@@ -2,24 +2,25 @@
 
 namespace App\GameElement\Combat\Event;
 
+use App\GameElement\Combat\CombatOpponentInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class CombatFinishEvent extends Event
 {
     public function __construct(
-        private readonly object $winner,
-        private readonly object $looser,
+        private readonly CombatOpponentInterface $winner,
+        private readonly CombatOpponentInterface $loser,
     )
     {
     }
 
-    public function getWinner(): object
+    public function getWinner(): CombatOpponentInterface
     {
         return $this->winner;
     }
 
-    public function getLoser(): object
+    public function getLoser(): CombatOpponentInterface
     {
-        return $this->looser;
+        return $this->loser;
     }
 }

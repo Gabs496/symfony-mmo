@@ -5,6 +5,7 @@ namespace App\GameElement\Combat\Activity;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
+use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\Event\CombatDamageCalculateEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatFinishEvent;
@@ -30,7 +31,7 @@ class CombatEngineExtension implements EventSubscriberInterface
             ],
             ActivityEndEvent::class => [
                 ['fight', 0]
-            ]
+            ],
         ];
     }
 
@@ -74,7 +75,7 @@ class CombatEngineExtension implements EventSubscriberInterface
     /**
      * @throws DamageNotCalculatedException
      */
-    protected function attack(object $attacker, object $defender, EventDispatcherInterface $eventDispatcher): CombatDamageInflictedEvent
+    protected function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender, EventDispatcherInterface $eventDispatcher): CombatDamageInflictedEvent
     {
         $offensiveStats = new CombatOffensiveStatsCalculateEvent($attacker, $defender);
         $eventDispatcher->dispatch($offensiveStats);

@@ -95,7 +95,7 @@ class MapSpawnedResource extends AbstractMapResourceSpawnInstance
         $this->setInvolvingActivity($activity);
     }
 
-    public function endActivity(Activity $activity): void
+    public function endActivity(): void
     {
         $this->setInvolvingActivity(null);
     }

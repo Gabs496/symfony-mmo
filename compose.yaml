@@ -26,5 +26,10 @@ services:
       - '3000:80'
     expose:
       - '3000'
+  lavinmq:
+    image: cloudamqp/lavinmq:latest
+    ports:
+      - 15672:15672 # HTTP
+      - 5672:5672 # AMQP
 volumes:
   symfony-mmo-db:

@@ -13,7 +13,7 @@ readonly class RewardApply
      */
     public function __construct(
         private RewardInterface $reward,
-        private object $recipe,
+        private RewardRecipeInterface $recipe,
     )
     {
     }
@@ -26,7 +26,7 @@ readonly class RewardApply
     /**
      * @return T
      */
-    public function getRecipe(): object
+    public function getRecipe(): RewardRecipeInterface
     {
         return $this->recipe;
     }

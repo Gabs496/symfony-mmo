@@ -14,16 +14,16 @@ abstract class AbstractActivity
 
     private ?DateTimeImmutable $scheduledAt = null;
 
-    protected \App\Entity\Data\Activity $entity;
+    protected string $entityId;
 
-    public function getEntity(): \App\Entity\Data\Activity
+    public function getEntityId(): string
     {
-        return $this->entity;
+        return $this->entityId;
     }
 
-    public function setEntity(\App\Entity\Data\Activity $entity): void
+    public function setEntityId(string $entityId): void
     {
-        $this->entity = $entity;
+        $this->entityId = $entityId;
     }
 
     public function getDuration(): ?float
