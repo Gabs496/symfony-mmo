@@ -60,7 +60,7 @@ readonly class MobCombatEngine implements EventSubscriberInterface
 
         foreach ($event->getStats()->getStats() as $stat) {
             $maximimumBonus = Math::mul($stat->getValue(), 0.1);
-            $percentage = bcmul(rand(1, 100), 0.01, 2);
+            $percentage = bcmul(rand(0, 100), 0.01, 2);
             $event->increase($stat::class, Math::mul($maximimumBonus, $percentage));
 
         }
