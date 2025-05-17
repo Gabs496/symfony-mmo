@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Player\Activity;
+namespace App\Engine\Player;
 
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
@@ -11,7 +11,7 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
 
-readonly class ActivityListener
+readonly class PlayerActivityListener
 {
     public function __construct(
         private HubInterface $hub,
