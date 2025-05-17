@@ -9,17 +9,17 @@ use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
+use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class MobCombatEngine implements EventSubscriberInterface
 {
 
     public function __construct(
         protected MapSpawnedMobRepository $mapSpawnedMobRepository,
-        protected MessageBusInterface $messageBus,
+        protected RewardEngine $rewardEngine,
     )
     {
     }
@@ -137,7 +137,7 @@ readonly class MobCombatEngine implements EventSubscriberInterface
         }
 
         foreach ($loser->getMob()->getRewardOnDefeats() as $reward) {
-            $this->messageBus->dispatch(new RewardApply($reward, $event->getWinner()));
+            $this->rewardEngine->apply(new RewardApply($reward, $event->getWinner()));
         }
     }
 }

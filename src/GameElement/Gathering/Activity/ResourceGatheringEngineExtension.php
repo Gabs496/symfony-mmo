@@ -8,15 +8,16 @@ use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEvent;
+use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface, EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus, private EventDispatcherInterface $eventDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected RewardEngine $rewardEngine,
     )
     {
     }
@@ -67,7 +68,7 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
         }
 
         foreach ($activity->getRewards() as $reward) {
-            $this->messageBus->dispatch(new RewardApply($reward, $event->getSubject()));
+            $this->rewardEngine->apply(new RewardApply($reward, $event->getSubject()));
         }
     }
 

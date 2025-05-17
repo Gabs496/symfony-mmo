@@ -8,19 +8,19 @@ use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
+use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
 /** @extends ActivityEngineExtensionInterface<PlayerCharacter,RecipeCraftingEngineExtension> */
 readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionInterface, EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
-        private EventDispatcherInterface $eventDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected RewardEngine $rewardEngine,
     )
     {
     }
@@ -70,7 +70,7 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
         }
 
         foreach ($activity->getRewards() as $reward) {
-            $this->messageBus->dispatch(new RewardApply($reward, $event->getSubject()));
+            $this->rewardEngine->apply(new RewardApply($reward, $event->getSubject()));
         }
     }
 }
