@@ -2,15 +2,17 @@
 
 namespace App\Entity\Data;
 
-use App\Engine\PlayerCharacterManager;
 use App\Entity\Security\User;
+use App\GameElement\Activity\ActivitySubjectInterface;
 use App\GameElement\Character\AbstractCharacter;
+use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\HasHealthComponentInterface;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameElement\Mastery\MasteryType;
+use App\GameElement\Reward\RewardRecipeInterface;
 use App\Repository\Data\PlayerCharacterRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -21,7 +23,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: PlayerCharacterRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
-class PlayerCharacter extends AbstractCharacter implements UserInterface, HasHealthComponentInterface
+class PlayerCharacter extends AbstractCharacter
+    implements UserInterface, ActivitySubjectInterface, HasHealthComponentInterface, CombatOpponentInterface, RewardRecipeInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]

@@ -2,39 +2,43 @@
 
 namespace App\GameElement\Combat\Event;
 
-use App\GameElement\Combat\Exception\DamageNotCalculatedException;
-use App\GameElement\Combat\StatCollection;
+use App\GameElement\Combat\Component\Attack;
+use App\GameElement\Combat\Component\Damage;
+use App\GameElement\Combat\Component\Defense;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class CombatDamageCalculateEvent extends Event
 {
-    protected ?float $damage = null;
+    protected ?Damage $damage = null;
 
     public function __construct(
-        protected StatCollection $offensiveStats,
-        protected StatCollection $defensiveStats,
+        protected Attack  $attack,
+        protected Defense $defense,
     )
     {
     }
 
-    public function getOffensiveStats(): StatCollection
+    public function getAttack(): Attack
     {
-        return $this->offensiveStats;
+        return $this->attack;
     }
 
-    public function getDefensiveStats(): StatCollection
+    public function getDefense(): Defense
     {
-        return $this->defensiveStats;
+        return $this->defense;
     }
 
-    public function getDamage(): float
+    public function getDamage(): ?Damage
     {
         return $this->damage;
     }
 
     public function increaseDamage(float $variation): self
     {
-        $this->damage = bcadd($this->damage, $variation, 2);
+        if (!$this->damage) {
+            $this->damage = new Damage();
+        }
+        $this->damage->setValue($this->damage->getValue() + $variation);
         return $this;
     }
 }

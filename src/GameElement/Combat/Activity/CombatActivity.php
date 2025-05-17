@@ -5,6 +5,7 @@ namespace App\GameElement\Combat\Activity;
 use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\Engine\CombatEngineExtension;
 
 #[Activity(id: 'COMBAT')]
 class CombatActivity extends AbstractActivity

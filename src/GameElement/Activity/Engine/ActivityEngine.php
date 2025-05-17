@@ -12,6 +12,7 @@ use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityDurationNotSetException;
 use App\GameElement\Activity\Message\ActivityTimeout;
 use App\Repository\Data\ActivityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -21,11 +22,11 @@ use Symfony\Component\Messenger\Stamp\DelayStamp;
 #[AsMessageHandler(handles: ActivityTimeout::class, method: 'activityTimeout')]
 readonly class ActivityEngine
 {
-
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         private ActivityRepository $activityRepository,
         private MessageBusInterface $messageBus,
+        private EntityManagerInterface  $entityManager,
     )
     {
     }
@@ -47,7 +48,6 @@ readonly class ActivityEngine
 
         $activityEntity->setStartedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
-
         $this->messageBus->dispatch(new ActivityTimeout($type, $subject),[new DelayStamp($this->getMillisecondsDuration($type))]);
     }
 

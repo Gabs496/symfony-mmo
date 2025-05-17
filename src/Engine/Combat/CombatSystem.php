@@ -16,8 +16,8 @@ class CombatSystem
     #[AsEventListener(CombatDamageCalculateEvent::class)]
     public function calculateDamage(CombatDamageCalculateEvent $event): void
     {
-        $offensiveStats = $event->getOffensiveStats();
-        $defensiveStats = $event->getDefensiveStats();
+        $offensiveStats = $event->getAttack()->getStatCollection();
+        $defensiveStats = $event->getDefense()->getStatCollection();
 
         foreach ($offensiveStats->getStats() as $offensiveStat) {
 
@@ -30,7 +30,7 @@ class CombatSystem
             }
         }
 
-        if (Math::compare($event->getDamage(), 0.0) === 0) {
+        if (Math::compare($event->getDamage()->getValue(), 0.0) === 0) {
             $event->increaseDamage(self::MINIMUM_DAMAGE);
         }
     }

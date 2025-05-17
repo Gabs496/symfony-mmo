@@ -1,16 +1,19 @@
 <?php
 
-namespace App\GameElement\Combat\Activity;
+namespace App\GameElement\Combat\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
+use App\GameElement\Combat\Activity\CombatActivity;
 use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\Component\Attack;
+use App\GameElement\Combat\Component\Defense;
+use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\CombatDamageCalculateEvent;
-use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
-use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
-use App\GameElement\Combat\Exception\DamageNotCalculatedException;
+use App\GameElement\Combat\Event\DefendEvent;
+use App\GameElement\Combat\StatCollection;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -27,7 +30,7 @@ class CombatEngineExtension implements EventSubscriberInterface
     {
         return [
             BeforeActivityStartEvent::class => [
-                ['calculateRoundDuration', 0,]
+                ['calculateRoundDuration', 0]
             ],
             ActivityTimeoutEvent::class => [
                 ['fight', 0]
@@ -62,35 +65,23 @@ class CombatEngineExtension implements EventSubscriberInterface
         $this->attack($opponentB, $opponentA);
     }
 
-    /**
-     * @throws DamageNotCalculatedException
-     */
-    protected function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender): CombatDamageInflictedEvent
+    public function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender, ?StatCollection $statCollection = null): void
     {
-        $offensiveStats = new CombatOffensiveStatsCalculateEvent($attacker, $defender);
-        $this->eventDispatcher->dispatch($offensiveStats);
-
-        $defensiveStats = new CombatDefensiveStatsCalculateEvent($attacker, $defender);
-        $this->eventDispatcher->dispatch($defensiveStats);
-        $damageCalculation = new CombatDamageCalculateEvent(
-            $offensiveStats->getStats(),
-            $defensiveStats->getStats()
-        );
-        $this->eventDispatcher->dispatch($damageCalculation);
-
-        if ($damageCalculation->getDamage() === null) {
-            throw new DamageNotCalculatedException(sprintf("Damage not calculated: check if %s event has been listened", self::class));
+        if (!$statCollection) {
+            $this->eventDispatcher->dispatch(new AttackEvent($attacker, $defender));
+            return;
         }
 
-        $damageEvent = new CombatDamageInflictedEvent(
-            $attacker,
-            $damageCalculation->getDamage(),
-            $defender,
-            $offensiveStats->getStats(),
-            $defensiveStats->getStats(),
-        );
-        $this->eventDispatcher->dispatch($damageEvent);
+        $attack = new Attack($attacker, $statCollection);
+        $this->eventDispatcher->dispatch(new DefendEvent($attack, $defender));
+    }
 
-        return $damageEvent;
+    public function defend(Attack $from, CombatOpponentInterface $defender, StatCollection $defenderStat): void
+    {
+        $defense = new Defense($defender, $defenderStat);
+        $damageCalculation = new CombatDamageCalculateEvent($from, $defense);
+        $this->eventDispatcher->dispatch($damageCalculation);
+        $damage = $damageCalculation->getDamage();
+        $this->eventDispatcher->dispatch(new CombatDamageInflictedEvent($from, $defense, $damage));
     }
 }

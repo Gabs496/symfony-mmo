@@ -6,6 +6,7 @@ use App\Engine\Item\ItemInstantiator;
 use App\Engine\Player\Reward\ItemReward;
 use App\Engine\Player\Reward\MasteryReward;
 use App\Engine\PlayerCharacterManager;
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
@@ -29,12 +30,15 @@ readonly class PlayerRewardApplyEngine
     public function __invoke(RewardApply $rewardApplication): void
     {
         $recipe = $rewardApplication->getRecipe();
-        if (!$recipe instanceof PlayerCharacterManager) {
-            return;
+        if (!$recipe instanceof PlayerCharacter) {
+            if (!$recipe instanceof PlayerCharacterManager) {
+                return;
+            }
+            $recipe = $this->repository->find($recipe->getId());
         }
 
         $playerEntity = $this->repository->find($recipe->getId());
-        if (!$playerEntity instanceof \App\Entity\Data\PlayerCharacter) {
+        if (!$playerEntity) {
             return;
         }
 

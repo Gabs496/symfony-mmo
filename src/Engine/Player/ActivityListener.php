@@ -2,9 +2,11 @@
 
 namespace App\Engine\Player;
 
+use App\Engine\PlayerCharacterManager;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
+use App\Repository\Data\ActivityRepository;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Mercure\HubInterface;
@@ -14,9 +16,10 @@ use Twig\Environment;
 readonly class ActivityListener
 {
     public function __construct(
-        private HubInterface $hub,
-        private Environment $twig,
+        private HubInterface              $hub,
+        private Environment               $twig,
         private PlayerCharacterRepository $playerCharacterRepository,
+        private ActivityRepository $activityRepository,
     )
     {
 
@@ -27,10 +30,14 @@ readonly class ActivityListener
     {
         $player = $event->getSubject();
         if (!$player instanceof PlayerCharacter) {
-            return;
+            if (!$player instanceof PlayerCharacterManager){
+                return;
+            }
+            $player = $this->playerCharacterRepository->find($player->getId());
         }
 
-        $player->startActivity($event->getActivity()->getEntity());
+        $activityEntity = $this->activityRepository->find($event->getActivity()->getEntityId());
+        $player->startActivity($activityEntity);
         $this->playerCharacterRepository->save($player);
 
         $this->hub->publish(new Update(
@@ -45,13 +52,17 @@ readonly class ActivityListener
     {
         $player = $event->getSubject();
         if (!$player instanceof PlayerCharacter) {
-            return;
+            if (!$player instanceof PlayerCharacterManager){
+                return;
+            }
+            $player = $this->playerCharacterRepository->find($player->getId());
         }
         $player->endCurrentActivity();
+        $this->playerCharacterRepository->save($player);
 
         $this->hub->publish(new Update(
             'player_gui_' . $player->getId(),
-            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $event->getActivity()->getEntity()]),
+            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end'),
             true
         ));
     }

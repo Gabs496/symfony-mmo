@@ -2,44 +2,33 @@
 
 namespace App\GameElement\Combat\Event;
 
-use App\GameElement\Combat\CombatOpponentInterface;
-use App\GameElement\Combat\StatCollection;
+use App\GameElement\Combat\Component\Attack;
+use App\GameElement\Combat\Component\Damage;
+use App\GameElement\Combat\Component\Defense;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class CombatDamageInflictedEvent extends Event
 {
     public function __construct(
-        private readonly CombatOpponentInterface $attacker,
-        private readonly float                   $damage,
-        private readonly CombatOpponentInterface $defender,
-        private readonly StatCollection          $attackerStats,
-        private readonly StatCollection          $defenderStats,
+        private readonly Attack $attack,
+        private readonly Defense $defense,
+        private readonly Damage $damage,
     )
     {
     }
 
-    public function getAttacker(): CombatOpponentInterface
+    public function getAttack(): Attack
     {
-        return $this->attacker;
+        return $this->attack;
     }
 
-    public function getDefender(): CombatOpponentInterface
+    public function getDefense(): Defense
     {
-        return $this->defender;
+        return $this->defense;
     }
 
-    public function getDamage(): float
+    public function getDamage(): Damage
     {
         return $this->damage;
-    }
-
-    public function getAttackerStats(): StatCollection
-    {
-        return $this->attackerStats;
-    }
-
-    public function getDefenderStats(): StatCollection
-    {
-        return $this->defenderStats;
     }
 }

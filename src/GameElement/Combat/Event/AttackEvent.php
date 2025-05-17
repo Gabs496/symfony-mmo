@@ -4,15 +4,12 @@ namespace App\GameElement\Combat\Event;
 
 use App\GameElement\Combat\CombatOpponentInterface;
 
-class CombatOffensiveStatsCalculateEvent extends CombatCalculateStatsEvent
+readonly class AttackEvent
 {
     public function __construct(
-        private readonly CombatOpponentInterface $attacker,
-        private readonly CombatOpponentInterface $defender,
-    )
-    {
-        parent::__construct();
-    }
+        protected CombatOpponentInterface $attacker,
+        protected CombatOpponentInterface $defender,
+    ){}
 
     public function getAttacker(): CombatOpponentInterface
     {
