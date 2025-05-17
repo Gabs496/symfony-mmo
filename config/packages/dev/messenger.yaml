@@ -1,0 +1,7 @@
+framework:
+  messenger:
+    transports:
+      sync: 'sync://'
+    routing:
+#      App\GameElement\Reward\RewardApply: sync
+#      App\GameElement\Activity\Message\ActivityTimeout: sync
