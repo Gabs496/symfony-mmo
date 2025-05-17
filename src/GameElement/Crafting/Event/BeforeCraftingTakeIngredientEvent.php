@@ -14,11 +14,6 @@ class BeforeCraftingTakeIngredientEvent
         private readonly AbstractRecipe           $recipe,
     ){}
 
-    public function getSubjectId(): mixed
-    {
-        return $this->subjectId;
-    }
-
     public function getSubject(): ActivitySubjectInterface
     {
         return $this->subject;

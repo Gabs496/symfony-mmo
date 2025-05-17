@@ -3,6 +3,7 @@
 namespace App\Engine\Player;
 
 use App\Engine\PlayerCharacterManager;
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
@@ -26,7 +27,7 @@ readonly class PlayerCraftingEngine
         }
         $player = $this->playerCharacterRepository->find($subject->getId());
         $recipe = $event->getRecipe();
-        if (!$player instanceof \App\Entity\Data\PlayerCharacter) {
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
 

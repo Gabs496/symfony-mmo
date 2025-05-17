@@ -53,6 +53,8 @@ readonly class PlayerItemEngine
             $itemInstance = $baseBag->extract($itemInstance, $quantity);
         }
         $this->playerCharacterRepository->save($player);
+
+        $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
         return $itemInstance;
     }
 

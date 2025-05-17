@@ -11,18 +11,30 @@ use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
 use App\GameElement\Reward\RewardApply;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
 /** @extends ActivityEngineExtensionInterface<PlayerCharacter,RecipeCraftingEngineExtension> */
-readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionInterface
+readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionInterface, EventSubscriberInterface
 {
     public function __construct(
         private MessageBusInterface $messageBus,
         private EventDispatcherInterface $eventDispatcher,
     )
     {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            BeforeActivityStartEvent::class => [
+                ['beforeActivityStart', 0]
+            ],
+            ActivityEndEvent::class => [
+                ['reward', 0]
+            ]
+        ];
     }
 
     public static function getId(): string
@@ -35,7 +47,6 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
      * @psalm-param   AbstractRecipe $directObject
      * @throws Throwable
      */
-    #[AsEventListener(BeforeActivityStartEvent::class)]
     public  function beforeActivityStart(BeforeActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
@@ -51,8 +62,7 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
         $activity->setDuration($activity->getRecipe()->getCraftingTime());
     }
 
-    #[AsEventListener(ActivityEndEvent::class)]
-    public function onActivityEnd(ActivityEndEvent $event): void
+    public function reward(ActivityEndEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof RecipeCraftingActivity) {

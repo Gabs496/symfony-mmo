@@ -3,16 +3,17 @@
 namespace App\Engine\Player;
 
 use App\Engine\PlayerCharacterManager;
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\Repository\Data\ActivityRepository;
 use App\Repository\Data\PlayerCharacterRepository;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
 
-readonly class PlayerActivityEngine
+readonly class PlayerActivityEngine implements EventSubscriberInterface
 {
     public function __construct(
         private HubInterface $hub,
@@ -24,15 +25,26 @@ readonly class PlayerActivityEngine
 
     }
 
-    #[AsEventListener(ActivityStartEvent::class)]
-    public function onPlayerActivityStart(ActivityStartEvent $event): void
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ActivityStartEvent::class => [
+                ['lockPlayer', 0],
+            ],
+            ActivityEndEvent::class => [
+                ['unlockPlayer', 0],
+            ],
+        ];
+    }
+
+    public function lockPlayer(ActivityStartEvent $event): void
     {
         $subject = $event->getSubject();
         if (!$subject instanceof PlayerCharacterManager) {
             return;
         }
         $player = $this->playerCharacterRepository->find($subject->getId());
-        if (!$player instanceof \App\Entity\Data\PlayerCharacter) {
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
 
@@ -47,18 +59,18 @@ readonly class PlayerActivityEngine
         ));
     }
 
-    #[AsEventListener(ActivityEndEvent::class)]
-    public function onPlayerActivityEnd(ActivityEndEvent $event): void
+    public function unlockPlayer(ActivityEndEvent $event): void
     {
         $subject = $event->getSubject();
         if (!$subject instanceof PlayerCharacterManager) {
             return;
         }
         $player = $this->playerCharacterRepository->find($subject->getId());
-        if (!$player instanceof \App\Entity\Data\PlayerCharacter) {
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
         $player->endCurrentActivity();
+        $this->playerCharacterRepository->save($player);
 
         $activityEntity = $this->activityRepository->find($event->getActivity()->getEntityId());
 

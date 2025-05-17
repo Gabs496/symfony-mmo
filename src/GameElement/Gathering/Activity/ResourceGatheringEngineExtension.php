@@ -4,20 +4,39 @@ namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
 use App\GameElement\Activity\Event\ActivityEndEvent;
+use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
+use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
+use App\GameElement\Gathering\Event\ResourceGatheringEvent;
 use App\GameElement\Reward\RewardApply;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface
+readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface, EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageBusInterface $messageBus, private EventDispatcherInterface $eventDispatcher,
     )
     {
     }
 
-    #[AsEventListener(BeforeActivityStartEvent::class)]
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            BeforeActivityStartEvent::class => [
+                ['beforeActivityStart', 0]
+            ],
+            ActivityTimeoutEvent::class => [
+                ['gather', 0]
+            ],
+            ActivityEndEvent::class => [
+                ['reward', 0],
+                ['dispatchEnd', 0]
+            ],
+        ];
+    }
+
     public  function beforeActivityStart(BeforeActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
@@ -29,8 +48,18 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
         $activity->setDuration($resource->getGatheringTime());
     }
 
-    #[AsEventListener(ActivityEndEvent::class)]
-    public function onActivityEnd(ActivityEndEvent $event): void
+    public function gather(ActivityTimeoutEvent $event): void
+    {
+        $timeout = $event->getTimeout();
+        $activity = $timeout->getActivity();
+        if (!$activity instanceof ResourceGatheringActivity) {
+            return;
+        }
+
+        $this->eventDispatcher->dispatch(new ResourceGatheringEvent($activity, $timeout->getSubject()));
+    }
+
+    public function reward(ActivityEndEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
@@ -40,5 +69,15 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
         foreach ($activity->getRewards() as $reward) {
             $this->messageBus->dispatch(new RewardApply($reward, $event->getSubject()));
         }
+    }
+
+    public function dispatchEnd(ActivityEndEvent $event): void
+    {
+        $activity = $event->getActivity();
+        if (!$activity instanceof ResourceGatheringActivity) {
+            return;
+        }
+
+        $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($activity, $event->getSubject()));
     }
 }

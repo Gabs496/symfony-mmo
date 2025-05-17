@@ -7,6 +7,7 @@ use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\ActivitySubjectInterface;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
+use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityDurationNotSetException;
 use App\GameElement\Activity\Message\ActivityTimeout;
@@ -17,6 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
+#[AsMessageHandler(handles: ActivityTimeout::class, method: 'activityTimeout')]
 readonly class ActivityEngine
 {
 
@@ -66,7 +68,6 @@ readonly class ActivityEngine
         return $activity::class;
     }
 
-    #[AsMessageHandler]
     public function activityTimeout(ActivityTimeout $message): void
     {
         $activity = $message->getActivity();
@@ -75,9 +76,12 @@ readonly class ActivityEngine
             return;
         }
 
+        $timeoutEvent = new ActivityTimeoutEvent($message);
+        $this->eventDispatcher->dispatch($timeoutEvent);
+
         $activityEntity->setCompletedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
 
-        $this->eventDispatcher->dispatch(new ActivityEndEvent($activity, $message->getSubjectId()));
+        $this->eventDispatcher->dispatch(new ActivityEndEvent($activity, $message->getSubject()));
     }
 }

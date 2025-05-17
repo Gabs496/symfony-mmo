@@ -24,7 +24,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
     {
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             HealthDecreasedEvent::class => [
