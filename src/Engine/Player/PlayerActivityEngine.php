@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player;
 
-use App\Engine\PlayerCharacter;
+use App\Engine\PlayerCharacterManager;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\Repository\Data\ActivityRepository;
@@ -28,7 +28,7 @@ readonly class PlayerActivityEngine
     public function onPlayerActivityStart(ActivityStartEvent $event): void
     {
         $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
+        if (!$subject instanceof PlayerCharacterManager) {
             return;
         }
         $player = $this->playerCharacterRepository->find($subject->getId());
@@ -51,7 +51,7 @@ readonly class PlayerActivityEngine
     public function onPlayerActivityEnd(ActivityEndEvent $event): void
     {
         $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
+        if (!$subject instanceof PlayerCharacterManager) {
             return;
         }
         $player = $this->playerCharacterRepository->find($subject->getId());

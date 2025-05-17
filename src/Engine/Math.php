@@ -40,4 +40,9 @@ class Math
     {
         return round($a, self::ROUND);
     }
+
+    public static function compare(string $a, string $b): int
+    {
+        return bccomp($a, $b, self::SCALE);
+    }
 }

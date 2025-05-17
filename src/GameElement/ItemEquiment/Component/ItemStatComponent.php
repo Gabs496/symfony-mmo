@@ -10,6 +10,7 @@ class ItemStatComponent extends AbstractGameComponent
         protected array $stats,
     )
     {
+        parent::__construct();
     }
 
     public function getStats(): array

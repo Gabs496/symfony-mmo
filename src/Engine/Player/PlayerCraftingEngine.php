@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player;
 
-use App\Engine\PlayerCharacter;
+use App\Engine\PlayerCharacterManager;
 use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
@@ -21,7 +21,7 @@ readonly class PlayerCraftingEngine
     public function takeIngredient(BeforeCraftingTakeIngredientEvent $event): void
     {
         $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
+        if (!$subject instanceof PlayerCharacterManager) {
             return;
         }
         $player = $this->playerCharacterRepository->find($subject->getId());

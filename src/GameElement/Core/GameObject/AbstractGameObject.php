@@ -2,10 +2,9 @@
 
 namespace App\GameElement\Core\GameObject;
 
-use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
 
-readonly abstract class AbstractGameObject implements GameComponentOwnerInterface
+readonly abstract class AbstractGameObject implements GameObjectInterface
 {
     use GameComponentOwnerTrait;
 

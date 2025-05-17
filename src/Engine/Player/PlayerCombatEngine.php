@@ -2,29 +2,28 @@
 
 namespace App\Engine\Player;
 
+use App\Engine\Combat\CombatSystem;
 use App\Engine\Math;
+use App\Engine\PlayerCharacterManager;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
-use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
 use App\GameElement\Combat\Stats\DefensiveStat;
 use App\GameElement\Combat\Stats\OffensiveStat;
 use App\GameElement\Combat\Stats\PhysicalAttackStat;
+use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
-use App\GameElement\Mob\AbstractMobInstance;
 use App\GameElement\Notification\Engine\NotificationEngine;
-use App\GameElement\Reward\RewardApply;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Twig\Environment;
 
-class PlayerCombatEngine implements EventSubscriberInterface
+readonly class PlayerCombatEngine implements EventSubscriberInterface
 {
     public function __construct(
         protected PlayerCharacterRepository $playerCharacterRepository,
@@ -33,6 +32,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
         protected HubInterface $hub,
         protected Environment $twig,
         protected NotificationEngine $notificationEngine,
+        protected HealthEngine $healthEngine,
     )
     {
     }
@@ -56,7 +56,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
     public function calculateAttack(CombatOffensiveStatsCalculateEvent $event): void
     {
         $attacker = $event->getAttacker();
-        if (!$attacker instanceof \App\Engine\PlayerCharacter) {
+        if (!$attacker instanceof PlayerCharacterManager) {
             return;
         }
 
@@ -73,7 +73,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
     public function calculateDefense(CombatDefensiveStatsCalculateEvent $event): void
     {
         $defender = $event->getDefender();
-        if (!$defender instanceof \App\Engine\PlayerCharacter) {
+        if (!$defender instanceof PlayerCharacterManager) {
             return;
         }
 
@@ -107,9 +107,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
     private function calculateBonusAttack(CombatOffensiveStatsCalculateEvent $event): void
     {
         foreach ($event->getStats()->getStats() as $stat) {
-            $maximimumBonus = Math::mul($stat->getValue(), 0.1);
-            $percentage = bcmul(rand(1, 100), 0.01, 2);
-            $event->increase($stat::class, Math::mul($maximimumBonus, $percentage));
+            $event->increase($stat::class, CombatSystem::getBonusAttack($stat->getValue()));
 
         }
     }
@@ -135,7 +133,7 @@ class PlayerCombatEngine implements EventSubscriberInterface
     public function receiveDamage(CombatDamageInflictedEvent $event): void
     {
         $defender = $event->getDefender();
-        if (!$defender instanceof \App\Engine\PlayerCharacter) {
+        if (!$defender instanceof PlayerCharacterManager) {
            return;
         }
 
@@ -144,25 +142,20 @@ class PlayerCombatEngine implements EventSubscriberInterface
             return;
         }
 
-        $defender->setCurrentHealth(max(Math::sub($defender->getCurrentHealth(), $event->getDamage()), 0.0));
-        $this->playerCharacterRepository->save($defender);
-        $event->setIsDefenderAlive(bccomp($defender->getCurrentHealth(), 0.0, 2) > 0);
-
-        $this->hub->publish(new Update('player_gui_' . $defender->getId(),
-            $this->twig->load('parts/player_health.stream.html.twig')->renderBlock('update', ['player' => $defender]),
-            true
-        ));
+        $health = $defender->getHealthComponent();
+        $this->healthEngine->decreaseCurrentHealth($health, $event->getDamage());
+        $event->setIsDefenderAlive(bccomp($health->getCurrentHealth(), 0.0, 2) > 0);
     }
 
     public function notifyDamage(CombatDamageInflictedEvent $event): void
     {
         $defender = $event->getDefender();
-        if ($defender instanceof \App\Engine\PlayerCharacter) {
+        if ($defender instanceof PlayerCharacterManager) {
             $this->notificationEngine->danger($defender->getId(), 'You have received ' . Math::getStatViewValue($event->getDamage()) . ' damage');
         }
 
         $attacker = $event->getAttacker();
-        if ($attacker instanceof \App\Engine\PlayerCharacter) {
+        if ($attacker instanceof PlayerCharacterManager) {
             $this->notificationEngine->success($attacker->getId(), 'You have inflicted ' . Math::getStatViewValue($event->getDamage()) . ' damage');
         }
     }

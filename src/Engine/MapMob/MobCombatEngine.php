@@ -2,6 +2,7 @@
 
 namespace App\Engine\MapMob;
 
+use App\Engine\Combat\CombatSystem;
 use App\Engine\Math;
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
@@ -83,9 +84,7 @@ readonly class MobCombatEngine implements EventSubscriberInterface
     private function calculateBonusAttack(CombatOffensiveStatsCalculateEvent $event): void
     {
         foreach ($event->getStats()->getStats() as $stat) {
-            $maximimumBonus = Math::mul($stat->getValue(), 0.1);
-            $percentage = bcmul(rand(1, 100), 0.01, 2);
-            $event->increase($stat::class, Math::mul($maximimumBonus, $percentage));
+            $event->increase($stat::class, CombatSystem::getBonusAttack($stat->getValue()));
 
         }
     }

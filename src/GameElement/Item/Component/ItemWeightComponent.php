@@ -10,6 +10,7 @@ class ItemWeightComponent extends AbstractGameComponent
         protected float $weight = 0.0,
     )
     {
+        parent::__construct();
     }
 
     public function getWeight(): float

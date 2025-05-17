@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Engine\Item\ItemActionEngine;
+use App\Engine\PlayerCharacterManager;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
@@ -57,7 +58,7 @@ class MapController extends AbstractController
             return $this->redirectToRoute('app_map');
         }
 
-        $gameActivity->run(new \App\Engine\PlayerCharacter($player->getId()), new ResourceGatheringActivity($spawnedResource->getResource(), $spawnedResource->getId()));
+        $gameActivity->run(new PlayerCharacterManager($player->getId()), new ResourceGatheringActivity($spawnedResource->getResource(), $spawnedResource->getId()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -73,7 +74,7 @@ class MapController extends AbstractController
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->run(new \App\Engine\PlayerCharacter($user->getId()), new RecipeCraftingActivity($recipe));
+        $gameActivity->run(new PlayerCharacterManager($user->getId()), new RecipeCraftingActivity($recipe));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -87,7 +88,7 @@ class MapController extends AbstractController
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $playerCharacter = new \App\Engine\PlayerCharacter($player->getId());
+        $playerCharacter = new PlayerCharacterManager($player->getId());
         $gameActivity->run($playerCharacter, new CombatActivity($playerCharacter, $mapSpawnedMob));
 
         if ($request->headers->get('Turbo-Frame')) {

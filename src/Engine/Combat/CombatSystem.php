@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 class CombatSystem
 {
     protected const float MINIMUM_DAMAGE = 0.01;
+    protected const float MAXIMUM_BONUS_ATTACK_PERCENTAGE = 0.1;
 
     #[AsEventListener(CombatDamageCalculateEvent::class)]
     public function calculateDamage(CombatDamageCalculateEvent $event): void
@@ -29,8 +30,15 @@ class CombatSystem
             }
         }
 
-        if (bccomp($event->getDamage(), 0.0, Math::SCALE) === 0) {
+        if (Math::compare($event->getDamage(), 0.0) === 0) {
             $event->increaseDamage(self::MINIMUM_DAMAGE);
         }
+    }
+
+    public static function getBonusAttack(float $damage): float
+    {
+        $maximumBonusDamage = Math::mul($damage, self::MAXIMUM_BONUS_ATTACK_PERCENTAGE);
+        $randomPercentage = bcmul(rand(1, 100), 0.01, 2);
+        return Math::mul($maximumBonusDamage, $randomPercentage);
     }
 }
