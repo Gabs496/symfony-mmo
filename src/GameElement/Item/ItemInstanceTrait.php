@@ -8,7 +8,6 @@ use RuntimeException;
 trait ItemInstanceTrait
 {
     use GameComponentOwnerTrait;
-
     protected ?AbstractItemPrototype $itemPrototype = null;
     protected int $quantity = 1;
 

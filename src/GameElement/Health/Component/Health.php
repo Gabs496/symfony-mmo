@@ -3,17 +3,14 @@
 namespace App\GameElement\Health\Component;
 
 use App\GameElement\Core\GameComponent\AbstractGameComponent;
-use App\GameElement\Core\GameObject\GameObjectInterface;
 
 class Health extends AbstractGameComponent
 {
     public function __construct(
-        GameObjectInterface $gameObject,
-        protected float $maxHealth,
-        protected float $currentHealth,
+        protected float     $maxHealth,
+        protected float     $currentHealth,
 
     ) {
-        parent::__construct($gameObject);
     }
 
     public function getMaxHealth(): float
@@ -39,5 +36,10 @@ class Health extends AbstractGameComponent
     public function getPercentage(): float
     {
         return round(bcdiv($this->currentHealth, $this->maxHealth, 4), 2);
+    }
+
+    public function isAlive(): bool
+    {
+        return $this->currentHealth > 0.0;
     }
 }

@@ -29,7 +29,8 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
     {
         return [
             BeforeActivityStartEvent::class => [
-                ['beforeActivityStart', 0]
+                ['dispatchTakeIngredient', 0],
+                ['setDuration', 0]
             ],
             ActivityEndEvent::class => [
                 ['reward', 0]
@@ -47,7 +48,7 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
      * @psalm-param   AbstractRecipe $directObject
      * @throws Throwable
      */
-    public  function beforeActivityStart(BeforeActivityStartEvent $event): void
+    public  function dispatchTakeIngredient(BeforeActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof RecipeCraftingActivity) {
@@ -58,6 +59,14 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
         $this->eventDispatcher->dispatch($takeIngredientEvent);
         if (!$takeIngredientEvent->isProcessed()) {
             throw new RuntimeException("Crafting activity not started, ingredient not taken. Must add listener to " . BeforeCraftingTakeIngredientEvent::class . ' and be sure to execute "setProcessed()" after taking the ingredients.');
+        }
+    }
+
+    public function setDuration(BeforeActivityStartEvent $event): void
+    {
+        $activity = $event->getActivity();
+        if (!$activity instanceof RecipeCraftingActivity) {
+            return;
         }
         $activity->setDuration($activity->getRecipe()->getCraftingTime());
     }

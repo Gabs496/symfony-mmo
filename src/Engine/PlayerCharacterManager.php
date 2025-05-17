@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\ActivitySubjectInterface;
 use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Core\GameObject\GameObjectInterface;

@@ -13,11 +13,19 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MapSpawnedMobRepository extends ServiceEntityRepository
 {
-    use SaveEntityTrait;
+    use SaveEntityTrait {
+        save as defaultSave;
+    }
     use RemoveEntityTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MapSpawnedMob::class);
+    }
+
+    public function save(MapSpawnedMob $entity): void
+    {
+        $entity->cloneComponent();
+        $this->defaultSave($entity);
     }
 
     //    /**

@@ -3,31 +3,26 @@
 namespace App\GameElement\Mob;
 
 use App\GameElement\Combat\Stats\OffensiveStat;
+use App\GameElement\Core\GameComponent\AbstractGameComponent;
+use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
+use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\HasHealthComponentInterface;
 
-abstract class AbstractMobInstance
+abstract class AbstractMobInstance implements GameObjectInterface, HasHealthComponentInterface
 {
-    protected float $currentHealth;
-
+    use GameComponentOwnerTrait;
     public function __construct(
         protected AbstractMob $mob,
+        /** @var AbstractGameComponent[] */
+        protected array $components = [],
     )
     {
-        $this->currentHealth = $mob->getMaxHealth();
     }
 
     public function getMob(): AbstractMob
     {
         return $this->mob;
-    }
-
-    public function setCurrentHealth(float $currentHealth): void
-    {
-        $this->currentHealth = $currentHealth;
-    }
-
-    public function getCurrentHealth(): float
-    {
-        return $this->currentHealth;
     }
 
     /** @return OffensiveStat[] */
@@ -41,8 +36,8 @@ abstract class AbstractMobInstance
         return $this->getMob()->getDefensiveStats();
     }
 
-    public function getMaxHealth(): float
+    public function getHealth(): Health
     {
-        return $this->getMob()->getMaxHealth();
+        return $this->getComponent(Health::class);
     }
 }

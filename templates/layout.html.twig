@@ -19,7 +19,7 @@
                 </div>
                 <div class="nav--item w-25">
                     <div id="player_health_{{ app.user.id }}">
-                        {% include 'parts/player_health.stream.html.twig' with {player_id: app.user.id, health: player.healthComponent} %}
+                        {% include 'parts/player_health.stream.html.twig' with {player_id: app.user.id, health: player.health} %}
                     </div>
                 </div>
             </div>

@@ -197,8 +197,8 @@ class PlayerCharacter extends AbstractCharacter implements UserInterface, HasHea
         $this->currentHealth = $currentHealth;
     }
 
-    public function getHealthComponent(): Health
+    public function getHealth(): Health
     {
-        return new Health(new PlayerCharacterManager($this->id),0.5, $this->getCurrentHealth());
+        return new Health(0.5, $this->getCurrentHealth());
     }
 }

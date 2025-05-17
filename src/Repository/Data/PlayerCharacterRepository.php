@@ -12,6 +12,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PlayerCharacterRepository extends ServiceEntityRepository
 {
+    use SaveEntityTrait {
+        save as defaultSave;
+    }
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PlayerCharacter::class);
@@ -20,8 +23,7 @@ class PlayerCharacterRepository extends ServiceEntityRepository
     public function save(PlayerCharacter $entity): void
     {
         $entity->cloneMasterySet();
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
+        $this->defaultSave($entity);
     }
 
     //    /**

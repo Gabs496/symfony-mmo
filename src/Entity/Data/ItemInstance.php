@@ -9,6 +9,7 @@ use App\GameElement\Item\AbstractItemPrototype;
 use App\GameObject\Item\AbstractBaseItemPrototype;
 use App\Repository\Data\ItemInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 
 #[ORM\Entity(repositoryClass: ItemInstanceRepository::class)]
@@ -16,9 +17,7 @@ class ItemInstance extends AbstractItemInstance
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?string $id = null;
+    private string $id;
 
     #[ORM\ManyToOne(targetEntity: ItemBag::class, inversedBy: 'items')]
     protected ?AbstractItemBag $bag = null;
@@ -36,7 +35,12 @@ class ItemInstance extends AbstractItemInstance
     #[GameObjectReference(AbstractBaseItemPrototype::class, objectIdProperty: 'itemPrototypeId')]
     protected ?AbstractItemPrototype $itemPrototype = null;
 
-    public function getId(): ?string
+    public function __construct()
+    {
+        $this->id = Uuid::v7();
+    }
+
+    public function getId(): string
     {
         return $this->id;
     }

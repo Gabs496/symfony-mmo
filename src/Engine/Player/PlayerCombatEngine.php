@@ -142,9 +142,8 @@ readonly class PlayerCombatEngine implements EventSubscriberInterface
             return;
         }
 
-        $health = $defender->getHealthComponent();
-        $this->healthEngine->decreaseCurrentHealth($health, $event->getDamage());
-        $event->setIsDefenderAlive(bccomp($health->getCurrentHealth(), 0.0, 2) > 0);
+        $this->healthEngine->decreaseCurrentHealth($defender, $event->getDamage());
+        $this->playerCharacterRepository->save($defender);
     }
 
     public function notifyDamage(CombatDamageInflictedEvent $event): void

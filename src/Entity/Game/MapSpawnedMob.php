@@ -22,13 +22,13 @@ class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterfa
     private string $id;
 
     #[ORM\Column(length: 50)]
-    private ?string $mapId = null;
+    private ?string $mapId;
 
     #[ORM\Column(length: 50)]
     private string $mobId;
 
-    #[ORM\Column(type: 'float')]
-    protected float $currentHealth = 0.0;
+    #[ORM\Column(type: 'json_document', nullable: false)]
+    protected array $components = [];
 
     #[GameObjectReference(class: AbstractMob::class,objectIdProperty: 'mobId')]
     protected AbstractMob $mob;
@@ -36,16 +36,16 @@ class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterfa
     #[GameObjectReference(class: AbstractBaseMap::class,objectIdProperty: 'mapId')]
     protected AbstractBaseMap $map;
 
-    public function __construct(AbstractBaseMap $map, AbstractMob $mob)
+    public function __construct(AbstractBaseMap $map, AbstractMob $mob, array $components = [])
     {
         $this->id = Uuid::v7();
         $this->map = $map;
         $this->mapId = $map->getId();
         $this->mobId = $mob->getId();
-        parent::__construct($mob);
+        parent::__construct($mob, $components);
     }
 
-    public function getId(): ?string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -67,5 +67,14 @@ class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterfa
         $this->mapId = $mapId;
 
         return $this;
+    }
+
+    public function cloneComponent(): void
+    {
+        $components = $this->getComponents();
+        $this->components = [];
+        foreach ($components as $component) {
+            $this->addComponent(clone $component);
+        }
     }
 }

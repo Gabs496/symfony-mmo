@@ -11,7 +11,6 @@ class ItemConditionComponent extends AbstractGameComponent
         protected ?float $currentCondition = null,
     )
     {
-        parent::__construct();
         $this->currentCondition = $currentCondition ?? $maxCondition;
     }
 

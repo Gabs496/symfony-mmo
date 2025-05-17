@@ -26,10 +26,10 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
     {
         return [
             BeforeActivityStartEvent::class => [
-                ['beforeActivityStart', 0]
+                ['setDuration', 0]
             ],
             ActivityTimeoutEvent::class => [
-                ['gather', 0]
+                ['dispatchGathering', 0]
             ],
             ActivityEndEvent::class => [
                 ['reward', 0],
@@ -38,7 +38,7 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
         ];
     }
 
-    public  function beforeActivityStart(BeforeActivityStartEvent $event): void
+    public  function setDuration(BeforeActivityStartEvent $event): void
     {
         $activity = $event->getActivity();
         if (!$activity instanceof ResourceGatheringActivity) {
@@ -49,7 +49,7 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
         $activity->setDuration($resource->getGatheringTime());
     }
 
-    public function gather(ActivityTimeoutEvent $event): void
+    public function dispatchGathering(ActivityTimeoutEvent $event): void
     {
         $timeout = $event->getTimeout();
         $activity = $timeout->getActivity();

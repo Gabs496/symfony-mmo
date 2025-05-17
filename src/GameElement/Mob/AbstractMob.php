@@ -5,23 +5,32 @@ namespace App\GameElement\Mob;
 use App\GameElement\Combat\Stats\AbstractStat;
 use App\GameElement\Combat\Stats\DefensiveStat;
 use App\GameElement\Combat\Stats\OffensiveStat;
+use App\GameElement\Core\GameComponent\AbstractGameComponent;
 use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Health\Component\Health;
 use App\GameElement\Reward\RewardInterface;
 
 abstract readonly class AbstractMob extends AbstractGameObject
 {
+    /** @var AbstractGameComponent[] */
+    protected array $components;
+
     public function __construct(
         string $id,
         protected string $name,
-        protected float $maxHealth,
+        float $maxHealth,
         protected string $description,
         /** @var AbstractStat[] */
         protected array $combatStats = [],
         /** @var RewardInterface[] */
-        protected array $rewardOnDefeats = []
+        protected array $rewardOnDefeats = [],
+        array $components = [],
     )
     {
-        parent::__construct($id);
+        $components = array_merge($components,[
+            new Health($maxHealth, $maxHealth)
+        ]);
+        parent::__construct($id, $components);
     }
 
     /** @return AbstractStat[] */
@@ -55,11 +64,6 @@ abstract readonly class AbstractMob extends AbstractGameObject
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    public function getMaxHealth(): float
-    {
-        return $this->maxHealth;
     }
 
     public function getIcon(): string

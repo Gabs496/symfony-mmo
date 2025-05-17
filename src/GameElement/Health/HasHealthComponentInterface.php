@@ -6,5 +6,5 @@ use App\GameElement\Health\Component\Health;
 
 interface HasHealthComponentInterface
 {
-    public function getHealthComponent(): Health;
+    public function getHealth(): Health;
 }

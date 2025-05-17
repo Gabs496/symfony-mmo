@@ -3,14 +3,15 @@
 namespace App\Engine\MapMob;
 
 use App\Engine\Combat\CombatSystem;
-use App\Engine\Math;
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\CombatDefensiveStatsCalculateEvent;
 use App\GameElement\Combat\Event\CombatFinishEvent;
 use App\GameElement\Combat\Event\CombatOffensiveStatsCalculateEvent;
+use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
+use App\GameElement\Reward\RewardRecipeInterface;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -19,7 +20,8 @@ readonly class MobCombatEngine implements EventSubscriberInterface
 
     public function __construct(
         protected MapSpawnedMobRepository $mapSpawnedMobRepository,
-        protected RewardEngine $rewardEngine,
+        protected RewardEngine            $rewardEngine,
+        private HealthEngine $healthEngine,
     )
     {
     }
@@ -38,7 +40,6 @@ readonly class MobCombatEngine implements EventSubscriberInterface
             ],
             CombatFinishEvent::class => [
                 ['reward', 0],
-                ['clearMapMobIfDefeated', -1],
             ],
         ];
     }
@@ -108,36 +109,19 @@ readonly class MobCombatEngine implements EventSubscriberInterface
             return;
         }
 
-        $defender->setCurrentHealth(max(Math::sub($defender->getCurrentHealth(), $event->getDamage()), 0.0));
+        $this->healthEngine->decreaseCurrentHealth($defender, $event->getDamage());
         $this->mapSpawnedMobRepository->save($defender);
-        $event->setIsDefenderAlive(bccomp($defender->getCurrentHealth(), 0.0, 2) > 0);
+
+        $attacker = $event->getAttacker();
+        if (!$defender->getHealth()->isAlive() && $attacker instanceof RewardRecipeInterface) {
+           $this->reward($defender, $attacker);
+        }
     }
 
-    public function clearMapMobIfDefeated(CombatFinishEvent $event): void
+    private function reward(MapSpawnedMob $mob, RewardRecipeInterface $recipe): void
     {
-        $loser = $this->mapSpawnedMobRepository->find($event->getLoser());
-        if (!$loser instanceof MapSpawnedMob) {
-            return;
-        }
-
-        $this->mapSpawnedMobRepository->remove($loser);
-    }
-
-    public function reward(CombatFinishEvent $event): void
-    {
-        $loser = $event->getLoser();
-
-        if (!$loser instanceof MapSpawnedMob) {
-            return;
-        }
-
-        $loser = $this->mapSpawnedMobRepository->find($loser->getId());
-        if (!$loser instanceof MapSpawnedMob) {
-            return;
-        }
-
-        foreach ($loser->getMob()->getRewardOnDefeats() as $reward) {
-            $this->rewardEngine->apply(new RewardApply($reward, $event->getWinner()));
+        foreach ($mob->getMob()->getRewardOnDefeats() as $reward) {
+            $this->rewardEngine->apply(new RewardApply($reward, $recipe));
         }
     }
 }

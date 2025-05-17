@@ -39,9 +39,19 @@ class PlayerHealthEngine implements EventSubscriberInterface
 
     public function saveNewHealth(HealthDecreasedEvent $event): void
     {
-        $health = $event->getHealthComponent();
-        $player = $health->getGameObject();
-        if (!$player instanceof PlayerCharacterManager) {
+        $player = $event->getObject();
+        if (!$player instanceof PlayerCharacter) {
+            return;
+        }
+
+        $player->setCurrentHealth($event->getHealth()->getCurrentHealth());
+        $this->playerCharacterRepository->save($player);
+    }
+
+    public function updateHealthBar(HealthDecreasedEvent $event): void
+    {
+        $player = $event->getObject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
 
@@ -50,29 +60,16 @@ class PlayerHealthEngine implements EventSubscriberInterface
             return;
         }
 
-        $player->setCurrentHealth($health->getCurrentHealth());
-        $this->playerCharacterRepository->save($player);
-    }
-
-    public function updateHealthBar(HealthDecreasedEvent $event): void
-    {
-        $health = $event->getHealthComponent();
-        $player = $health->getGameObject();
-        if (!$player instanceof PlayerCharacterManager) {
-            return;
-        }
-
         $this->hub->publish(new Update('player_gui_' . $player->getId(),
-            $this->twig->load('parts/player_health.stream.html.twig')->renderBlock('update', ['player_id' => $player->getId(), 'health' => $health]),
+            $this->twig->load('parts/player_health.stream.html.twig')->renderBlock('update', ['player_id' => $player->getId(), 'health' => $player->getHealth()]),
             true
         ));
     }
 
     public function notifyGameOver(HealthReachedZeroEvent $event): void
     {
-        $health = $event->getHealthComponent();
-        $player = $health->getGameObject();
-        if (!$player instanceof PlayerCharacterManager) {
+        $player = $event->getObject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
 

@@ -2,7 +2,9 @@
 
 namespace App\GameElement\Item;
 
-interface ItemInstanceInterface
+use App\GameElement\Core\GameObject\GameObjectInterface;
+
+interface ItemInstanceInterface extends GameObjectInterface
 {
     public function isInstanceOf(AbstractItemPrototype $item): bool;
 

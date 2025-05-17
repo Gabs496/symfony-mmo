@@ -13,7 +13,6 @@ class ItemEquipmentComponent extends AbstractGameComponent
         array $stats = [],
         float $maxCondition = 0.0,
     ) {
-        parent::__construct();
         $this->itemStatComponent = new ItemStatComponent($stats);
         $this->itemConditionComponent = new ItemConditionComponent($maxCondition);
     }

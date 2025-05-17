@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Core\GameComponent;
 
-abstract class AbstractGameComponent
+interface GameComponentOwnerInterface
 {
+
 }
