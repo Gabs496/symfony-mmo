@@ -14,7 +14,7 @@ use Random\RandomException;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-readonly class MapResourceEngine
+readonly class MapResourceFullfillEngine
 {
     public function __construct(
         private MapSpawnedResourceRepository $mapSpawnedResourceRepository,
