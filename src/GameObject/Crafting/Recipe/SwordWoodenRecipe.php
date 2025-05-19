@@ -2,10 +2,10 @@
 
 namespace App\GameObject\Crafting\Recipe;
 
-use App\Engine\Player\Reward\ItemReward;
 use App\Engine\Player\Reward\MasteryReward;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\RecipeIngredient;
+use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
 use App\GameObject\Mastery\Crafting\SwordCrafting;

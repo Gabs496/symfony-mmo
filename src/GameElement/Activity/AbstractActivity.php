@@ -6,15 +6,24 @@ use DateTimeImmutable;
 
 abstract class AbstractActivity
 {
-    /**
-     * Duration in seconds
-     */
-    private ?float $duration = null;
-    private bool $isCompleted = false;
+    protected ActivitySubjectTokenInterface $subject;
+    /** Duration in seconds */
+    protected ?float $duration = null;
+    protected bool $isCompleted = false;
 
-    private ?DateTimeImmutable $scheduledAt = null;
+    protected ?DateTimeImmutable $scheduledAt = null;
 
     protected string $entityId;
+
+    public function __construct(ActivitySubjectTokenInterface $subject)
+    {
+        $this->subject = $subject;
+    }
+
+    public function getSubject(): ActivitySubjectTokenInterface
+    {
+        return $this->subject;
+    }
 
     public function getEntityId(): string
     {

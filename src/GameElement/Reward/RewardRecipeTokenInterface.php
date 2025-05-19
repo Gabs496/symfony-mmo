@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Reward;
 
-interface RewardRecipeInterface
+interface RewardRecipeTokenInterface
 {
+
 }

@@ -4,7 +4,6 @@ namespace App\GameElement\Activity\Engine;
 
 use App\Entity\Data\Activity;
 use App\GameElement\Activity\AbstractActivity;
-use App\GameElement\Activity\ActivitySubjectInterface;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\ActivityTimeoutEvent;
@@ -12,7 +11,6 @@ use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityDurationNotSetException;
 use App\GameElement\Activity\Message\ActivityTimeout;
 use App\Repository\Data\ActivityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -26,29 +24,28 @@ readonly class ActivityEngine
         private EventDispatcherInterface $eventDispatcher,
         private ActivityRepository $activityRepository,
         private MessageBusInterface $messageBus,
-        private EntityManagerInterface  $entityManager,
     )
     {
     }
 
-    public function run(ActivitySubjectInterface $subject, AbstractActivity $type): void
+    public function run(AbstractActivity $activity): void
     {
-        $this->eventDispatcher->dispatch(new BeforeActivityStartEvent($type, $subject));
+        $this->eventDispatcher->dispatch(new BeforeActivityStartEvent($activity));
 
-        if ($type->getDuration() === null) {
-            throw new ActivityDurationNotSetException($type);
+        if ($activity->getDuration() === null) {
+            throw new ActivityDurationNotSetException($activity);
         }
 
-        $activityEntity = (new Activity(ActivityEngine::getId($type), $type->getDuration()));
+        $activityEntity = (new Activity(ActivityEngine::getId($activity), $activity->getDuration()));
         $this->activityRepository->save($activityEntity);
-        $type->setEntityId($activityEntity->getId());
-        $type->start();
+        $activity->setEntityId($activityEntity->getId());
+        $activity->start();
 
-        $this->eventDispatcher->dispatch(new ActivityStartEvent($type, $subject));
+        $this->eventDispatcher->dispatch(new ActivityStartEvent($activity));
 
         $activityEntity->setStartedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
-        $this->messageBus->dispatch(new ActivityTimeout($type, $subject),[new DelayStamp($this->getMillisecondsDuration($type))]);
+        $this->messageBus->dispatch(new ActivityTimeout($activity),[new DelayStamp($this->getMillisecondsDuration($activity))]);
     }
 
     protected function getMillisecondsDuration(AbstractActivity $activity): int
@@ -76,12 +73,12 @@ readonly class ActivityEngine
             return;
         }
 
-        $timeoutEvent = new ActivityTimeoutEvent($message);
+        $timeoutEvent = new ActivityTimeoutEvent($message->getActivity());
         $this->eventDispatcher->dispatch($timeoutEvent);
 
         $activityEntity->setCompletedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
 
-        $this->eventDispatcher->dispatch(new ActivityEndEvent($activity, $message->getSubject()));
+        $this->eventDispatcher->dispatch(new ActivityEndEvent($activity));
     }
 }

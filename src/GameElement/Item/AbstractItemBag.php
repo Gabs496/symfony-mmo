@@ -5,6 +5,7 @@ namespace App\GameElement\Item;
 use App\GameElement\Item\Component\ItemWeightComponent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
+use Symfony\Component\Uid\Uuid;
 
 abstract class AbstractItemBag
 {
@@ -69,6 +70,7 @@ abstract class AbstractItemBag
             if ($itemInstanceInBag == $itemInstance) {
                 $itemInstanceInBag->setQuantity($itemInstanceInBag->getQuantity() - $quantity);
                 $extracted = clone $itemInstanceInBag;
+                $extracted->setId(Uuid::v7()->toString());
                 $extracted->setQuantity($quantity);
                 if ($itemInstanceInBag->getQuantity() <= 0) {
                     unset($this->items[$key]);

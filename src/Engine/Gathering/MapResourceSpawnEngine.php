@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\MapResource;
+namespace App\Engine\Gathering;
 
 use App\Entity\Game\MapSpawnedResource;
 use App\GameElement\Core\GameObject\GameObjectEngine;
@@ -14,7 +14,7 @@ use Random\RandomException;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-readonly class MapResourceFullfillEngine
+readonly class MapResourceSpawnEngine
 {
     public function __construct(
         private MapSpawnedResourceRepository $mapSpawnedResourceRepository,

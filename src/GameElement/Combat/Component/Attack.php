@@ -2,19 +2,19 @@
 
 namespace App\GameElement\Combat\Component;
 
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Combat\StatCollection;
 
 class Attack
 {
     public function __construct(
-        protected CombatOpponentInterface $attacker,
-        protected StatCollection $statCollection
+        protected readonly CombatOpponentTokenInterface $attacker,
+        protected StatCollection $statCollection,
     )
     {
     }
 
-    public function getAttacker(): CombatOpponentInterface
+    public function getAttacker(): CombatOpponentTokenInterface
     {
         return $this->attacker;
     }
@@ -22,5 +22,10 @@ class Attack
     public function getStatCollection(): StatCollection
     {
         return $this->statCollection;
+    }
+
+    public function setStatCollection(StatCollection $statCollection): void
+    {
+        $this->statCollection = $statCollection;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Engine\Player;
 
+use App\Engine\Gathering\Activity\ResourceGatheringActivity;
 use App\Entity\Game\MapSpawnedResource;
 use App\GameElement\Activity\Engine\ActivityEngine;
-use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\Repository\Game\MapSpawnedResourceRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -36,7 +36,7 @@ readonly class PlayerGatheringEngine implements EventSubscriberInterface
         }
 
         if ($mapSpawnedResource->getQuantity() > 0) {
-            $this->activityEngine->run($event->getSubject(), new ResourceGatheringActivity($activity->getResource(), $mapSpawnedResource->getId()));
+            $this->activityEngine->run(new ResourceGatheringActivity($activity->getSubject(), $activity->getResource(), $mapSpawnedResource->getId()));
         }
     }
 }

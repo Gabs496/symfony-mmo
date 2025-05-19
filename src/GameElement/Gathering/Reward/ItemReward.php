@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Player\Reward;
+namespace App\GameElement\Gathering\Reward;
 
 use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Reward\RewardInterface;

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Combat;
 
-interface CombatOpponentInterface
+interface CombatOpponentTokenInterface
 {
 
 }

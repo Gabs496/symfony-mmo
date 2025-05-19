@@ -2,8 +2,6 @@
 
 namespace App\Engine\Player;
 
-use App\Engine\PlayerCharacterManager;
-use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\Repository\Data\ActivityRepository;
@@ -39,14 +37,11 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function lockPlayer(ActivityStartEvent $event): void
     {
-        $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacterManager) {
+        $token = $event->getActivity()->getSubject();
+        if (!$token instanceof PlayerToken) {
             return;
         }
-        $player = $this->playerCharacterRepository->find($subject->getId());
-        if (!$player instanceof PlayerCharacter) {
-            return;
-        }
+        $player = $this->playerCharacterRepository->find($token->getId());
 
         $activityEntity = $this->activityRepository->find($event->getActivity()->getEntityId());
         $player->startActivity($activityEntity);
@@ -61,14 +56,11 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function unlockPlayer(ActivityEndEvent $event): void
     {
-        $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacterManager) {
+        $token = $event->getActivity()->getSubject();
+        if (!$token instanceof PlayerToken) {
             return;
         }
-        $player = $this->playerCharacterRepository->find($subject->getId());
-        if (!$player instanceof PlayerCharacter) {
-            return;
-        }
+        $player = $this->playerCharacterRepository->find($token->getId());
         $player->endCurrentActivity();
         $this->playerCharacterRepository->save($player);
 

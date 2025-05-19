@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Activity\Event;
 
-readonly class ActivityStartEvent extends AbstractSubjectActivityEvent
+readonly class ActivityStartEvent extends AbstractActivityEvent
 {
 
 }

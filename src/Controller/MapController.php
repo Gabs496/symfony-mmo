@@ -2,21 +2,20 @@
 
 namespace App\Controller;
 
+use App\Engine\Gathering\Activity\ResourceGatheringActivity;
 use App\Engine\Item\ItemActionEngine;
-use App\Engine\PlayerCharacterManager;
+use App\Engine\MapMob\MobToken;
+use App\Engine\Player\PlayerCombatEngine;
+use App\Engine\Player\PlayerToken;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
 use App\Entity\Game\MapSpawnedResource;
 use App\GameElement\Activity\Engine\ActivityEngine;
-use App\GameElement\Combat\Activity\CombatActivity;
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
-use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Map\Engine\MapEngine;
-use App\GameElement\Notification\Engine\NotificationEngine;
-use App\Repository\Game\MapSpawnedResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,18 +46,13 @@ class MapController extends AbstractController
     }
 
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
-    public function startGathering(NotificationEngine $notificationEngine, MapSpawnedResource $spawnedResource, ActivityEngine $gameActivity, MapSpawnedResourceRepository $mapSpawnedResourceRepository, Request $request): Response
+    public function startGathering(MapSpawnedResource $spawnedResource, ActivityEngine $gameActivity, Request $request): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
-        if ($spawnedResource->isEmpty()) {
-            $mapSpawnedResourceRepository->remove($spawnedResource);
-            $notificationEngine->danger($player->getId(), 'Resource is empty');
-            return $this->redirectToRoute('app_map');
-        }
 
-        $gameActivity->run(new PlayerCharacterManager($player->getId()), new ResourceGatheringActivity($spawnedResource->getResource(), $spawnedResource->getId()));
+        $gameActivity->run(new ResourceGatheringActivity(new PlayerToken($player->getId()), $spawnedResource->getResource(), $spawnedResource->getId()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -74,7 +68,7 @@ class MapController extends AbstractController
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->run(new PlayerCharacterManager($user->getId()), new RecipeCraftingActivity($recipe));
+        $gameActivity->run(new RecipeCraftingActivity(new PlayerToken($user->getId()), $recipe));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -84,12 +78,11 @@ class MapController extends AbstractController
     }
 
     #[Route('/mob-fight/{id}', name: 'app_map_mob_fight')]
-    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapSpawnedMob $mapSpawnedMob): Response
+    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapSpawnedMob $mapSpawnedMob, PlayerCombatEngine $combatEngine): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $playerCharacter = new PlayerCharacterManager($player->getId());
-        $gameActivity->run($playerCharacter, new CombatActivity($playerCharacter, $mapSpawnedMob));
+        $gameActivity->run($combatEngine->generateAttackActivity($player, new MobToken($mapSpawnedMob->getId())));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

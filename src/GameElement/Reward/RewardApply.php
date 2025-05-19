@@ -12,8 +12,8 @@ readonly class RewardApply
      * @param T $recipe
      */
     public function __construct(
-        private RewardInterface $reward,
-        private RewardRecipeInterface $recipe,
+        private RewardInterface            $reward,
+        private RewardRecipeTokenInterface $recipe,
     )
     {
     }
@@ -26,7 +26,7 @@ readonly class RewardApply
     /**
      * @return T
      */
-    public function getRecipe(): RewardRecipeInterface
+    public function getRecipe(): RewardRecipeTokenInterface
     {
         return $this->recipe;
     }

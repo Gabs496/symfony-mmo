@@ -2,20 +2,23 @@
 
 namespace App\GameElement\Gathering\Activity;
 
-use App\Engine\Player\Reward\ItemReward;
-use App\Engine\Player\Reward\MasteryReward;
 use App\GameElement\Activity\AbstractActivity;
+use App\GameElement\Activity\ActivitySubjectTokenInterface;
 use App\GameElement\Activity\Activity;
 use App\GameElement\Gathering\AbstractResource;
+use App\GameElement\Gathering\Reward\ItemReward;
 
 #[Activity(id: 'RESOURCE_GATHERING')]
 class ResourceGatheringActivity extends AbstractActivity
 {
     public function __construct(
-        private readonly AbstractResource $resource,
-        private readonly mixed            $resourceInstanceId,
+        ActivitySubjectTokenInterface       $subject,
+        protected readonly AbstractResource $resource,
+        protected readonly mixed            $resourceInstanceId,
     )
     {
+        parent::__construct($subject);
+        $this->duration = $this->resource->getGatheringTime();
     }
 
     public function getResource(): AbstractResource
@@ -31,6 +34,5 @@ class ResourceGatheringActivity extends AbstractActivity
     public function getRewards(): iterable
     {
         yield new ItemReward($this->resource->getRewardItem(), 1);
-        yield new MasteryReward($this->resource->getInvolvedMastery(), 0.01);
     }
 }

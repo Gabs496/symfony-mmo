@@ -3,10 +3,8 @@
 namespace App\Engine\Player;
 
 use App\Engine\Item\ItemInstantiator;
-use App\Engine\Player\Reward\ItemReward;
 use App\Engine\Player\Reward\MasteryReward;
-use App\Engine\PlayerCharacterManager;
-use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
@@ -30,37 +28,31 @@ readonly class PlayerRewardApplyEngine
     public function __invoke(RewardApply $rewardApplication): void
     {
         $recipe = $rewardApplication->getRecipe();
-        if (!$recipe instanceof PlayerCharacter) {
-            if (!$recipe instanceof PlayerCharacterManager) {
-                return;
-            }
-            $recipe = $this->repository->find($recipe->getId());
-        }
-
-        $playerEntity = $this->repository->find($recipe->getId());
-        if (!$playerEntity) {
+        if (!$recipe instanceof PlayerToken) {
             return;
         }
 
+        $recipe = $this->repository->find($recipe->getId());
+
         $reward = $rewardApplication->getReward();
         if ($reward instanceof MasteryReward) {
-            $playerEntity->increaseMasteryExperience($reward->getType(), $reward->getExperience());
-            $this->repository->save($playerEntity);
+            $recipe->increaseMasteryExperience($reward->getType(), $reward->getExperience());
+            $this->repository->save($recipe);
         }
 
         if ($reward instanceof ItemReward) {
             try {
                 /** @var AbstractBaseItemPrototype $item */
                 $item = $reward->getItem();
-                $this->playerEngine->giveItem($playerEntity, $this->instantiator->createFrom($item, $reward->getQuantity()));
+                $this->playerEngine->giveItem($recipe, $this->instantiator->createFrom($item, $reward->getQuantity()));
             } catch (MaxBagSizeReachedException $e) {
-                $this->notificationEngine->danger($playerEntity->getId(), 'Your bag is full, you cannot receive the item.');
+                $this->notificationEngine->danger($recipe->getId(), 'Your bag is full, you cannot receive the item.');
                 return;
             }
         }
 
         if ($reward instanceof RewardNotificationInterface) {
-            $this->notificationEngine->success($playerEntity->getId(), sprintf('+%s %s', $reward->getQuantity(), $reward->getName()));
+            $this->notificationEngine->success($recipe->getId(), sprintf('+%s %s', $reward->getQuantity(), $reward->getName()));
         }
     }
 }

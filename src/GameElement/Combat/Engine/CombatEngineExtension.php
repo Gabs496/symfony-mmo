@@ -4,16 +4,15 @@ namespace App\GameElement\Combat\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityTimeoutEvent;
-use App\GameElement\Activity\Event\BeforeActivityStartEvent;
-use App\GameElement\Combat\Activity\CombatActivity;
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\Activity\AttackActivity;
+use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Combat\Component\Attack;
 use App\GameElement\Combat\Component\Defense;
 use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\CombatDamageCalculateEvent;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
+use App\GameElement\Combat\Event\CombatDamageReceivedEvent;
 use App\GameElement\Combat\Event\DefendEvent;
-use App\GameElement\Combat\StatCollection;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -29,59 +28,37 @@ class CombatEngineExtension implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            BeforeActivityStartEvent::class => [
-                ['calculateRoundDuration', 0]
-            ],
             ActivityTimeoutEvent::class => [
-                ['fight', 0]
+                ['startAttack', 0]
             ],
         ];
     }
 
-    public function calculateRoundDuration(BeforeActivityStartEvent $event): void
+    public function startAttack(ActivityTimeoutEvent $event): void
     {
-        if (!$event->getActivity() instanceof CombatActivity) {
+        $activity = $event->getActivity();
+        if (!$activity instanceof AttackActivity) {
             return;
         }
 
-        //TODO: check if both opponents are alive
+        $attack = $activity->getAttack();
+        $opponent = $activity->getOpponent();
 
-        //TODO: Implement combat round duration calculation
-        $event->getActivity()->setDuration(1.0);
+        $this->attack($attack, $opponent);
     }
 
-    public function fight(ActivityTimeoutEvent $event): void
+    public function attack(Attack $attack, CombatOpponentTokenInterface $defender): void
     {
-        $timeout = $event->getTimeout();
-        $activity = $timeout->getActivity();
-        if (!$activity instanceof CombatActivity) {
-            return;
-        }
-
-        $opponentA = $activity->getFirstOpponent();
-        $opponentB = $activity->getSecondOpponent();
-
-        $this->attack($opponentA, $opponentB);
-        $this->attack($opponentB, $opponentA);
-    }
-
-    public function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender, ?StatCollection $statCollection = null): void
-    {
-        if (!$statCollection) {
-            $this->eventDispatcher->dispatch(new AttackEvent($attacker, $defender));
-            return;
-        }
-
-        $attack = new Attack($attacker, $statCollection);
+        $this->eventDispatcher->dispatch(new AttackEvent($attack, $defender));
         $this->eventDispatcher->dispatch(new DefendEvent($attack, $defender));
     }
 
-    public function defend(Attack $from, CombatOpponentInterface $defender, StatCollection $defenderStat): void
+    public function defend(Attack $from, Defense $defense): void
     {
-        $defense = new Defense($defender, $defenderStat);
         $damageCalculation = new CombatDamageCalculateEvent($from, $defense);
         $this->eventDispatcher->dispatch($damageCalculation);
         $damage = $damageCalculation->getDamage();
         $this->eventDispatcher->dispatch(new CombatDamageInflictedEvent($from, $defense, $damage));
+        $this->eventDispatcher->dispatch(new CombatDamageReceivedEvent($from, $defense, $damage));
     }
 }

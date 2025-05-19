@@ -4,26 +4,28 @@ namespace App\Engine\MapMob;
 
 use App\Engine\Combat\CombatSystem;
 use App\Entity\Game\MapSpawnedMob;
+use App\GameElement\Combat\Component\Attack;
+use App\GameElement\Combat\Component\Defense;
 use App\GameElement\Combat\Engine\CombatEngineExtension;
-use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Health\Engine\HealthEngine;
+use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\GameElement\Reward\Engine\RewardEngine;
-use App\GameElement\Reward\RewardApply;
-use App\GameElement\Reward\RewardRecipeInterface;
 use App\Repository\Game\MapSpawnedMobRepository;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class MobCombatEngine implements EventSubscriberInterface
 {
 
     public function __construct(
-        protected MapSpawnedMobRepository $mapSpawnedMobRepository,
-        protected RewardEngine            $rewardEngine,
-        protected HealthEngine $healthEngine,
-        protected CombatEngineExtension $combatEngine,
+        protected MapSpawnedMobRepository  $mapSpawnedMobRepository,
+        protected RewardEngine             $rewardEngine,
+        protected HealthEngine             $healthEngine,
+        protected CombatEngineExtension    $combatEngine,
+        private EventDispatcherInterface $eventDispatcher,
     )
     {
     }
@@ -31,9 +33,6 @@ readonly class MobCombatEngine implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AttackEvent::class => [
-                ['attack', 0],
-            ],
             DefendEvent::class => [
                 ['defend', 0],
             ],
@@ -43,39 +42,29 @@ readonly class MobCombatEngine implements EventSubscriberInterface
         ];
     }
 
-    public function attack(AttackEvent $event): void
-    {
-        $attacker = $event->getAttacker();
-        if (!$attacker instanceof MapSpawnedMob) {
-            return;
-        }
-
-        $attacker = $this->mapSpawnedMobRepository->find($attacker->getId());
-        if (!$attacker instanceof MapSpawnedMob) {
-            return;
-        }
-
-        $statCollection = new StatCollection();
-        $this->calculateBaseAttack($attacker, $statCollection);
-        $this->calculateBonusAttack($statCollection);
-        $this->combatEngine->attack($attacker, $event->getDefender(), $statCollection);
-    }
-
     public function defend(DefendEvent $event): void
     {
         $defender = $event->getDefender();
-        if (!$defender instanceof MapSpawnedMob) {
+        if (!$defender instanceof MobToken) {
             return;
         }
 
         $defender = $this->mapSpawnedMobRepository->find($defender->getId());
-        if (!$defender instanceof MapSpawnedMob) {
+        if (!$defender) {
             return;
         }
 
         $statCollection = new StatCollection();
         $this->calculateBaseDefense($defender, $statCollection);
-        $this->combatEngine->defend($event->getAttack(), $defender, $statCollection);
+        $defense = new Defense($event->getDefender(), $statCollection);
+        $this->combatEngine->defend($event->getAttack(), $defense);
+
+        $defender = $this->mapSpawnedMobRepository->find($defender->getId());
+        if (!$defender) {
+            return;
+        }
+        $attack = $this->generateAttack($defender);
+        $this->combatEngine->attack($attack, $event->getAttack()->getAttacker());
     }
 
     private function calculateBaseAttack(MapSpawnedMob $attacker, StatCollection $statCollection): void
@@ -103,12 +92,11 @@ readonly class MobCombatEngine implements EventSubscriberInterface
     public function receiveDamage(CombatDamageInflictedEvent $event): void
     {
         $defender = $event->getDefense()->getDefender();
-        if (!$defender instanceof MapSpawnedMob) {
+        if (!$defender instanceof MobToken) {
             return;
         }
-
         $defender = $this->mapSpawnedMobRepository->find($defender->getId());
-        if (!$defender instanceof MapSpawnedMob) {
+        if (!$defender) {
             return;
         }
 
@@ -118,15 +106,15 @@ readonly class MobCombatEngine implements EventSubscriberInterface
         $attacker = $event->getAttack()->getAttacker();
         if (!$defender->getHealth()->isAlive()) {
             $this->mapSpawnedMobRepository->remove($defender);
-            if ($attacker instanceof RewardRecipeInterface) {
-                $this->reward($defender, $attacker);
-            }}
+            $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender->getMob()));
+        }
     }
 
-    private function reward(MapSpawnedMob $mob, RewardRecipeInterface $recipe): void
+    public function generateAttack(MapSpawnedMob $mobInstance): Attack
     {
-        foreach ($mob->getMob()->getRewardOnDefeats() as $reward) {
-            $this->rewardEngine->apply(new RewardApply($reward, $recipe));
-        }
+        $statCollection = new StatCollection();
+        $this->calculateBaseAttack($mobInstance, $statCollection);
+        $this->calculateBonusAttack($statCollection);
+        return new Attack(new MobToken($mobInstance->getId()), $statCollection);
     }
 }

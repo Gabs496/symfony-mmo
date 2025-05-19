@@ -4,11 +4,14 @@ namespace App\Engine\Player;
 
 use App\Engine\Combat\CombatSystem;
 use App\Engine\Math;
-use App\Engine\PlayerCharacterManager;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Combat\Activity\AttackActivity;
+use App\GameElement\Combat\CombatOpponentTokenInterface;
+use App\GameElement\Combat\Component\Attack;
+use App\GameElement\Combat\Component\Defense;
 use App\GameElement\Combat\Engine\CombatEngineExtension;
-use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\CombatDamageInflictedEvent;
+use App\GameElement\Combat\Event\CombatDamageReceivedEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Combat\Stats\DefensiveStat;
@@ -43,57 +46,26 @@ readonly class PlayerCombatEngine implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AttackEvent::class => [
-                ['attack', 0],
-            ],
             DefendEvent::class => [
                 ['defend', 0],
             ],
-            CombatDamageInflictedEvent::class => [
+            CombatDamageReceivedEvent::class => [
                 ['receiveDamage', 0],
-                ['notifyDamage', -1],
+            ],
+            CombatDamageInflictedEvent::class => [
+                ['notifyDamage', 0],
             ],
         ];
-    }
-
-    public function attack(AttackEvent $event): void
-    {
-        $player = $event->getAttacker();
-        if (!$player instanceof PlayerCharacter) {
-            if (!$player instanceof PlayerCharacterManager){
-                return;
-            }
-            $player = $this->playerCharacterRepository->find($player->getId());
-            if (!$player) {
-                return;
-            }
-        }
-
-        $statCollection = new StatCollection();
-        $this->calculateBaseAttack($player, $statCollection);
-        $this->calculateEquipmentAttack($player, $statCollection);
-        $this->calculateBonusAttack($statCollection);
-
-        $this->combatEngine->attack($player, $event->getDefender(), $statCollection);
     }
 
     public function defend(DefendEvent $event): void
     {
         $player = $event->getDefender();
-        if (!$player instanceof PlayerCharacter) {
-            if (!$player instanceof PlayerCharacterManager){
-                return;
-            }
-            $player = $this->playerCharacterRepository->find($player->getId());
-            if (!$player) {
-                return;
-            }
+        if (!$player instanceof PlayerToken) {
+            return;
         }
-
-        $statCollection = new StatCollection();
-        $this->calculateBaseDefense($statCollection);
-        $this->calculateEquipmentDefense($player, $statCollection);
-        $this->combatEngine->defend($event->getAttack(), $event->getDefender(), $statCollection);
+        $player = $this->playerCharacterRepository->find($player->getId());
+        $this->combatEngine->defend($event->getAttack(), $this->generateDefense($player));
     }
 
     private function calculateBaseAttack(PlayerCharacter $attacker, StatCollection $statCollection): void
@@ -140,32 +112,60 @@ readonly class PlayerCombatEngine implements EventSubscriberInterface
         }
     }
 
-    public function receiveDamage(CombatDamageInflictedEvent $event): void
+    public function receiveDamage(CombatDamageReceivedEvent $event): void
     {
         $defender = $event->getDefense()->getDefender();
-        if (!$defender instanceof PlayerCharacterManager) {
+        if (!$defender instanceof PlayerToken) {
            return;
         }
-
         $defender = $this->playerCharacterRepository->find($defender->getId());
-        if (!$defender instanceof PlayerCharacter) {
-            return;
-        }
 
         $this->healthEngine->decreaseCurrentHealth($defender, $event->getDamage()->getValue());
         $this->playerCharacterRepository->save($defender);
+
+        $this->notifyDamage($event);
     }
 
-    public function notifyDamage(CombatDamageInflictedEvent $event): void
+    public function notifyDamage(CombatDamageInflictedEvent|CombatDamageReceivedEvent $event): void
     {
         $defender = $event->getDefense()->getDefender();
-        if ($defender instanceof PlayerCharacter) {
+        if ($defender instanceof PlayerToken && $event instanceof CombatDamageReceivedEvent) {
             $this->notificationEngine->danger($defender->getId(), 'You have received ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
         }
 
         $attacker = $event->getAttack()->getAttacker();
-        if ($attacker instanceof PlayerCharacter) {
+        if ($attacker instanceof PlayerToken && $event instanceof CombatDamageInflictedEvent) {
             $this->notificationEngine->success($attacker->getId(), 'You have inflicted ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
         }
+    }
+
+    public function generateAttackActivity(PlayerCharacter $player, CombatOpponentTokenInterface $opponent): AttackActivity
+    {
+        $statCollection = $this->getAttackStatCollection($player);
+        //TODO: calculate attack duration
+        $activity = new AttackActivity(
+            new PlayerToken($player->getId()),
+            new Attack(new PlayerToken($player->getId()), $statCollection),
+            $opponent
+        );
+        $activity->setDuration(1.0);
+        return $activity;
+    }
+
+    protected function getAttackStatCollection(PlayerCharacter $player): StatCollection
+    {
+        $statCollection = new StatCollection();
+        $this->calculateBaseAttack($player, $statCollection);
+        $this->calculateEquipmentAttack($player, $statCollection);
+        $this->calculateBonusAttack($statCollection);
+        return $statCollection;
+    }
+
+    protected function generateDefense(PlayerCharacter $player): Defense
+    {
+        $statCollection = new StatCollection();
+        $this->calculateBaseDefense($statCollection);
+        $this->calculateEquipmentDefense($player, $statCollection);
+        return new Defense(new PlayerToken($player->getId()), $statCollection);
     }
 }

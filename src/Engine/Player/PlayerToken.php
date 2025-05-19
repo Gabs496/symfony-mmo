@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Engine\Player;
+
+use App\GameElement\Activity\ActivitySubjectTokenInterface;
+use App\GameElement\Combat\CombatOpponentTokenInterface;
+use App\GameElement\Reward\RewardRecipeTokenInterface;
+
+readonly class PlayerToken implements ActivitySubjectTokenInterface, RewardRecipeTokenInterface, CombatOpponentTokenInterface
+{
+    public function __construct(
+        private string $id,
+
+    )
+    {
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+}

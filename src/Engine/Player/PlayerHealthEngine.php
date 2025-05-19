@@ -2,7 +2,6 @@
 
 namespace App\Engine\Player;
 
-use App\Engine\PlayerCharacterManager;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Health\Event\HealthDecreasedEvent;
 use App\GameElement\Health\Event\HealthReachedZeroEvent;
@@ -51,11 +50,6 @@ class PlayerHealthEngine implements EventSubscriberInterface
     public function updateHealthBar(HealthDecreasedEvent $event): void
     {
         $player = $event->getObject();
-        if (!$player instanceof PlayerCharacter) {
-            return;
-        }
-
-        $player = $this->playerCharacterRepository->find($player->getId());
         if (!$player instanceof PlayerCharacter) {
             return;
         }

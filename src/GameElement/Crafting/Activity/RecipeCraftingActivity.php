@@ -4,15 +4,19 @@ namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
+use App\GameElement\Activity\ActivitySubjectTokenInterface;
 use App\GameElement\Crafting\AbstractRecipe;
 
 #[Activity(id: 'RECIPE_CRAFTING')]
 class RecipeCraftingActivity extends AbstractActivity
 {
     public function __construct(
+        ActivitySubjectTokenInterface $subject,
         private readonly AbstractRecipe $recipe,
     )
     {
+        parent::__construct($subject);
+        $this->duration = $this->recipe->getCraftingTime();
     }
 
     public function getRecipe(): AbstractRecipe

@@ -2,6 +2,6 @@
 
 namespace App\GameElement\Activity;
 
-interface ActivitySubjectInterface
+ interface ActivitySubjectTokenInterface
 {
 }

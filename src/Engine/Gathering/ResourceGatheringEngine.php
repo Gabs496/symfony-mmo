@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Engine\MapResource;
+namespace App\Engine\Gathering;
 
+use App\Engine\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Activity\Event\ActivityStartEvent;
-use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Event\ResourceGatheringEvent;
 use App\Repository\Data\ActivityRepository;
 use App\Repository\Game\MapSpawnedResourceRepository;
@@ -23,7 +23,6 @@ readonly class ResourceGatheringEngine implements EventSubscriberInterface
         return [
             ActivityStartEvent::class => [
                 ['lockMapSpawnedResourceActivity'],
-//                ['streamActvityStart'],
             ],
             ResourceGatheringEvent::class => [
                 ['consumeMapSpawnedResourceActivity'],
@@ -43,25 +42,6 @@ readonly class ResourceGatheringEngine implements EventSubscriberInterface
         $mapSpawnedResource->startActivity($activityEntity);
         $this->mapSpawnedResourceRepository->save($mapSpawnedResource);
     }
-
-//    public function streamActvityStart(ActivityStartEvent $event): void
-//    {
-//        $activity = $event->getActivity();
-//        if (!$activity instanceof ResourceGatheringActivity) {
-//            return;
-//        }
-//
-//        $subject = $event->getSubject();
-//        if (!$subject instanceof PlayerCharacter) {
-//            return;
-//        }
-//
-//        $mapSpawnedResource = $this->mapSpawnedResourceRepository->find($activity->getResourceInstanceId());
-//        $this->hub->publish(new Update(['mapAvailableActivities_' . $mapSpawnedResource->getMapId()],
-//            $this->twig->load('map/MapAvailableActivity.stream.html.twig')->renderBlock('update', ['entity' => $mapSpawnedResource, 'id' => $mapSpawnedResource->getId()]),
-//        true
-//        ));
-//    }
 
     public function consumeMapSpawnedResourceActivity(ResourceGatheringEvent $event): void
     {

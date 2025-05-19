@@ -2,18 +2,6 @@
 
 namespace App\GameElement\Activity\Event;
 
-use App\GameElement\Activity\Message\ActivityTimeout;
-
-readonly class ActivityTimeoutEvent
+readonly class ActivityTimeoutEvent extends AbstractActivityEvent
 {
-    public function __construct(
-        private ActivityTimeout $timeout,
-    )
-    {
-    }
-
-    public function getTimeout(): ActivityTimeout
-    {
-        return $this->timeout;
-    }
 }

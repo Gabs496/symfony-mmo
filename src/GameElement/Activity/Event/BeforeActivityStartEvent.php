@@ -3,6 +3,6 @@
 namespace App\GameElement\Activity\Event;
 
 
-readonly class BeforeActivityStartEvent extends AbstractSubjectActivityEvent
+readonly class BeforeActivityStartEvent extends AbstractActivityEvent
 {
 }
