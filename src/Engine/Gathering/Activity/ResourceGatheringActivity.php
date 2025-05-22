@@ -2,7 +2,7 @@
 
 namespace App\Engine\Gathering\Activity;
 
-use App\Engine\Player\Reward\MasteryReward;
+use App\Engine\Reward\MasteryReward;
 
 class ResourceGatheringActivity extends \App\GameElement\Gathering\Activity\ResourceGatheringActivity
 {

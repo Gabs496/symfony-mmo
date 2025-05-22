@@ -4,6 +4,8 @@ namespace App\Engine\Player;
 
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
+use App\GameElement\Activity\Event\BeforeActivityStartEvent;
+use App\GameElement\Notification\Exception\UserNotificationException;
 use App\Repository\Data\ActivityRepository;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -26,6 +28,9 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            BeforeActivityStartEvent::class => [
+                ['checkIfPlayerLocked', 0],
+            ],
             ActivityStartEvent::class => [
                 ['lockPlayer', 0],
             ],
@@ -33,6 +38,18 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
                 ['unlockPlayer', 0],
             ],
         ];
+    }
+
+    public function checkIfPlayerLocked(BeforeActivityStartEvent $event): void
+    {
+        $token = $event->getActivity()->getSubject();
+        if (!$token instanceof PlayerToken) {
+            return;
+        }
+        $player = $this->playerCharacterRepository->find($token->getId());
+        if ($player->getCurrentActivity()) {
+            throw new UserNotificationException($player->getId(), 'You are too busy',);
+        }
     }
 
     public function lockPlayer(ActivityStartEvent $event): void

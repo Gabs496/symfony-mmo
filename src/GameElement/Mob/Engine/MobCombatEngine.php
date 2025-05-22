@@ -5,7 +5,7 @@ namespace App\GameElement\Mob\Engine;
 use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
-use App\GameElement\Reward\RewardRecipeTokenInterface;
+use App\GameElement\Reward\RewardRecipe;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MobCombatEngine implements EventSubscriberInterface
@@ -30,7 +30,7 @@ class MobCombatEngine implements EventSubscriberInterface
     {
         $mob = $event->getDefeatedMob();
         $recipe = $event->getFrom();
-        if (!$recipe instanceof RewardRecipeTokenInterface) {
+        if (!$recipe instanceof RewardRecipe) {
             return;
         }
 

@@ -2,18 +2,11 @@
 
 namespace App\GameElement\Reward;
 
-/**
- * @template T
- */
 readonly class RewardApply
 {
-    /**
-     * @param RewardInterface $reward
-     * @param T $recipe
-     */
     public function __construct(
-        private RewardInterface            $reward,
-        private RewardRecipeTokenInterface $recipe,
+        private RewardInterface $reward,
+        private RewardRecipe    $recipe,
     )
     {
     }
@@ -23,10 +16,7 @@ readonly class RewardApply
         return $this->reward;
     }
 
-    /**
-     * @return T
-     */
-    public function getRecipe(): RewardRecipeTokenInterface
+    public function getRecipe(): RewardRecipe
     {
         return $this->recipe;
     }

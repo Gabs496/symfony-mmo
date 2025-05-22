@@ -1,12 +1,12 @@
 <?php
 
-namespace App\GameElement\Mastery;
+namespace App\Engine\Reward;
 
 use App\Engine\Math;
+use App\GameElement\Mastery\MasteryType;
 use App\GameElement\Reward\RewardInterface;
 use App\GameElement\Reward\RewardNotificationInterface;
 
-//TODO: maybe it could be an implementation concept
 readonly class MasteryReward implements RewardInterface, RewardNotificationInterface
 {
     public function __construct(

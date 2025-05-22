@@ -3,7 +3,8 @@
 namespace App\Engine\Player;
 
 use App\Engine\Item\ItemInstantiator;
-use App\Engine\Player\Reward\MasteryReward;
+use App\Engine\Reward\MasteryReward;
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Notification\Engine\NotificationEngine;
@@ -28,7 +29,11 @@ readonly class PlayerRewardApplyEngine
     public function __invoke(RewardApply $rewardApplication): void
     {
         $recipe = $rewardApplication->getRecipe();
-        if (!$recipe instanceof PlayerToken) {
+        if ($recipe instanceof PlayerToken) {
+            $recipe = $this->repository->find($recipe->getId());
+        }
+
+        if (!$recipe instanceof PlayerCharacter) {
             return;
         }
 
@@ -52,7 +57,7 @@ readonly class PlayerRewardApplyEngine
         }
 
         if ($reward instanceof RewardNotificationInterface) {
-            $this->notificationEngine->success($recipe->getId(), sprintf('+%s %s', $reward->getQuantity(), $reward->getName()));
+            $this->notificationEngine->success($recipe->getId(), sprintf('<span class="fas fa-dumbbell"></span> +%s %s', $reward->getQuantity(), $reward->getName()));
         }
     }
 }

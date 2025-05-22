@@ -2,7 +2,7 @@
 
 namespace App\GameObject\Mob\Animal;
 
-use App\Engine\Player\Reward\MasteryReward;
+use App\Engine\Reward\MasteryReward;
 use App\GameElement\Combat\Stats\PhysicalAttackStat;
 use App\GameElement\Combat\Stats\PhysicalDefenseStat;
 use App\GameElement\Gathering\Reward\ItemReward;

@@ -5,11 +5,13 @@ namespace App\Engine\Player;
 use App\Engine\Combat\CombatSystem;
 use App\Engine\Math;
 use App\Entity\Data\PlayerCharacter;
+use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\Activity\AttackActivity;
 use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
-use App\GameElement\Combat\Event\CombatDamageEvent;
+use App\GameElement\Combat\Event\DamageEvent;
+use App\GameElement\Combat\Event\DefeatEvent;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\Phase\PreCalculatedAttack;
@@ -39,9 +41,12 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
     public static function getSubscribedEvents(): array
     {
         return [
-            CombatDamageEvent::class => [
-                ['damageInflictedEvent', 0]
-            ]
+            DamageEvent::class => [
+                ['notifyDamageInflicted', 0]
+            ],
+            DefeatEvent::class => [
+                ['notifyOpponentDefeat', 0]
+            ],
         ];
     }
 
@@ -93,23 +98,34 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         $this->healthEngine->decreaseCurrentHealth($player, $damage->getValue());
         $this->playerCharacterRepository->save($player);
 
-        $combatDamageEvent = new CombatDamageEvent($attack, $defense, $damage);
+        $combatDamageEvent = new DamageEvent($attack, $defense, $damage);
         $this->damageReceivedEvent($combatDamageEvent);
         $callbackDispatcher->dispatch($combatDamageEvent);
     }
 
-    public function damageReceivedEvent(CombatDamageEvent $event): void
+    public function damageReceivedEvent(DamageEvent $event): void
     {
         /** @var PlayerCharacter $player */
         $player = $event->getDefense()->getDefender();
-        $this->notificationEngine->danger($player->getId(), 'You have received ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
+        $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
     }
 
-    public function damageInflictedEvent(CombatDamageEvent $event): void
+    public function notifyDamageInflicted(DamageEvent $event): void
     {
         /** @var PlayerCharacter $player */
         $player = $event->getAttack()->getAttacker();
-        $this->notificationEngine->success($player->getId(), 'You have inflicted ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
+        $this->notificationEngine->success($player->getId(), '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
+    }
+
+    public function notifyOpponentDefeat(DefeatEvent $event): void
+    {
+        /** @var PlayerCharacter $player */
+        $player = $event->getAttack()->getAttacker();
+
+        $defender = $event->getDefense()->getDefender();
+        if ($defender instanceof MapSpawnedMob) {
+            $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $defender->getMob()->getName());
+        }
     }
 
     private function getAttackStatCollection(PlayerCharacter $player): StatCollection

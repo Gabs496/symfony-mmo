@@ -7,13 +7,12 @@ use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class CombatDamageCalculateEvent extends Event
+class DamageEvent extends Event
 {
-    protected ?Damage $damage = null;
-
     public function __construct(
-        protected Attack  $attack,
-        protected Defense $defense,
+        private readonly Attack $attack,
+        private readonly Defense $defense,
+        private readonly Damage $damage,
     )
     {
     }
@@ -28,17 +27,8 @@ class CombatDamageCalculateEvent extends Event
         return $this->defense;
     }
 
-    public function getDamage(): ?Damage
+    public function getDamage(): Damage
     {
         return $this->damage;
-    }
-
-    public function increaseDamage(float $variation): self
-    {
-        if (!$this->damage) {
-            $this->damage = new Damage();
-        }
-        $this->damage->setValue($this->damage->getValue() + $variation);
-        return $this;
     }
 }

@@ -5,9 +5,9 @@ namespace App\Engine\Player;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\ActivitySubjectTokenInterface;
 use App\GameElement\Combat\CombatOpponentTokenInterface;
-use App\GameElement\Reward\RewardRecipeTokenInterface;
+use App\GameElement\Reward\RewardRecipe;
 
-readonly class PlayerToken implements ActivitySubjectTokenInterface, RewardRecipeTokenInterface, CombatOpponentTokenInterface
+readonly class PlayerToken implements ActivitySubjectTokenInterface, RewardRecipe, CombatOpponentTokenInterface
 {
     public function __construct(
         private string $id,

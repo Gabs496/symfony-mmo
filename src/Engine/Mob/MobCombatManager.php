@@ -8,7 +8,8 @@ use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
-use App\GameElement\Combat\Event\CombatDamageEvent;
+use App\GameElement\Combat\Event\DamageEvent;
+use App\GameElement\Combat\Event\DefeatEvent;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
@@ -60,12 +61,14 @@ class MobCombatManager implements CombatManagerInterface
         $damage = $this->combatSystem->calculateDamage($attack, $defense);
         $this->receiveDamage($defense, $damage);
 
-        $callbackDispatcher->dispatch(new CombatDamageEvent($attack, $defense, $damage));
+        $callbackDispatcher->dispatch(new DamageEvent($attack, $defense, $damage));
 
         /** @var MapSpawnedMob $defender */
         $defender = $defense->getDefender();
         if (!$defender->getHealth()->isAlive()) {
             $this->mapSpawnedMobRepository->remove($defender);
+            $callbackDispatcher->dispatch(new DefeatEvent($attack, $defense));
+
             $attacker = $attack->getAttacker();
             $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender->getMob()));
             return;

@@ -12,7 +12,7 @@ use App\Repository\Game\MapSpawnedMobRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-readonly class MapMobSpawnEngine
+readonly class MobSpawnEngine
 {
     public function __construct(
         private MapSpawnedMobRepository $mapSpawnedMobRepository,

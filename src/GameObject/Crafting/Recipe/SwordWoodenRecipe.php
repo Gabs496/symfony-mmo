@@ -2,7 +2,7 @@
 
 namespace App\GameObject\Crafting\Recipe;
 
-use App\Engine\Player\Reward\MasteryReward;
+use App\Engine\Reward\MasteryReward;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\RecipeIngredient;
 use App\GameElement\Gathering\Reward\ItemReward;
