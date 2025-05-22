@@ -2,7 +2,7 @@
 <turbo-stream action="append" target="notifications">
     <template>
         <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
-            <span class="badge bg-success">{{ message }}</span>
+            <span class="badge bg-success">{{ message|raw }}</span>
         </div>
     </template>
 </turbo-stream>
@@ -11,7 +11,7 @@
     <turbo-stream action="append" target="notifications">
         <template>
             <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
-                <span class="badge bg-danger">{{ message }}</span>
+                <span class="badge bg-danger">{{ message|raw }}</span>
             </div>
         </template>
     </turbo-stream>
