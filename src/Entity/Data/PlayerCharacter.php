@@ -2,8 +2,10 @@
 
 namespace App\Entity\Data;
 
+use App\Engine\Player\PlayerCombatManager;
 use App\Entity\Security\User;
 use App\GameElement\Character\AbstractCharacter;
+use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\HasHealthComponentInterface;
@@ -21,7 +23,7 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 class PlayerCharacter extends AbstractCharacter
-    implements UserInterface, HasHealthComponentInterface
+    implements UserInterface, HasHealthComponentInterface, CombatOpponentInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -200,5 +202,10 @@ class PlayerCharacter extends AbstractCharacter
     public function getHealth(): Health
     {
         return new Health(0.5, $this->getCurrentHealth());
+    }
+
+    public static function getCombatManagerClass(): string
+    {
+        return PlayerCombatManager::class;
     }
 }

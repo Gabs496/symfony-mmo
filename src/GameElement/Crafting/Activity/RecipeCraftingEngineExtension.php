@@ -10,8 +10,8 @@ use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Throwable;
 

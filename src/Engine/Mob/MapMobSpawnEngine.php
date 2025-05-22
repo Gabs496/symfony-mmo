@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\MapMob;
+namespace App\Engine\Mob;
 
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Core\GameObject\GameObjectEngine;

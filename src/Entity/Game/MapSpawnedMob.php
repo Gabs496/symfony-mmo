@@ -2,6 +2,8 @@
 
 namespace App\Entity\Game;
 
+use App\Engine\Mob\MobCombatManager;
+use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Mob\AbstractMob;
 use App\GameElement\Mob\AbstractMobInstance;
@@ -13,7 +15,7 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapSpawnedMobRepository::class)]
 #[Broadcast(topics: ['@="map_spawned_mobs_" ~ entity.getMapId()'], private: true, template: 'map/spawned_mob_list.stream.html.twig')]
-class MapSpawnedMob extends AbstractMobInstance
+class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
@@ -75,5 +77,10 @@ class MapSpawnedMob extends AbstractMobInstance
         foreach ($components as $component) {
             $this->addComponent(clone $component);
         }
+    }
+
+    public static function getCombatManagerClass(): string
+    {
+        return MobCombatManager::class;
     }
 }

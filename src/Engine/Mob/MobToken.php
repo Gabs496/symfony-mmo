@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Engine\MapMob;
+namespace App\Engine\Mob;
 
+use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\CombatOpponentTokenInterface;
 
 class MobToken implements CombatOpponentTokenInterface
@@ -15,5 +16,10 @@ class MobToken implements CombatOpponentTokenInterface
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getCombatOpponentClass(): string
+    {
+        return MapSpawnedMob::class;
     }
 }

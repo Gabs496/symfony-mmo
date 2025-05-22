@@ -2,6 +2,7 @@
 
 namespace App\Engine\Player;
 
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\ActivitySubjectTokenInterface;
 use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Reward\RewardRecipeTokenInterface;
@@ -18,5 +19,10 @@ readonly class PlayerToken implements ActivitySubjectTokenInterface, RewardRecip
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getCombatOpponentClass(): string
+    {
+        return PlayerCharacter::class;
     }
 }

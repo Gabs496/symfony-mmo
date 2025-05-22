@@ -2,12 +2,12 @@
 
 namespace App\GameElement\Combat\Event;
 
-use App\GameElement\Combat\Component\Attack;
-use App\GameElement\Combat\Component\Damage;
-use App\GameElement\Combat\Component\Defense;
+use App\GameElement\Combat\Phase\Attack;
+use App\GameElement\Combat\Phase\Damage;
+use App\GameElement\Combat\Phase\Defense;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class CombatDamageInflictedEvent extends Event
+class CombatDamageEvent extends Event
 {
     public function __construct(
         private readonly Attack $attack,

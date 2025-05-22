@@ -5,7 +5,7 @@ namespace App\GameElement\Health\Engine;
 use App\GameElement\Health\Event\HealthDecreasedEvent;
 use App\GameElement\Health\Event\HealthReachedZeroEvent;
 use App\GameElement\Health\HasHealthComponentInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class HealthEngine
 {

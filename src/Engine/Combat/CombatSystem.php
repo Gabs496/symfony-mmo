@@ -3,21 +3,22 @@
 namespace App\Engine\Combat;
 
 use App\Engine\Math;
-use App\GameElement\Combat\Event\CombatDamageCalculateEvent;
+use App\GameElement\Combat\Phase\Attack;
+use App\GameElement\Combat\Phase\Damage;
+use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\Stats\PhysicalAttackStat;
 use App\GameElement\Combat\Stats\PhysicalDefenseStat;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 class CombatSystem
 {
     protected const float MINIMUM_DAMAGE = 0.01;
     protected const float MAXIMUM_BONUS_ATTACK_PERCENTAGE = 0.1;
 
-    #[AsEventListener(CombatDamageCalculateEvent::class)]
-    public function calculateDamage(CombatDamageCalculateEvent $event): void
+    public function calculateDamage(Attack $attack, Defense $defense): Damage
     {
-        $offensiveStats = $event->getAttack()->getStatCollection();
-        $defensiveStats = $event->getDefense()->getStatCollection();
+        $offensiveStats = $attack->getStatCollection();
+        $defensiveStats = $defense->getStatCollection();
+        $damage = new Damage();
 
         foreach ($offensiveStats->getStats() as $offensiveStat) {
 
@@ -25,14 +26,16 @@ class CombatSystem
                 $defenseStat = $defensiveStats->getStat(PhysicalDefenseStat::class);
                 $defenseValue = Math::mul($defenseStat->getValue(), 0.1);
                 $physicalDamage = max(Math::sub($offensiveStat->getValue(), $defenseValue), 0.0);
-                $event->increaseDamage($physicalDamage);
+                $damage->increaseValue($physicalDamage);
                 break;
             }
         }
 
-        if (Math::compare($event->getDamage()->getValue(), 0.0) === 0) {
-            $event->increaseDamage(self::MINIMUM_DAMAGE);
+        if (Math::compare($damage->getValue(), 0.0) === 0) {
+            $damage->increaseValue(self::MINIMUM_DAMAGE);
         }
+
+        return $damage;
     }
 
     public static function getBonusAttack(float $damage): float

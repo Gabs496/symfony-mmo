@@ -11,11 +11,11 @@ use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityDurationNotSetException;
 use App\GameElement\Activity\Message\ActivityTimeout;
 use App\Repository\Data\ActivityRepository;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[AsMessageHandler(handles: ActivityTimeout::class, method: 'activityTimeout')]
 readonly class ActivityEngine

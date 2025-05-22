@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\Combat\Component;
+namespace App\GameElement\Combat\Phase;
 
 class Damage
 {
@@ -18,5 +18,10 @@ class Damage
     public function getValue(): float
     {
         return $this->value;
+    }
+
+    public function increaseValue(float $value): void
+    {
+        $this->value += $value;
     }
 }

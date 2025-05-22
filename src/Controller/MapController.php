@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Engine\Gathering\Activity\ResourceGatheringActivity;
 use App\Engine\Item\ItemActionEngine;
-use App\Engine\MapMob\MobToken;
-use App\Engine\Player\PlayerCombatEngine;
+use App\Engine\Mob\MobToken;
+use App\Engine\Player\PlayerCombatManager;
 use App\Engine\Player\PlayerToken;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
@@ -78,7 +78,7 @@ class MapController extends AbstractController
     }
 
     #[Route('/mob-fight/{id}', name: 'app_map_mob_fight')]
-    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapSpawnedMob $mapSpawnedMob, PlayerCombatEngine $combatEngine): Response
+    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapSpawnedMob $mapSpawnedMob, PlayerCombatManager $combatEngine): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();

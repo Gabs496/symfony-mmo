@@ -23,5 +23,9 @@ services:
     Symfony\UX\StimulusBundle\Helper\StimulusHelper:
         alias: 'stimulus.helper'
 
+    _instanceof:
+        App\GameElement\Combat\Engine\CombatManagerInterface:
+            tags: ['combat.manager']
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

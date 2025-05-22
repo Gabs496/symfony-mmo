@@ -1,20 +1,20 @@
 <?php
 
-namespace App\GameElement\Combat\Component;
+namespace App\GameElement\Combat\Phase;
 
-use App\GameElement\Combat\CombatOpponentTokenInterface;
+use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\StatCollection;
 
 class Attack
 {
     public function __construct(
-        protected readonly CombatOpponentTokenInterface $attacker,
+        protected readonly CombatOpponentInterface $attacker,
         protected StatCollection $statCollection,
     )
     {
     }
 
-    public function getAttacker(): CombatOpponentTokenInterface
+    public function getAttacker(): CombatOpponentInterface
     {
         return $this->attacker;
     }
