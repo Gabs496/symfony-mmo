@@ -2,17 +2,16 @@
 
 namespace App\Engine\Player;
 
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
-use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class PlayerCraftingEngine implements EventSubscriberInterface
 {
     public function __construct(
         private PlayerItemEngine $itemEngine,
-        private PlayerCharacterRepository $playerCharacterRepository,
     ){}
 
     public static function getSubscribedEvents(): array
@@ -26,12 +25,11 @@ readonly class PlayerCraftingEngine implements EventSubscriberInterface
 
     public function takeIngredient(BeforeCraftingTakeIngredientEvent $event): void
     {
-        $token = $event->getSubject();
-        if (!$token instanceof PlayerToken) {
+        $player = $event->getSubject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
 
-        $player = $this->playerCharacterRepository->find($token->getId());
         $recipe = $event->getRecipe();
         try {
             foreach ($recipe->getIngredients() as $ingredient) {

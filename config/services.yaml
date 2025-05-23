@@ -26,6 +26,8 @@ services:
     _instanceof:
         App\GameElement\Combat\Engine\CombatManagerInterface:
             tags: ['combat.manager']
+        App\GameElement\Core\Token\TokenExchangerInterface:
+            tags: [ 'token.exchanger' ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

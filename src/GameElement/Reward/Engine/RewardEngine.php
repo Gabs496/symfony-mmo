@@ -15,6 +15,7 @@ class RewardEngine
 
     public function apply(RewardApply $rewardApply): void
     {
+        $rewardApply->clear();
         $this->messageBus->dispatch($rewardApply);
     }
 }

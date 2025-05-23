@@ -5,7 +5,6 @@ namespace App\Engine\Mob;
 use App\Engine\Combat\CombatSystem;
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\CombatOpponentInterface;
-use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
 use App\GameElement\Combat\Event\DamageEvent;
@@ -30,13 +29,6 @@ class MobCombatManager implements CombatManagerInterface
         protected CombatEngine             $combatEngine,
     )
     {
-    }
-
-    /** @param MobToken $token
-     */
-    public function exchangeToken(CombatOpponentTokenInterface $token): CombatOpponentInterface
-    {
-        return $this->mapSpawnedMobRepository->find($token->getId());
     }
 
     /** @param MapSpawnedMob $attacker */

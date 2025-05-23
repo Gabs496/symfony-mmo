@@ -2,11 +2,14 @@
 
 namespace App\GameElement\Activity;
 
+use App\GameElement\Core\Token\TokenInterface;
+use App\GameElement\Core\Token\TokenizableInterface;
 use DateTimeImmutable;
 
 abstract class AbstractActivity
 {
-    protected ActivitySubjectTokenInterface $subject;
+    protected TokenInterface $subjectToken;
+    protected ?TokenizableInterface $subject;
     /** Duration in seconds */
     protected ?float $duration = null;
     protected bool $isCompleted = false;
@@ -15,14 +18,25 @@ abstract class AbstractActivity
 
     protected string $entityId;
 
-    public function __construct(ActivitySubjectTokenInterface $subject)
+    public function __construct(TokenizableInterface $subject)
     {
         $this->subject = $subject;
+        $this->subjectToken = $subject->getToken();
     }
 
-    public function getSubject(): ActivitySubjectTokenInterface
+    public function getSubjectToken(): TokenInterface
+    {
+        return $this->subjectToken;
+    }
+
+    public function getSubject(): TokenizableInterface
     {
         return $this->subject;
+    }
+
+    public function setSubject(?TokenizableInterface $subject): void
+    {
+        $this->subject = $subject;
     }
 
     public function getEntityId(): string

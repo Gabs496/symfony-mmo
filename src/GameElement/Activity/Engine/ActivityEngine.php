@@ -10,6 +10,7 @@ use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityDurationNotSetException;
 use App\GameElement\Activity\Message\ActivityTimeout;
+use App\GameElement\Core\Token\TokenEngine;
 use App\Repository\Data\ActivityRepository;
 use ReflectionClass;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -24,6 +25,7 @@ readonly class ActivityEngine
         private EventDispatcherInterface $eventDispatcher,
         private ActivityRepository $activityRepository,
         private MessageBusInterface $messageBus,
+        protected TokenEngine $tokenEngine,
     )
     {
     }
@@ -45,6 +47,8 @@ readonly class ActivityEngine
 
         $activityEntity->setStartedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
+
+        $activity->setSubject(null);
         $this->messageBus->dispatch(new ActivityTimeout($activity),[new DelayStamp($this->getMillisecondsDuration($activity))]);
     }
 
@@ -68,6 +72,7 @@ readonly class ActivityEngine
     public function activityTimeout(ActivityTimeout $message): void
     {
         $activity = $message->getActivity();
+        $activity->setSubject($this->tokenEngine->exchange($activity->getSubjectToken()));
         $activityEntity = $this->activityRepository->find($activity->getEntityId());
         if (!$activityEntity instanceof Activity) {
             return;

@@ -4,9 +4,7 @@ namespace App\Controller;
 
 use App\Engine\Gathering\Activity\ResourceGatheringActivity;
 use App\Engine\Item\ItemActionEngine;
-use App\Engine\Mob\MobToken;
 use App\Engine\Player\PlayerCombatManager;
-use App\Engine\Player\PlayerToken;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
@@ -52,7 +50,7 @@ class MapController extends AbstractController
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
 
-        $gameActivity->run(new ResourceGatheringActivity(new PlayerToken($player->getId()), $spawnedResource->getResource(), $spawnedResource->getId()));
+        $gameActivity->run(new ResourceGatheringActivity($player, $spawnedResource->getResource(), $spawnedResource->getId()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -68,7 +66,7 @@ class MapController extends AbstractController
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->run(new RecipeCraftingActivity(new PlayerToken($user->getId()), $recipe));
+        $gameActivity->run(new RecipeCraftingActivity($user, $recipe));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -82,7 +80,7 @@ class MapController extends AbstractController
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $gameActivity->run($combatEngine->generateAttackActivity($player, new MobToken($mapSpawnedMob->getId())));
+        $gameActivity->run($combatEngine->generateAttackActivity($player, $mapSpawnedMob));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

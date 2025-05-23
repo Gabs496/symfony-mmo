@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Crafting\Event;
 
-use App\GameElement\Activity\ActivitySubjectTokenInterface;
+use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Crafting\AbstractRecipe;
 
 class BeforeCraftingTakeIngredientEvent
@@ -10,11 +10,11 @@ class BeforeCraftingTakeIngredientEvent
     private bool $processed = false;
 
     public function __construct(
-        private readonly ActivitySubjectTokenInterface $subject,
+        private readonly TokenizableInterface $subject,
         private readonly AbstractRecipe                $recipe,
     ){}
 
-    public function getSubject(): ActivitySubjectTokenInterface
+    public function getSubject(): TokenizableInterface
     {
         return $this->subject;
     }

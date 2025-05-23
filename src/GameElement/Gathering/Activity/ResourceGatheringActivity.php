@@ -3,8 +3,8 @@
 namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
-use App\GameElement\Activity\ActivitySubjectTokenInterface;
 use App\GameElement\Activity\Activity;
+use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Gathering\AbstractResource;
 use App\GameElement\Gathering\Reward\ItemReward;
 
@@ -12,7 +12,7 @@ use App\GameElement\Gathering\Reward\ItemReward;
 class ResourceGatheringActivity extends AbstractActivity
 {
     public function __construct(
-        ActivitySubjectTokenInterface       $subject,
+        TokenizableInterface       $subject,
         protected readonly AbstractResource $resource,
         protected readonly mixed            $resourceInstanceId,
     )

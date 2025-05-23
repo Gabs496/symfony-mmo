@@ -2,12 +2,9 @@
 
 namespace App\Engine\Player;
 
-use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Activity\ActivitySubjectTokenInterface;
-use App\GameElement\Combat\CombatOpponentTokenInterface;
-use App\GameElement\Reward\RewardRecipe;
+use App\GameElement\Core\Token\TokenInterface;
 
-readonly class PlayerToken implements ActivitySubjectTokenInterface, RewardRecipe, CombatOpponentTokenInterface
+readonly class PlayerToken implements TokenInterface
 {
     public function __construct(
         private string $id,
@@ -21,8 +18,8 @@ readonly class PlayerToken implements ActivitySubjectTokenInterface, RewardRecip
         return $this->id;
     }
 
-    public function getCombatOpponentClass(): string
+    public function getExchangerClass(): string
     {
-        return PlayerCharacter::class;
+        return PlayerTokenExchanger::class;
     }
 }

@@ -4,14 +4,14 @@ namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
-use App\GameElement\Activity\ActivitySubjectTokenInterface;
+use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Crafting\AbstractRecipe;
 
 #[Activity(id: 'RECIPE_CRAFTING')]
 class RecipeCraftingActivity extends AbstractActivity
 {
     public function __construct(
-        ActivitySubjectTokenInterface $subject,
+        TokenizableInterface $subject,
         private readonly AbstractRecipe $recipe,
     )
     {

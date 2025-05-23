@@ -6,11 +6,11 @@ use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Combat\Activity\AttackActivity;
 use App\GameElement\Combat\CombatOpponentInterface;
-use App\GameElement\Combat\CombatOpponentTokenInterface;
 use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\Phase\Attack;
-use App\GameElement\Combat\Phase\PreCalculatedAttack;
+use App\GameElement\Combat\StatCollection;
+use App\GameElement\Core\Token\TokenEngine;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -23,6 +23,7 @@ class CombatEngine implements EventSubscriberInterface
     public function __construct(
         protected ActivityEngine           $activityEngine,
         protected EventDispatcherInterface $eventDispatcher,
+        protected TokenEngine $tokenEngine,
         #[AutowireIterator('combat.manager')]
         /** @var iterable<CombatManagerInterface> */
         protected iterable                  $combatManagers,
@@ -46,25 +47,26 @@ class CombatEngine implements EventSubscriberInterface
             return;
         }
 
-        $attackerToken = $activity->getAttacker();
-        $defenderToken = $activity->getOpponent();
+        $attackerToken = $activity->getAttackerToken();
+        $defenderToken = $activity->getDefenderToken();
 
-        $attackManager = $this->getCombatManagerFromToken($attackerToken);
-        $defenderManager = $this->getCombatManagerFromToken($defenderToken);
+        $attacker = $this->tokenEngine->exchange($attackerToken);
+        $defender = $this->tokenEngine->exchange($defenderToken);
 
-        $attacker = $attackManager->exchangeToken($attackerToken);
-        $defender = $defenderManager->exchangeToken($defenderToken);
+        if (!$attacker instanceof CombatOpponentInterface || !$defender instanceof CombatOpponentInterface) {
+            throw new RuntimeException(sprintf("Both %s and %s must implement %s", $attacker::class, $defender::class, CombatOpponentInterface::class));
+        }
 
-        $this->attack($attacker, $defender, $activity->getPreCalculatedAttack());
+        $this->attack($attacker, $defender, $activity->getPreCalculatedStatCollection());
     }
 
-    public function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender, ?PreCalculatedAttack $preCalculatedAttack = null): void
+    public function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
     {
         $attackManager = $this->getCombatManager($attacker::class);
         $defenderManager = $this->getCombatManager($defender::class);
 
-        if ($preCalculatedAttack) {
-            $attack = new Attack($attacker, $preCalculatedAttack->getStatCollection());
+        if ($preCalculatedStatCollection) {
+            $attack = new Attack($attacker, $preCalculatedStatCollection);
         } else {
             $attack = $attackManager->generateAttack($attacker, $defender);
         }
@@ -79,11 +81,6 @@ class CombatEngine implements EventSubscriberInterface
         }
 
         $defenderManager->defend($attack, $defense, $callbackDispatcher);
-    }
-
-    protected function getCombatManagerFromToken(CombatOpponentTokenInterface $token): CombatManagerInterface
-    {
-        return $this->getCombatManager($token->getCombatOpponentClass());
     }
 
     /** @param class-string<CombatOpponentInterface> $combatOpponentClass */

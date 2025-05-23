@@ -2,10 +2,9 @@
 
 namespace App\Engine\Mob;
 
-use App\Entity\Game\MapSpawnedMob;
-use App\GameElement\Combat\CombatOpponentTokenInterface;
+use App\GameElement\Core\Token\TokenInterface;
 
-class MobToken implements CombatOpponentTokenInterface
+class MobToken implements TokenInterface
 {
     public function __construct(
         protected string $id,
@@ -18,8 +17,8 @@ class MobToken implements CombatOpponentTokenInterface
         return $this->id;
     }
 
-    public function getCombatOpponentClass(): string
+    public function getExchangerClass(): string
     {
-        return MapSpawnedMob::class;
+        return MobTokenExchanger::class;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Engine\Player;
 
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
@@ -42,11 +43,10 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function checkIfPlayerLocked(BeforeActivityStartEvent $event): void
     {
-        $token = $event->getActivity()->getSubject();
-        if (!$token instanceof PlayerToken) {
+        $player = $event->getActivity()->getSubject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
-        $player = $this->playerCharacterRepository->find($token->getId());
         if ($player->getCurrentActivity()) {
             throw new UserNotificationException($player->getId(), 'You are too busy',);
         }
@@ -54,11 +54,10 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function lockPlayer(ActivityStartEvent $event): void
     {
-        $token = $event->getActivity()->getSubject();
-        if (!$token instanceof PlayerToken) {
+        $player = $event->getActivity()->getSubject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
-        $player = $this->playerCharacterRepository->find($token->getId());
 
         $activityEntity = $this->activityRepository->find($event->getActivity()->getEntityId());
         $player->startActivity($activityEntity);
@@ -73,11 +72,11 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function unlockPlayer(ActivityEndEvent $event): void
     {
-        $token = $event->getActivity()->getSubject();
-        if (!$token instanceof PlayerToken) {
+        $player = $event->getActivity()->getSubject();
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
-        $player = $this->playerCharacterRepository->find($token->getId());
+
         $player->endCurrentActivity();
         $this->playerCharacterRepository->save($player);
 

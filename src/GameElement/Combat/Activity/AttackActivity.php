@@ -4,35 +4,35 @@ namespace App\GameElement\Combat\Activity;
 
 use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
-use App\GameElement\Activity\ActivitySubjectTokenInterface;
-use App\GameElement\Combat\CombatOpponentTokenInterface;
-use App\GameElement\Combat\Phase\PreCalculatedAttack;
+use App\GameElement\Combat\StatCollection;
+use App\GameElement\Core\Token\TokenInterface;
+use App\GameElement\Core\Token\TokenizableInterface;
 
 #[Activity(id: 'COMBAT')]
 class AttackActivity extends AbstractActivity
 {
     public function __construct(
-        ActivitySubjectTokenInterface                 $subject,
-        private readonly CombatOpponentTokenInterface $attacker,
-        private readonly CombatOpponentTokenInterface $opponent,
-        private readonly ?PreCalculatedAttack         $preCalculatedAttack = null,
+        TokenizableInterface                          $subject,
+        private readonly TokenInterface               $attackerToken,
+        private readonly TokenInterface               $defenderToken,
+        private readonly ?StatCollection $preCalculatedStatCollection = null,
     )
     {
         parent::__construct($subject);
     }
 
-    public function getAttacker(): CombatOpponentTokenInterface
+    public function getAttackerToken(): TokenInterface
     {
-        return $this->attacker;
+        return $this->attackerToken;
     }
 
-    public function getPreCalculatedAttack(): PreCalculatedAttack
+    public function getPreCalculatedStatCollection(): ?StatCollection
     {
-        return $this->preCalculatedAttack;
+        return $this->preCalculatedStatCollection;
     }
 
-    public function getOpponent(): CombatOpponentTokenInterface
+    public function getDefenderToken(): TokenInterface
     {
-        return $this->opponent;
+        return $this->defenderToken;
     }
 }

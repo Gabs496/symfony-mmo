@@ -3,10 +3,12 @@
 namespace App\Entity\Data;
 
 use App\Engine\Player\PlayerCombatManager;
+use App\Engine\Player\PlayerToken;
 use App\Entity\Security\User;
 use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
+use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\HasHealthComponentInterface;
 use App\GameElement\Map\AbstractMap;
@@ -24,7 +26,7 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 class PlayerCharacter extends AbstractCharacter
-    implements UserInterface, HasHealthComponentInterface, CombatOpponentInterface, RewardRecipe
+    implements UserInterface, TokenizableInterface, HasHealthComponentInterface, CombatOpponentInterface, RewardRecipe
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -208,5 +210,10 @@ class PlayerCharacter extends AbstractCharacter
     public static function getCombatManagerClass(): string
     {
         return PlayerCombatManager::class;
+    }
+
+    public function getToken(): PlayerToken
+    {
+        return new PlayerToken($this->id);
     }
 }
