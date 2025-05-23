@@ -53,6 +53,7 @@ class ItemActionEngine
         match ($action::class) {
             Equip::class => $this->handleEquip($event),
             Unequip::class => $this->handleUnequip($event),
+            Drop::class => $this->handleDrop($event),
             default => throw new RuntimeException(sprintf('Not supported action (%s)', $action::class))
         };
 
@@ -90,6 +91,20 @@ class ItemActionEngine
                 throw new RuntimeException('Invalid item type for unequip action');
             }
             $this->playerItemEngine->unequip($itemInstance, $target);
+        }
+    }
+
+    protected function handleDrop(ItemActionPerformedEvent $event): void
+    {
+        if (count($event->getTargets()) !== 1) {
+            throw new RuntimeException('Invalid number of targets for drop action');
+        }
+
+        $target = array_values($event->getTargets())[0];
+
+        if ($target instanceof PlayerCharacter) {
+            $itemInstance = $event->getItemInstance();
+            $this->playerItemEngine->takeItem($target, $itemInstance, $itemInstance->getQuantity());
         }
     }
 }

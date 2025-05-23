@@ -2,8 +2,7 @@
 
 namespace App\Engine\Player;
 
-use App\Engine\Player\Event\PlayerBackpackUpdateEvent;
-use App\Engine\Player\Event\PlayerEquipmentUpdateEvent;
+use App\Engine\Player\Event\PlayerItemBagUpdateEvent;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\AbstractItemPrototype;
@@ -41,20 +40,22 @@ readonly class PlayerItemEngine
 
         $this->playerCharacterRepository->save($player);
 
-        $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
+        $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $backPack));
     }
 
     public function takeItem(PlayerCharacter $player, AbstractItemPrototype|ItemInstanceInterface $itemInstance, int $quantity): ItemInstanceInterface
     {
-        $baseBag = $player->getBackpack();
         if ($itemInstance instanceof AbstractItemPrototype) {
-            $itemInstance = $baseBag->findAndExtract($itemInstance, $quantity);
+            $bag = $player->getBackpack();
+            $itemInstance = $bag->findAndExtract($itemInstance, $quantity);
         } else {
-            $itemInstance = $baseBag->extract($itemInstance, $quantity);
+            /** @var ItemInstance $itemInstance */
+            $bag = $itemInstance->getBag();
+            $itemInstance = $bag->extract($itemInstance, $quantity);
         }
         $this->playerCharacterRepository->save($player);
 
-        $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
+        $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $bag));
         return $itemInstance;
     }
 
@@ -74,8 +75,8 @@ readonly class PlayerItemEngine
             $this->notificationEngine->danger($player->getId(), 'Your equipment is full, you cannot equip the item.');
         }
 
-        $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
-        $this->eventDispatcher->dispatch(new PlayerEquipmentUpdateEvent($player->getId()));
+        $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $player->getBackpack()));
+        $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $player->getEquipment()));
     }
 
     public function unequip(ItemInstance $itemInstance, PlayerCharacter $player): void
@@ -89,46 +90,29 @@ readonly class PlayerItemEngine
         $equipment->setBag($player->getBackpack());
         $this->playerCharacterRepository->save($player);
 
-        $this->eventDispatcher->dispatch(new PlayerBackpackUpdateEvent($player->getId()));
-        $this->eventDispatcher->dispatch(new PlayerEquipmentUpdateEvent($player->getId()));
+        $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $player->getBackpack()));
+        $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(),$player->getEquipment()));
     }
 
-    #[AsEventListener(PlayerBackpackUpdateEvent::class)]
-    public function onPlayerBackpackUpdated(PlayerBackpackUpdateEvent $event): void
+    #[AsEventListener(PlayerItemBagUpdateEvent::class)]
+    public function onPlayerItemBagUpdated(PlayerItemBagUpdateEvent $event): void
     {
         $player = $this->playerCharacterRepository->find($event->getPlayerId());
 
         try {
             $this->hub->publish(new Update(
                 'player_gui_' . $player->getId(),
-                $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $player->getBackpack()]),
+                $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $event->getItemBag()]),
                 true
             ));
 
             $this->hub->publish(new Update(
                 'player_gui_' . $player->getId(),
-                $this->twig->render('item_bag/items_update.stream.html.twig', ['bag' => $player->getBackpack()]),
+                $this->twig->render('item_bag/items_update.stream.html.twig', ['bag' => $event->getItemBag()]),
                 true
             ));
         } catch (RuntimeError $twigError) {
             $this->logger->error($twigError->getMessage());
         }
-    }
-
-    #[AsEventListener(PlayerEquipmentUpdateEvent::class)]
-    public function onPlayerEquipmentUpdateEvent(PlayerEquipmentUpdateEvent $event): void
-    {
-        $player = $this->playerCharacterRepository->find($event->getPlayerId());
-        $this->hub->publish(new Update(
-            'player_gui_' . $player->getId(),
-            $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $player->getEquipment()]),
-            true
-        ));
-
-        $this->hub->publish(new Update(
-            'player_gui_' . $player->getId(),
-            $this->twig->render('item_bag/items_update.stream.html.twig', ['bag' => $player->getEquipment()]),
-            true
-        ));
     }
 }
