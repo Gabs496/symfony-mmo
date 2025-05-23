@@ -9,6 +9,7 @@ use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\Phase\Attack;
+use App\GameElement\Combat\Phase\DefenseFinished;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\Token\TokenEngine;
 use RuntimeException;
@@ -75,12 +76,18 @@ class CombatEngine implements EventSubscriberInterface
         $defense = $defenderManager->generateDefense($attack,$defender);
         $this->eventDispatcher->dispatch(new DefendEvent($attack, $defense));
 
-        $callbackDispatcher = new EventDispatcher();
+        $attackerDispatcher = new EventDispatcher();
         if ($attackManager instanceof EventSubscriberInterface) {
-            $callbackDispatcher->addSubscriber($attackManager);
+            $attackerDispatcher->addSubscriber($attackManager);
+        }
+        $defenderDispatcher = new EventDispatcher();
+        if ($defenderManager instanceof EventSubscriberInterface) {
+            $defenderDispatcher->addSubscriber($defenderManager);
         }
 
-        $defenderManager->defend($attack, $defense, $callbackDispatcher);
+        $attackResult = $defenderManager->defend($attack, $defense);
+        $attackerDispatcher->dispatch($attackResult);
+        $defenderDispatcher->dispatch(new DefenseFinished($attack, $defense, $attackResult));
     }
 
     /** @param class-string<CombatOpponentInterface> $combatOpponentClass */

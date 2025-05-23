@@ -9,9 +9,8 @@ use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\Activity\AttackActivity;
 use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
-use App\GameElement\Combat\Event\DamageEvent;
-use App\GameElement\Combat\Event\DefeatEvent;
 use App\GameElement\Combat\Phase\Attack;
+use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Combat\Stats\DefensiveStat;
@@ -24,7 +23,6 @@ use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 readonly class PlayerCombatManager implements CombatManagerInterface, EventSubscriberInterface
 {
@@ -40,11 +38,8 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
     public static function getSubscribedEvents(): array
     {
         return [
-            DamageEvent::class => [
-                ['notifyDamageInflicted', 0]
-            ],
-            DefeatEvent::class => [
-                ['notifyOpponentDefeat', 0]
+            AttackResult::class => [
+                ['handleAttackResult', 0]
             ],
         ];
     }
@@ -79,7 +74,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         return new Defense($defender, $statCollection);
     }
 
-    public function defend(Attack $attack, Defense $defense, EventDispatcherInterface $callbackDispatcher): void
+    public function defend(Attack $attack, Defense $defense): AttackResult
     {
         $damage = $this->combatSystem->calculateDamage($attack, $defense);
 
@@ -88,33 +83,23 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         $this->healthEngine->decreaseCurrentHealth($player, $damage->getValue());
         $this->playerCharacterRepository->save($player);
 
-        $combatDamageEvent = new DamageEvent($attack, $defense, $damage);
-        $this->damageReceivedEvent($combatDamageEvent);
-        $callbackDispatcher->dispatch($combatDamageEvent);
+        $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($damage->getValue()) . ' damage');
+
+        return new AttackResult($attack, $defense, $damage, !$player->getHealth()->isAlive());
     }
 
-    public function damageReceivedEvent(DamageEvent $event): void
+    public function handleAttackResult(AttackResult $attackResult): void
     {
         /** @var PlayerCharacter $player */
-        $player = $event->getDefense()->getDefender();
-        $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
-    }
+        $player = $attackResult->getAttack()->getAttacker();
+        $this->notificationEngine->success($player->getId(), '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($attackResult->getDamage()->getValue()) . ' damage');
 
-    public function notifyDamageInflicted(DamageEvent $event): void
-    {
-        /** @var PlayerCharacter $player */
-        $player = $event->getAttack()->getAttacker();
-        $this->notificationEngine->success($player->getId(), '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($event->getDamage()->getValue()) . ' damage');
-    }
+        $defender = $attackResult->getDefense()->getDefender();
 
-    public function notifyOpponentDefeat(DefeatEvent $event): void
-    {
-        /** @var PlayerCharacter $player */
-        $player = $event->getAttack()->getAttacker();
-
-        $defender = $event->getDefense()->getDefender();
-        if ($defender instanceof MapSpawnedMob) {
-            $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $defender->getMob()->getName());
+        if ($attackResult->isDefeated()) {
+            if ($defender instanceof MapSpawnedMob) {
+                $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $defender->getMob()->getName());
+            }
         }
     }
 

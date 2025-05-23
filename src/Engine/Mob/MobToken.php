@@ -4,7 +4,7 @@ namespace App\Engine\Mob;
 
 use App\GameElement\Core\Token\TokenInterface;
 
-class MobToken implements TokenInterface
+readonly class MobToken implements TokenInterface
 {
     public function __construct(
         protected string $id,

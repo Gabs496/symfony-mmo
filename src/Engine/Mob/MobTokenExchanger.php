@@ -8,7 +8,7 @@ use App\GameElement\Core\Token\TokenExchangerInterface;
 use App\GameElement\Core\Token\TokenInterface;
 use App\Repository\Game\MapSpawnedMobRepository;
 
-class MobTokenExchanger implements TokenExchangerInterface
+readonly class MobTokenExchanger implements TokenExchangerInterface
 {
     public function __construct(
         protected MapSpawnedMobRepository $mobRepository,

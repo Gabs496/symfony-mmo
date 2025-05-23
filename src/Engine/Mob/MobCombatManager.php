@@ -7,18 +7,19 @@ use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\CombatOpponentInterface;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
-use App\GameElement\Combat\Event\DamageEvent;
-use App\GameElement\Combat\Event\DefeatEvent;
 use App\GameElement\Combat\Phase\Attack;
+use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
+use App\GameElement\Combat\Phase\DefenseFinished;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\Repository\Game\MapSpawnedMobRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class MobCombatManager implements CombatManagerInterface
+readonly class MobCombatManager implements CombatManagerInterface, EventSubscriberInterface
 {
 
     public function __construct(
@@ -29,6 +30,15 @@ class MobCombatManager implements CombatManagerInterface
         protected CombatEngine             $combatEngine,
     )
     {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            DefenseFinished::class => [
+                ['counterAttack', 0],
+            ]
+        ];
     }
 
     /** @param MapSpawnedMob $attacker */
@@ -48,30 +58,37 @@ class MobCombatManager implements CombatManagerInterface
         return new Defense($defender, $statCollection);
     }
 
-    public function defend(Attack $attack, Defense $defense, EventDispatcherInterface $callbackDispatcher): void
+    public function defend(Attack $attack, Defense $defense): AttackResult
     {
+
         $damage = $this->combatSystem->calculateDamage($attack, $defense);
         $this->receiveDamage($defense, $damage);
+        $attackResult = new AttackResult($attack, $defense, $damage);
 
-        $callbackDispatcher->dispatch(new DamageEvent($attack, $defense, $damage));
 
         /** @var MapSpawnedMob $defender */
         $defender = $defense->getDefender();
         if (!$defender->getHealth()->isAlive()) {
             $this->mapSpawnedMobRepository->remove($defender);
-            $callbackDispatcher->dispatch(new DefeatEvent($attack, $defense));
-
-            $attacker = $attack->getAttacker();
-            $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender->getMob()));
-            return;
+            $attackResult->setIsDefeated(true);
         }
 
-        $this->counterAttack($attack, $defense);
+        return $attackResult;
     }
 
-    private function counterAttack(Attack $attack, Defense $defense): void
+
+    public function counterAttack(DefenseFinished $defenseFinished): void
     {
-        $this->combatEngine->attack($defense->getDefender(), $attack->getAttacker());
+        /** @var MapSpawnedMob $defender */
+        $defender = $defenseFinished->getDefense()->getDefender();
+        $attacker = $defenseFinished->getAttack()->getAttacker();
+        if ($defenseFinished->getAttackResult()->isDefeated()) {
+            $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender->getMob()));
+        }
+
+        if ($defender->getHealth()->isAlive()) {
+            $this->combatEngine->attack($defender, $attacker);
+        }
     }
 
     private function receiveDamage(Defense $defense, Damage $damage): void
