@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GameElement\MapResource\Engine\Fullfill\Event;
+namespace App\GameElement\MapResource\Engine\Spawn\Event;
 
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\MapResource\MapResourceSpawn;
 
-readonly class MapResourceFullfill
+readonly class MapResourceSpawnAction
 {
     public function __construct(
         private MapResourceSpawn $mapResourceSpawn,

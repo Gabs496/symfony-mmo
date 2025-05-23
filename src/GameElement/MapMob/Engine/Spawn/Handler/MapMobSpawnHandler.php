@@ -1,13 +1,13 @@
 <?php
 
-namespace App\GameElement\MapResource\Engine\Fullfill\Handler;
+namespace App\GameElement\MapMob\Engine\Spawn\Handler;
 
-use App\GameElement\MapResource\Engine\Fullfill\Event\MapResourceFullfill;
+use App\GameElement\MapMob\Engine\Spawn\Event\MapMobSpawnAction;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class MapResourceFullfillHandler
+readonly class MapMobSpawnHandler
 {
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher
@@ -15,7 +15,7 @@ readonly class MapResourceFullfillHandler
     {
     }
 
-    public function __invoke(MapResourceFullfill $message): void
+    public function __invoke(MapMobSpawnAction $message): void
     {
         $this->eventDispatcher->dispatch($message);
     }

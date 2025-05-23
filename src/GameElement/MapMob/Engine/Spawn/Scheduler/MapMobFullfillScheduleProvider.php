@@ -1,17 +1,17 @@
 <?php
 
-namespace App\GameElement\MapResource\Engine\Fullfill\Scheduler;
+namespace App\GameElement\MapMob\Engine\Spawn\Scheduler;
 
 use App\GameElement\Core\GameObject\GameObjectEngine;
-use App\GameElement\MapResource\Engine\Fullfill\Event\MapResourceFullfill;
-use App\GameElement\MapResource\MapWithSpawningResourceInterface;
+use App\GameElement\MapMob\Engine\Spawn\Event\MapMobSpawnAction;
+use App\GameElement\MapMob\MapWithSpawningMobInterface;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 
-#[AsSchedule('game_map_resource_fullfill')]
-class MapResourceFullfillScheduleProvider implements ScheduleProviderInterface
+#[AsSchedule('game_map_mob_fullfill')]
+class MapMobFullfillScheduleProvider implements ScheduleProviderInterface
 {
     private ?Schedule $schedule = null;
 
@@ -31,19 +31,19 @@ class MapResourceFullfillScheduleProvider implements ScheduleProviderInterface
 //        $schedule->stateful(new FilesystemAdapter('game_task_scheduler', 0, $this->kernel->getCacheDir() . "/game_environment_tasks"));
 
         // Tasks
-        $this->scheduleMapResourceFullfill($schedule);
+        $this->scheduleMapMobSpawn($schedule);
 
         $this->schedule = $schedule;
         return $schedule;
     }
 
-    private function scheduleMapResourceFullfill(Schedule $schedule): void
+    private function scheduleMapMobSpawn(Schedule $schedule): void
     {
-        $maps = $this->gameObjectEngine->getByClass(MapWithSpawningResourceInterface::class);
+        $maps = $this->gameObjectEngine->getByClass(MapWithSpawningMobInterface::class);
         foreach ($maps as $map) {
-            $spawningResources = $map->getSpawningResources();
-            foreach ($spawningResources as $spawningResource) {
-                $message = new MapResourceFullfill($spawningResource, $map);
+            $spawningMobs = $map->getSpawningMobs();
+            foreach ($spawningMobs as $spawningMob) {
+                $message = new MapMobSpawnAction($spawningMob, $map);
                 $recurringMessage = RecurringMessage::every('5 seconds', $message);
                 $schedule->add($recurringMessage);
             }

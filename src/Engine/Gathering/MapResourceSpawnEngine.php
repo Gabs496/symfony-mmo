@@ -5,7 +5,7 @@ namespace App\Engine\Gathering;
 use App\Entity\Game\MapSpawnedResource;
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Gathering\AbstractResource;
-use App\GameElement\MapResource\Engine\Fullfill\Event\MapResourceFullfill;
+use App\GameElement\MapResource\Engine\Spawn\Event\MapResourceSpawnAction;
 use App\GameElement\MapResource\MapResourceSpawn;
 use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapSpawnedResourceRepository;
@@ -25,14 +25,11 @@ readonly class MapResourceSpawnEngine
     }
 
     /** TODO: try to create a common engine to manage map fullfill */
-    #[AsEventListener(MapResourceFullfill::class)]
-    public function mapFullfill(MapResourceFullfill $event): void
+    #[AsEventListener(MapResourceSpawnAction::class)]
+    public function spawn(MapResourceSpawnAction $event): void
     {
-        $this->resourceFullfill($event->getMap(), $event->getMapResourceSpawn());
-    }
-
-    public function resourceFullfill(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn): void
-    {
+        $map = $event->getMap();
+        $mapResourceSpawn = $event->getMapResourceSpawn();
 
         if (!$this->hasFreeSpace($map, $mapResourceSpawn)) {
             return;
@@ -46,15 +43,9 @@ readonly class MapResourceSpawnEngine
         }
     }
 
-    private function spawnNewResource(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn, int $resourceQuantity = 0): MapSpawnedResource
+    private function spawnNewResource(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn, int $resourceQuantity = 0): void
     {
         if (!$resourceQuantity) {
-            $freeSpace = $this->getFreeSpace($map, $mapResourceSpawn);
-            if (!$freeSpace) {
-                //TODO: throw specific exception
-                throw new RuntimeException('Map is full of resource ' . $mapResourceSpawn->getResourceId());
-            }
-
             try {
                 $maxResourceQuantity = min(
                     $this->getFreeSpace($map, $mapResourceSpawn),
@@ -75,7 +66,6 @@ readonly class MapResourceSpawnEngine
         ));
         $this->mapSpawnedResourceRepository->save($instance);
 
-        return $instance;
     }
 
     public function hasFreeSpace(AbstractBaseMap $map, MapResourceSpawn $mapResourceSpawn): bool

@@ -4,7 +4,7 @@ namespace App\Engine\Mob;
 
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Core\GameObject\GameObjectEngine;
-use App\GameElement\MapMob\Engine\Fullfill\Event\MapMobFullfill;
+use App\GameElement\MapMob\Engine\Spawn\Event\MapMobSpawnAction;
 use App\GameElement\MapMob\MapMobSpawn;
 use App\GameElement\Mob\AbstractMob;
 use App\GameObject\Map\AbstractBaseMap;
@@ -21,32 +21,23 @@ readonly class MobSpawnEngine
     {
 
     }
-    #[AsEventListener(MapMobFullfill::class)]
-    public function mapFullfill(MapMobFullfill $event): void
+    #[AsEventListener(MapMobSpawnAction::class)]
+    public function spawn(MapMobSpawnAction $event): void
     {
-        $this->mobFullfill($event->getMap(), $event->getMapMobSpawn());
-    }
-
-    private function mobFullfill(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): void
-    {
-
-        if (!$this->hasFreeSpace($map, $mapMobSpawn)) {
+        $map = $event->getMap();
+        $mob = $event->getMapMobSpawn();
+        if (!$this->hasFreeSpace($map, $mob)) {
             return;
         }
 
         $randomNumber = bcdiv(random_int(0, 1000000000), 1000000000, 9);
-        if (bccomp($randomNumber, $mapMobSpawn->getSpawnRate(), 9) !== 1) {
-            $this->spawnNewMob($map, $mapMobSpawn);
+        if (bccomp($randomNumber, $mob->getSpawnRate(), 9) !== 1) {
+            $this->spawnNewMob($map, $mob);
         }
     }
 
     private function spawnNewMob(AbstractBaseMap $map, MapMobSpawn $mapMobSpawn): void
     {
-        $freeSpace = $this->getFreeSpace($map, $mapMobSpawn);
-        if (!$freeSpace) {
-            return;
-        }
-
         /** @var AbstractMob $mob */
         $mob = $this->gameObjectEngine->get($mapMobSpawn->getMobId());
         $instance = (new MapSpawnedMob($map, $mob, $mob->getComponents()));

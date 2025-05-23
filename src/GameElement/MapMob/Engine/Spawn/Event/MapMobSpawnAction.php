@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GameElement\MapMob\Engine\Fullfill\Event;
+namespace App\GameElement\MapMob\Engine\Spawn\Event;
 
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\MapMob\MapMobSpawn;
 
-readonly class MapMobFullfill
+readonly class MapMobSpawnAction
 {
     public function __construct(
         private MapMobSpawn $mapMobSpawn,
