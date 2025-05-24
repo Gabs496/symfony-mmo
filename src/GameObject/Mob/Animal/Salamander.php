@@ -24,7 +24,7 @@ readonly class Salamander extends AbstractBaseAnimalMob
                 new PhysicalDefenseStat(0.0),
                 new PhysicalAttackStat(0.01),
             ],
-            rewardOnDefeats: [
+            onDefeats: [
                 new MasteryReward(new PhysicalAttack(), 0.01),
             ]
         );

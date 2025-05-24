@@ -4,15 +4,17 @@ namespace App\GameElement\Gathering\Reward;
 
 use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Reward\RewardInterface;
-use App\GameElement\Reward\RewardNotificationInterface;
 
-readonly class ItemReward implements RewardInterface, RewardNotificationInterface
+readonly class ItemReward implements RewardInterface
 {
+    private \ArrayObject $attributes;
     public function __construct(
         private AbstractItemPrototype $item,
-        private int                   $quantity = 1
+        private int                   $quantity = 1,
+        array                 $attributes = []
     )
     {
+        $this->attributes = new \ArrayObject($attributes);
     }
 
     public function getItem(): AbstractItemPrototype
@@ -28,5 +30,10 @@ readonly class ItemReward implements RewardInterface, RewardNotificationInterfac
     public function getName(): string
     {
         return $this->item->getName();
+    }
+
+    public function getAttributes(): \ArrayObject
+    {
+        return $this->attributes;
     }
 }

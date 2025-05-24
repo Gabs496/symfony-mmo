@@ -34,7 +34,7 @@ class MobCombatEngine implements EventSubscriberInterface
             return;
         }
 
-        foreach ($mob->getRewardOnDefeats() as $reward) {
+        foreach ($mob->getOnDefeats() as $reward) {
             $this->rewardEngine->apply(new RewardApply($reward, $recipe));
         }
     }

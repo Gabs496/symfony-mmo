@@ -16,15 +16,15 @@ abstract readonly class AbstractMob extends AbstractGameObject
     protected array $components;
 
     public function __construct(
-        string $id,
+        string           $id,
         protected string $name,
-        float $maxHealth,
+        float            $maxHealth,
         protected string $description,
         /** @var AbstractStat[] */
-        protected array $combatStats = [],
+        protected array  $combatStats = [],
         /** @var RewardInterface[] */
-        protected array $rewardOnDefeats = [],
-        array $components = [],
+        protected array  $onDefeats = [],
+        array            $components = [],
     )
     {
         $components = array_merge($components,[
@@ -39,10 +39,9 @@ abstract readonly class AbstractMob extends AbstractGameObject
         return $this->combatStats;
     }
 
-    /** @return RewardInterface[] */
-    public function getRewardOnDefeats(): array
+    public function getOnDefeats(): array
     {
-        return $this->rewardOnDefeats;
+        return $this->onDefeats;
     }
 
     /** @return OffensiveStat[] */

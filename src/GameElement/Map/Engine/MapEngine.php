@@ -15,6 +15,7 @@ readonly class MapEngine
     {
     }
 
+    //TODO: move to implementation
     public function getSpawnedResources(AbstractMap $map)
     {
         return $this->mapSpawnedResourceRepository->findBy(['mapId' => $map->getId()]);

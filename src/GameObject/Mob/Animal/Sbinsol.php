@@ -5,6 +5,7 @@ namespace App\GameObject\Mob\Animal;
 use App\Engine\Reward\MasteryReward;
 use App\GameElement\Combat\Stats\PhysicalAttackStat;
 use App\GameElement\Combat\Stats\PhysicalDefenseStat;
+use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
@@ -29,9 +30,9 @@ readonly class Sbinsol extends AbstractBaseAnimalMob
                 new PhysicalDefenseStat(0.02),
                 new PhysicalAttackStat(0.01),
             ],
-            rewardOnDefeats: [
+            onDefeats: [
                 new MasteryReward(new PhysicalAttack(), 0.01),
-                new ItemReward(new WoodenSwordPrototype(), 1),
+                new ItemReward(new WoodenSwordPrototype(), 1, [new Drop(0.1)]),
             ]
         );
     }

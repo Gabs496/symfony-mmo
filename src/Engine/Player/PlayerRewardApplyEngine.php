@@ -10,7 +10,6 @@ use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Reward\RewardApply;
-use App\GameElement\Reward\RewardNotificationInterface;
 use App\GameObject\Item\AbstractBaseItemPrototype;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -55,8 +54,6 @@ readonly class PlayerRewardApplyEngine
             }
         }
 
-        if ($reward instanceof RewardNotificationInterface) {
-            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-dumbbell"></span> +%s %s', $reward->getQuantity(), $reward->getName()));
-        }
+        $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-dumbbell"></span> +%s %s', $reward->getQuantity(), $reward->getName()));
     }
 }
