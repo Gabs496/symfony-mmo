@@ -7,18 +7,18 @@ class MasterySet
     /** @var Mastery[] */
     private array $masteries = [];
 
-    public function increaseMasteryExperience(MasteryType $masteryType, float $experience): static
+    public function increaseMasteryExperience(string $masteryType, float $experience): static
     {
         $mastery = $this->getMastery($masteryType);
         $mastery->increaseExperience($experience);
         return $this;
     }
 
-    public function getMastery(MasteryType $masteryType): Mastery
+    public function getMastery(string $masteryType): Mastery
     {
         //TODO: try to optimize
         foreach ($this->masteries as $mastery) {
-            if ($mastery->getType() === (string)$masteryType) {
+            if ($mastery->getType() === $masteryType) {
                 return $mastery;
             }
         }
@@ -26,7 +26,7 @@ class MasterySet
         return $this->createMastery($masteryType);
     }
 
-    private function createMastery(MasteryType $masteryType): Mastery
+    private function createMastery(string $masteryType): Mastery
     {
         $mastery = new Mastery($masteryType, 0.0);
         $this->addMastery($mastery);

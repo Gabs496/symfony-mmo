@@ -30,6 +30,8 @@ services:
             tags: [ 'token.exchanger' ]
         App\GameElement\Core\GameObject\GameObjectInterface:
             tags: [ 'game.object' ]
+        App\GameElement\Mastery\MasteryType:
+            tags: [ 'mastery.type' ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

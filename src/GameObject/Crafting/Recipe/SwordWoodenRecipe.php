@@ -27,7 +27,7 @@ class SwordWoodenRecipe extends AbstractRecipe
             requirements: [
             ],
             rewards: [
-                new MasteryReward(type: new SwordCrafting(), experience: 0.1),
+                new MasteryReward(masteryId: SwordCrafting::getId(), experience: 0.1),
                 new ItemReward(item: new WoodenSwordPrototype(), quantity: 1),
             ]
         );

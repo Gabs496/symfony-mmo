@@ -6,9 +6,9 @@ use App\GameElement\Mastery\MasteryType;
 
 readonly class Woodcutting extends MasteryType
 {
-    public function __construct()
+    public static function getId(): string
     {
-        parent::__construct('WOODCUTTING');
+        return 'WOODCUTTING';
     }
 
     public static function getName(): string

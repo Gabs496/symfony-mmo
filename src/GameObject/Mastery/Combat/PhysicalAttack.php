@@ -5,9 +5,9 @@ namespace App\GameObject\Mastery\Combat;
 readonly class PhysicalAttack extends BaseCombatMastery
 {
 
-    public function __construct()
+    public static function getId(): string
     {
-        parent::__construct('PHYSICAL_ATTACK');
+        return 'PHYSICAL_ATTACK';
     }
 
     public static function getName(): string

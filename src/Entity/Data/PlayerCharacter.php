@@ -93,7 +93,7 @@ class PlayerCharacter extends AbstractCharacter
         return $this->masterySet->getMastery($masteryType)->getExperience();
     }
 
-    public function increaseMasteryExperience(MasteryType $masteryType, float $experience): static
+    public function increaseMasteryExperience(string $masteryType, float $experience): static
     {
         $this->masterySet->increaseMasteryExperience($masteryType, $experience);
 

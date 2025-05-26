@@ -6,9 +6,9 @@ use App\GameElement\Mastery\MasteryType;
 
 readonly class Mining extends MasteryType
 {
-    public function __construct()
+    public static function getId(): string
     {
-        parent::__construct('MINING');
+        return 'MINING';
     }
 
     public static function getName(): string

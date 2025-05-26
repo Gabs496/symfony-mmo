@@ -6,9 +6,9 @@ use App\GameElement\Mastery\MasteryType;
 
 readonly class SwordCrafting extends MasteryType
 {
-    public function __construct()
+    public static function getId(): string
     {
-        parent::__construct('SWORD_CRAFTING');
+        return 'SWORD_CRAFTING';
     }
 
     public static function getName(): string

@@ -4,7 +4,6 @@ namespace App\GameElement\Gathering;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Item\AbstractItemPrototype;
-use App\GameElement\Mastery\MasteryType;
 
 abstract class AbstractResource extends AbstractGameObject
 {
@@ -12,7 +11,7 @@ abstract class AbstractResource extends AbstractGameObject
         string                                 $id,
         private readonly string                $name,
         private readonly float                 $difficulty,
-        private readonly MasteryType           $involvedMastery,
+        private readonly string           $involvedMastery,
         private readonly AbstractItemPrototype $rewardItem,
         private readonly float                 $gatheringTime,
     )
@@ -35,7 +34,7 @@ abstract class AbstractResource extends AbstractGameObject
         return $this->difficulty;
     }
 
-    public function getInvolvedMastery(): MasteryType
+    public function getInvolvedMastery(): string
     {
         return $this->involvedMastery;
     }

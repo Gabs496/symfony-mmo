@@ -16,7 +16,7 @@ class OreCopper extends AbstractResource
             id: self::ID,
             name: 'Copper Ore',
             difficulty: 0.5,
-            involvedMastery: new Mining(),
+            involvedMastery: Mining::getId(),
             rewardItem: new CopperOrePrototype(),
             gatheringTime: 1.5
         );

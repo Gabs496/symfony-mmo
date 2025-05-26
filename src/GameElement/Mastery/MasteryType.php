@@ -2,18 +2,11 @@
 
 namespace App\GameElement\Mastery;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
-
-abstract readonly class MasteryType implements GameComponentInterface
+abstract readonly class MasteryType
 {
-    public function __construct(
-        protected string $id,
-    )
+    public static function getId(): string
     {
-    }
-    public function getId(): string
-    {
-        return $this->id;
+        return self::class;
     }
 
     public static abstract function getName(): string;

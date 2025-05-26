@@ -3,32 +3,26 @@
 namespace App\Engine\Reward;
 
 use App\Engine\Math;
-use App\GameElement\Mastery\MasteryType;
 use App\GameElement\Reward\RewardInterface;
 
 readonly class MasteryReward implements RewardInterface
 {
     public function __construct(
-        private MasteryType $type,
-        private float       $experience,
-        private array       $attributes = [],
+        private string $masteryId,
+        private float  $experience,
+        private array  $attributes = [],
     )
     {
     }
 
-    public function getType(): MasteryType
+    public function getMasteryId(): string
     {
-        return $this->type;
+        return $this->masteryId;
     }
 
     public function getExperience(): float
     {
         return $this->experience;
-    }
-
-    public function getName(): string
-    {
-        return strtolower($this->type->getName()) . ' experience';
     }
 
     public function getQuantity(): float

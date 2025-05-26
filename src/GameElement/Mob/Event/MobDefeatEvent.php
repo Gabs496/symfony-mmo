@@ -2,13 +2,13 @@
 
 namespace App\GameElement\Mob\Event;
 
-use App\GameElement\Mob\AbstractMob;
+use App\GameElement\Mob\AbstractMobInstance;
 
 readonly class MobDefeatEvent
 {
     public function __construct(
         protected mixed       $from,
-        protected AbstractMob $defeatedMob,
+        protected AbstractMobInstance $defeatedMob,
     )
     {
     }
@@ -18,7 +18,7 @@ readonly class MobDefeatEvent
         return $this->from;
     }
 
-    public function getDefeatedMob(): AbstractMob
+    public function getDefeatedMob(): AbstractMobInstance
     {
         return $this->defeatedMob;
     }

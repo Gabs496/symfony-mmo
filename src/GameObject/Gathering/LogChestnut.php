@@ -16,7 +16,7 @@ class LogChestnut extends AbstractResource
             id: self::ID,
             name: 'Chestnut Log',
             difficulty: 0.5,
-            involvedMastery: new Woodcutting(),
+            involvedMastery: Woodcutting::getId(),
             rewardItem: new ChestnutLogPrototype(),
             gatheringTime: 1.5,
         );

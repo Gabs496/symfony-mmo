@@ -83,7 +83,7 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         $defender = $defenseFinished->getDefense()->getDefender();
         $attacker = $defenseFinished->getAttack()->getAttacker();
         if ($defenseFinished->getAttackResult()->isDefeated()) {
-            $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender->getMob()));
+            $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender));
         }
 
         if ($defender->getHealth()->isAlive()) {

@@ -23,7 +23,7 @@ class Salamander extends AbstractBaseAnimalMob
                 new PhysicalAttackStat(0.01),
             ],
             onDefeats: [
-                new MasteryReward(new PhysicalAttack(), 0.01),
+                new MasteryReward(PhysicalAttack::getId(), 0.01),
             ]
         );
     }
