@@ -4,7 +4,7 @@ namespace App\Engine\Mob;
 
 use App\Engine\Combat\CombatSystem;
 use App\Entity\Game\MapSpawnedMob;
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
 use App\GameElement\Combat\Phase\Attack;
@@ -42,7 +42,7 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
     }
 
     /** @param MapSpawnedMob $attacker */
-    public function generateAttack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender): Attack
+    public function generateAttack(HasCombatComponentInterface $attacker, HasCombatComponentInterface $defender): Attack
     {
         $statCollection = new StatCollection();
         $this->calculateBaseAttack($attacker, $statCollection);
@@ -51,7 +51,7 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
     }
 
     /** @param MapSpawnedMob $defender */
-    public function generateDefense(Attack $attack, CombatOpponentInterface $defender): Defense
+    public function generateDefense(Attack $attack, HasCombatComponentInterface $defender): Defense
     {
         $statCollection = new StatCollection();
         $this->calculateBaseDefense($defender, $statCollection);

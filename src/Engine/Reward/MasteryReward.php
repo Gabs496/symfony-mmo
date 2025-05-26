@@ -5,19 +5,15 @@ namespace App\Engine\Reward;
 use App\Engine\Math;
 use App\GameElement\Mastery\MasteryType;
 use App\GameElement\Reward\RewardInterface;
-use ArrayObject;
 
 readonly class MasteryReward implements RewardInterface
 {
-    private \ArrayObject $attributes;
-
     public function __construct(
         private MasteryType $type,
         private float       $experience,
-        array       $attributes = [],
+        private array       $attributes = [],
     )
     {
-        $this->attributes = new ArrayObject($attributes);
     }
 
     public function getType(): MasteryType
@@ -40,7 +36,7 @@ readonly class MasteryReward implements RewardInterface
         return Math::getStatViewValue($this->experience);
     }
 
-    public function getAttributes(): \ArrayObject
+    public function getAttributes(): array
     {
         return $this->attributes;
     }

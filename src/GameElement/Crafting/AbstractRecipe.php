@@ -6,7 +6,7 @@ use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Reward\RewardInterface;
 
-abstract readonly class AbstractRecipe extends AbstractGameObject
+abstract class AbstractRecipe extends AbstractGameObject
 {
     public function __construct(
         string $id,

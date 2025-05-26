@@ -3,14 +3,12 @@
 namespace App\GameObject\Mob\Animal;
 
 use App\Engine\Reward\MasteryReward;
-use App\GameElement\Combat\Stats\PhysicalAttackStat;
-use App\GameElement\Combat\Stats\PhysicalDefenseStat;
+use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
+use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class Salamander extends AbstractBaseAnimalMob
+class Salamander extends AbstractBaseAnimalMob
 {
     public const string ID = "MOB_SALAMANDER";
     public function __construct()

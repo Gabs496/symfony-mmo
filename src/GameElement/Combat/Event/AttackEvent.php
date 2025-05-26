@@ -2,14 +2,14 @@
 
 namespace App\GameElement\Combat\Event;
 
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Combat\Phase\Attack;
 
 readonly class AttackEvent
 {
     public function __construct(
-        protected Attack $attack,
-        protected CombatOpponentInterface $defender,
+        protected Attack                      $attack,
+        protected HasCombatComponentInterface $defender,
     ){
     }
 
@@ -18,7 +18,7 @@ readonly class AttackEvent
         return $this->attack;
     }
 
-    public function getDefender(): CombatOpponentInterface
+    public function getDefender(): HasCombatComponentInterface
     {
         return $this->defender;
     }

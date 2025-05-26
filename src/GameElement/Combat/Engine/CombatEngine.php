@@ -5,7 +5,7 @@ namespace App\GameElement\Combat\Engine;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Combat\Activity\AttackActivity;
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\Phase\Attack;
@@ -54,14 +54,14 @@ class CombatEngine implements EventSubscriberInterface
         $attacker = $this->tokenEngine->exchange($attackerToken);
         $defender = $this->tokenEngine->exchange($defenderToken);
 
-        if (!$attacker instanceof CombatOpponentInterface || !$defender instanceof CombatOpponentInterface) {
-            throw new RuntimeException(sprintf("Both %s and %s must implement %s", $attacker::class, $defender::class, CombatOpponentInterface::class));
+        if (!$attacker instanceof HasCombatComponentInterface || !$defender instanceof HasCombatComponentInterface) {
+            throw new RuntimeException(sprintf("Both %s and %s must implement %s", $attacker::class, $defender::class, HasCombatComponentInterface::class));
         }
 
         $this->attack($attacker, $defender, $activity->getPreCalculatedStatCollection());
     }
 
-    public function attack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
+    public function attack(HasCombatComponentInterface $attacker, HasCombatComponentInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
     {
         $attackManager = $this->getCombatManager($attacker::class);
         $defenderManager = $this->getCombatManager($defender::class);
@@ -90,7 +90,7 @@ class CombatEngine implements EventSubscriberInterface
         $defenderDispatcher->dispatch(new DefenseFinished($attack, $defense, $attackResult));
     }
 
-    /** @param class-string<CombatOpponentInterface> $combatOpponentClass */
+    /** @param class-string<HasCombatComponentInterface> $combatOpponentClass */
     public function getCombatManager(string $combatOpponentClass): CombatManagerInterface
     {
         $combatManager = $this->registeredCombatManagers[$combatOpponentClass::getCombatManagerClass()] ?? null;

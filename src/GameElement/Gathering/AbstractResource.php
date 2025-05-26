@@ -6,15 +6,15 @@ use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Mastery\MasteryType;
 
-readonly class AbstractResource extends AbstractGameObject
+abstract class AbstractResource extends AbstractGameObject
 {
     public function __construct(
-        string                        $id,
-        private string                $name,
-        private float                 $difficulty,
-        private MasteryType           $involvedMastery,
-        private AbstractItemPrototype $rewardItem,
-        private float                 $gatheringTime,
+        string                                 $id,
+        private readonly string                $name,
+        private readonly float                 $difficulty,
+        private readonly MasteryType           $involvedMastery,
+        private readonly AbstractItemPrototype $rewardItem,
+        private readonly float                 $gatheringTime,
     )
     {
         parent::__construct($id);

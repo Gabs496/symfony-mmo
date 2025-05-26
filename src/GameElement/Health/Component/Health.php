@@ -2,9 +2,9 @@
 
 namespace App\GameElement\Health\Component;
 
-use App\GameElement\Core\GameComponent\AbstractGameComponent;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
 
-class Health extends AbstractGameComponent
+class Health implements GameComponentInterface
 {
     public function __construct(
         protected float     $maxHealth,

@@ -7,15 +7,15 @@ use App\Engine\Math;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\Activity\AttackActivity;
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\HasCombatComponentInterface;
+use App\GameElement\Combat\Component\Stat\DefensiveStat;
+use App\GameElement\Combat\Component\Stat\OffensiveStat;
+use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
-use App\GameElement\Combat\Stats\DefensiveStat;
-use App\GameElement\Combat\Stats\OffensiveStat;
-use App\GameElement\Combat\Stats\PhysicalAttackStat;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
@@ -59,14 +59,14 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
     }
 
     /** @param PlayerCharacter $attacker */
-    public function generateAttack(CombatOpponentInterface $attacker, CombatOpponentInterface $defender): Attack
+    public function generateAttack(HasCombatComponentInterface $attacker, HasCombatComponentInterface $defender): Attack
     {
         $statCollection = $this->getAttackStatCollection($attacker);
         return new Attack($attacker, $statCollection);
     }
 
     /** @param PlayerCharacter $defender */
-    public function generateDefense(Attack $attack, CombatOpponentInterface $defender): Defense
+    public function generateDefense(Attack $attack, HasCombatComponentInterface $defender): Defense
     {
         $statCollection = new StatCollection();
         $this->calculateBaseDefense($statCollection);

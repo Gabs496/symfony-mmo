@@ -2,9 +2,9 @@
 
 namespace App\GameElement\ItemEquiment\Component;
 
-use App\GameElement\Core\GameComponent\AbstractGameComponent;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
 
-class ItemEquipmentComponent extends AbstractGameComponent
+class ItemEquipmentComponent implements GameComponentInterface
 {
     protected ItemStatComponent $itemStatComponent;
     protected ItemConditionComponent $itemConditionComponent;

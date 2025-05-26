@@ -3,11 +3,11 @@
 namespace App\Engine\Combat;
 
 use App\Engine\Math;
+use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
+use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
-use App\GameElement\Combat\Stats\PhysicalAttackStat;
-use App\GameElement\Combat\Stats\PhysicalDefenseStat;
 
 class CombatSystem
 {

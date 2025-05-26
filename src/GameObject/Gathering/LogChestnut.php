@@ -5,10 +5,8 @@ namespace App\GameObject\Gathering;
 use App\GameElement\Gathering\AbstractResource;
 use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
 use App\GameObject\Mastery\Gathering\Woodcutting;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class LogChestnut extends AbstractResource
+class LogChestnut extends AbstractResource
 {
     public const string ID = 'LOG_CHESTNUT';
 

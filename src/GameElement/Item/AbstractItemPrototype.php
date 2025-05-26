@@ -4,7 +4,7 @@ namespace App\GameElement\Item;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
 
-readonly abstract class AbstractItemPrototype extends AbstractGameObject
+abstract class AbstractItemPrototype extends AbstractGameObject
 {
     public function __construct(
         string $id,

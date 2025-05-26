@@ -2,9 +2,9 @@
 
 namespace App\GameElement\Item\Component;
 
-use App\GameElement\Core\GameComponent\AbstractGameComponent;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
 
-class ItemWeightComponent extends AbstractGameComponent
+class ItemWeightComponent implements GameComponentInterface
 {
     public function __construct(
         protected float $weight = 0.0,

@@ -1,0 +1,37 @@
+<?php
+
+namespace App\GameElement\Combat\Component;
+
+use App\GameElement\Combat\Component\Stat\OffensiveStat;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
+
+readonly class Combat implements GameComponentInterface
+{
+    public function __construct(
+        /** @var AbstractStat[] $stats */
+        protected array $stats,
+        protected array $onDefeats = [],
+    )
+    {
+    }
+
+    public function getStats(): array
+    {
+        return $this->stats;
+    }
+
+    public function getOnDefeats(): array
+    {
+        return $this->onDefeats;
+    }
+
+    public function getOffensiveStats(): array
+    {
+        return array_filter($this->stats, fn(AbstractStat $stat) => $stat instanceof OffensiveStat);
+    }
+
+    public function getDefensiveStats(): array
+    {
+        return array_filter($this->stats, fn(AbstractStat $stat) => !$stat instanceof OffensiveStat);
+    }
+}

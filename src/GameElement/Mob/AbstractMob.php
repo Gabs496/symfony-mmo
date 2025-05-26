@@ -2,46 +2,49 @@
 
 namespace App\GameElement\Mob;
 
-use App\GameElement\Combat\Stats\AbstractStat;
-use App\GameElement\Combat\Stats\DefensiveStat;
-use App\GameElement\Combat\Stats\OffensiveStat;
-use App\GameElement\Core\GameComponent\AbstractGameComponent;
+use App\GameElement\Combat\Component\AbstractStat;
+use App\GameElement\Combat\Component\Combat;
+use App\GameElement\Combat\Component\Stat\DefensiveStat;
+use App\GameElement\Combat\Component\Stat\OffensiveStat;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Health\Component\Health;
-use App\GameElement\Reward\RewardInterface;
 
-abstract readonly class AbstractMob extends AbstractGameObject
+abstract class AbstractMob extends AbstractGameObject
 {
-    /** @var AbstractGameComponent[] */
+    /** @var GameComponentInterface[] */
     protected array $components;
 
     public function __construct(
         string           $id,
         protected string $name,
-        float            $maxHealth,
         protected string $description,
-        /** @var AbstractStat[] */
-        protected array  $combatStats = [],
-        /** @var RewardInterface[] */
-        protected array  $onDefeats = [],
-        array            $components = [],
+        float            $maxHealth,
+        /** @var AbstractStat[] $combatStats */
+        array  $combatStats = [],
+        array  $onDefeats = [],
+        array  $components = [],
     )
     {
-        $components = array_merge($components,[
-            new Health($maxHealth, $maxHealth)
-        ]);
+        $components = array_merge(
+            $components,
+            [
+                new Health($maxHealth, $maxHealth),
+                new Combat($combatStats, $onDefeats),
+            ],
+        );
         parent::__construct($id, $components);
     }
 
     /** @return AbstractStat[] */
     public function getCombatStats(): array
     {
-        return $this->combatStats;
+        return $this->getComponent(Combat::class)->getStats();
     }
 
     public function getOnDefeats(): array
     {
-        return $this->onDefeats;
+        return $this->getComponent(Combat::class)->getOnDefeats();
     }
 
     /** @return OffensiveStat[] */

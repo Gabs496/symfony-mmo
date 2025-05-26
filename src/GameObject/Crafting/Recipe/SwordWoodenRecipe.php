@@ -9,10 +9,8 @@ use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
 use App\GameObject\Mastery\Crafting\SwordCrafting;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class SwordWoodenRecipe extends AbstractRecipe
+class SwordWoodenRecipe extends AbstractRecipe
 {
     public const string ID = 'SWORD_WOODEN_RECIPE';
 

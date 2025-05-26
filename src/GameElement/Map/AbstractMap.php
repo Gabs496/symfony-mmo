@@ -4,7 +4,7 @@ namespace App\GameElement\Map;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
 
-readonly abstract class AbstractMap extends AbstractGameObject
+abstract class AbstractMap extends AbstractGameObject
 {
     public function __construct(
         string $id,

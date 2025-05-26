@@ -13,9 +13,12 @@ readonly class ItemInstantiator
         $instance
             ->setItemPrototypeId($itemPrototype->getId())
             ->setItemPrototype($itemPrototype)
-            ->setComponents($itemPrototype->getComponents())
             ->setQuantity($quantity)
         ;
+
+        foreach ($itemPrototype->getComponents() as $component) {
+            $instance->setComponent($component::class, $component);
+        }
 
         return $instance;
     }

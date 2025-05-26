@@ -3,10 +3,8 @@
 namespace App\GameObject\Item\Resource\Log;
 
 use App\GameObject\Item\AbstractItemResourcePrototype;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class ChestnutLogPrototype extends AbstractItemResourcePrototype
+class ChestnutLogPrototype extends AbstractItemResourcePrototype
 {
     public function __construct()
     {

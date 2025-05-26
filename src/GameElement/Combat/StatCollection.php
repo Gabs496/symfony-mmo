@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Combat;
 
-use App\GameElement\Combat\Stats\AbstractStat;
+use App\GameElement\Combat\Component\AbstractStat;
 use InvalidArgumentException;
 
 class StatCollection

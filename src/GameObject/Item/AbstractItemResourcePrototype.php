@@ -2,7 +2,7 @@
 
 namespace App\GameObject\Item;
 
-abstract readonly class AbstractItemResourcePrototype extends AbstractBaseItemPrototype
+abstract class AbstractItemResourcePrototype extends AbstractBaseItemPrototype
 {
     public function __construct(
         string $id,

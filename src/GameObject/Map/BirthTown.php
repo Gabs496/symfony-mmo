@@ -8,10 +8,8 @@ use App\GameObject\Gathering\LogChestnut;
 use App\GameObject\Gathering\OreCopper;
 use App\GameObject\Mob\Animal\Salamander;
 use App\GameObject\Mob\Animal\Sbinsol;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class BirthTown extends AbstractBaseMap
+class BirthTown extends AbstractBaseMap
 {
     public const string ID = "MAP_BIRT_TOWN";
 

@@ -4,7 +4,7 @@ namespace App\GameObject\Mob;
 
 use App\GameElement\Mob\AbstractMob;
 
-abstract readonly class AbstractBaseMob extends AbstractMob
+abstract class AbstractBaseMob extends AbstractMob
 {
     protected string $icon;
 
@@ -18,7 +18,7 @@ abstract readonly class AbstractBaseMob extends AbstractMob
         array   $onDefeats = [],
     )
     {
-        parent::__construct($id, $name, $maxHealth, $description, $combatStats, $onDefeats);
+        parent::__construct($id, $name, $description, $maxHealth, $combatStats, $onDefeats);
         $this->icon = $icon ?? '/mob/' . strtolower(get_class($this)) . '.png';
     }
 }

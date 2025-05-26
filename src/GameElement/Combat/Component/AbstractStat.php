@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\Combat\Stats;
+namespace App\GameElement\Combat\Component;
 
 abstract readonly class AbstractStat
 {

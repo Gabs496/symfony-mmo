@@ -2,12 +2,10 @@
 
 namespace App\GameObject\Item\Equipment\Sword;
 
-use App\GameElement\Combat\Stats\PhysicalAttackStat;
+use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameObject\Item\AbstractItemEquipmentPrototype;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class WoodenSwordPrototype extends AbstractItemEquipmentPrototype
+class WoodenSwordPrototype extends AbstractItemEquipmentPrototype
 {
     public function __construct()
     {

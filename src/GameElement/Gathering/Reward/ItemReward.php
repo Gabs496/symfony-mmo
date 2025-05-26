@@ -7,14 +7,12 @@ use App\GameElement\Reward\RewardInterface;
 
 readonly class ItemReward implements RewardInterface
 {
-    private \ArrayObject $attributes;
     public function __construct(
         private AbstractItemPrototype $item,
         private int                   $quantity = 1,
-        array                 $attributes = []
+        private array                 $attributes = []
     )
     {
-        $this->attributes = new \ArrayObject($attributes);
     }
 
     public function getItem(): AbstractItemPrototype
@@ -32,7 +30,7 @@ readonly class ItemReward implements RewardInterface
         return $this->item->getName();
     }
 
-    public function getAttributes(): \ArrayObject
+    public function getAttributes(): array
     {
         return $this->attributes;
     }

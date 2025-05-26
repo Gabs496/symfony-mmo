@@ -5,10 +5,8 @@ namespace App\GameObject\Gathering;
 use App\GameElement\Gathering\AbstractResource;
 use App\GameObject\Item\Resource\Ore\CopperOrePrototype;
 use App\GameObject\Mastery\Gathering\Mining;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('game.object')]
-readonly class OreCopper extends AbstractResource
+class OreCopper extends AbstractResource
 {
     public const string ID = 'ORE_COPPER';
 

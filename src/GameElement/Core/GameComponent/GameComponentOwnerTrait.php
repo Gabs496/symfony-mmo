@@ -4,24 +4,21 @@ namespace App\GameElement\Core\GameComponent;
 
 trait GameComponentOwnerTrait
 {
+    //TODO: fix this trait to use the correct type for components
+    // need to fix serializing
     public function getComponents(): array
     {
         return $this->components;
     }
 
-    public function addComponent(AbstractGameComponent $component): void
+    public function setComponent(string $componentId, GameComponentInterface $component): void
     {
-        $this->components[] = $component;
+        $this->components[$componentId] = $component;
     }
 
-    public function removeComponent(AbstractGameComponent $component): void
+    public function removeComponent(string $componentId): void
     {
-        foreach ($this->components as $key => $existingComponent) {
-            if ($existingComponent === $component) {
-                unset($this->components[$key]);
-                return;
-            }
-        }
+        unset($this->components[$componentId]);
     }
 
     public function hasComponent(string $componentClass): bool
@@ -30,14 +27,13 @@ trait GameComponentOwnerTrait
     }
 
     /**
-     * @template T of AbstractGameComponent
+     * @template T of GameComponentInterface
      * @param class-string<T> $componentClass
      * @return T|null $componentClass
      */
-    public function getComponent(string $componentClass): ?AbstractGameComponent
+    public function getComponent(string $componentClass): ?GameComponentInterface
     {
         foreach ($this->components as $component) {
-            /** @var AbstractGameComponent $component */
             if ($component instanceof $componentClass) {
                 return $component;
             }

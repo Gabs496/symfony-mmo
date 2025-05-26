@@ -85,11 +85,4 @@ class ItemInstance extends AbstractItemInstance
     {
         return $this->getItemPrototype();
     }
-
-    public function setComponents(array $components): ItemInstance
-    {
-        $this->components = $components;
-
-        return $this;
-    }
 }

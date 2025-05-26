@@ -3,7 +3,7 @@
 namespace App\GameObject\Mob;
 
 
-abstract readonly class AbstractBaseAnimalMob extends AbstractBaseMob
+abstract class AbstractBaseAnimalMob extends AbstractBaseMob
 {
 
 }

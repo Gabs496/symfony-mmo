@@ -2,11 +2,9 @@
 
 namespace App\GameObject\Item;
 
-use App\GameElement\ItemEquiment\Component\ItemConditionComponent;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
-use App\GameElement\ItemEquiment\Component\ItemStatComponent;
 
-abstract readonly class AbstractItemEquipmentPrototype extends AbstractBaseItemPrototype
+abstract class AbstractItemEquipmentPrototype extends AbstractBaseItemPrototype
 {
     public function __construct(
         string $id,

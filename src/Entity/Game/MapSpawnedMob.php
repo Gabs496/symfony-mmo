@@ -4,7 +4,8 @@ namespace App\Entity\Game;
 
 use App\Engine\Mob\MobCombatManager;
 use App\Engine\Mob\MobToken;
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\Component\Combat;
+use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Core\Token\TokenInterface;
 use App\GameElement\Core\Token\TokenizableInterface;
@@ -18,7 +19,7 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapSpawnedMobRepository::class)]
 #[Broadcast(topics: ['@="map_spawned_mobs_" ~ entity.getMapId()'], private: true, template: 'map/spawned_mob_list.stream.html.twig')]
-class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterface, TokenizableInterface
+class MapSpawnedMob extends AbstractMobInstance implements HasCombatComponentInterface, TokenizableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
@@ -78,7 +79,7 @@ class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterfa
         $components = $this->getComponents();
         $this->components = [];
         foreach ($components as $component) {
-            $this->addComponent(clone $component);
+            $this->setComponent($component::class, clone $component);
         }
     }
 
@@ -90,5 +91,10 @@ class MapSpawnedMob extends AbstractMobInstance implements CombatOpponentInterfa
     public function getToken(): TokenInterface
     {
         return new MobToken($this->id);
+    }
+
+    public function getCombatComponent(): Combat
+    {
+        return $this->getComponent(Combat::class);
     }
 }

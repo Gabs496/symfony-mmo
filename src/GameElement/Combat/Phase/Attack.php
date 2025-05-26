@@ -2,19 +2,19 @@
 
 namespace App\GameElement\Combat\Phase;
 
-use App\GameElement\Combat\CombatOpponentInterface;
+use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Combat\StatCollection;
 
 class Attack
 {
     public function __construct(
-        protected readonly CombatOpponentInterface $attacker,
-        protected StatCollection $statCollection,
+        protected readonly HasCombatComponentInterface $attacker,
+        protected StatCollection                       $statCollection,
     )
     {
     }
 
-    public function getAttacker(): CombatOpponentInterface
+    public function getAttacker(): HasCombatComponentInterface
     {
         return $this->attacker;
     }

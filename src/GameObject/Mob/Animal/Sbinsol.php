@@ -3,20 +3,18 @@
 namespace App\GameObject\Mob\Animal;
 
 use App\Engine\Reward\MasteryReward;
-use App\GameElement\Combat\Stats\PhysicalAttackStat;
-use App\GameElement\Combat\Stats\PhysicalDefenseStat;
+use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
+use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 /**
  * This mob is wanted and created from my small brother
  */
-#[AutoconfigureTag('game.object')]
-readonly class Sbinsol extends AbstractBaseAnimalMob
+class Sbinsol extends AbstractBaseAnimalMob
 {
     public const string ID = "MOB_SBINSOL";
     public function __construct()
