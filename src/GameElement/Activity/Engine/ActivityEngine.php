@@ -72,15 +72,23 @@ readonly class ActivityEngine
     public function activityTimeout(ActivityTimeout $message): void
     {
         $activity = $message->getActivity();
-        $activity->setSubject($this->tokenEngine->exchange($activity->getSubjectToken()));
         $activityEntity = $this->activityRepository->find($activity->getEntityId());
         if (!$activityEntity instanceof Activity) {
             return;
         }
 
-        $timeoutEvent = new ActivityTimeoutEvent($message->getActivity());
-        $this->eventDispatcher->dispatch($timeoutEvent);
+        $activity->setSubject($this->tokenEngine->exchange($activity->getSubjectToken()));
 
+        $timeoutEvent = new ActivityTimeoutEvent($message->getActivity());
+        try {
+            $this->eventDispatcher->dispatch($timeoutEvent);
+        } finally {
+            $this->end($activity, $activityEntity);
+        }
+    }
+
+    protected function end(AbstractActivity $activity, Activity $activityEntity): void
+    {
         $activityEntity->setCompletedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
 

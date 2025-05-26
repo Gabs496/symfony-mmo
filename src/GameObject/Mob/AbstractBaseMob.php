@@ -15,10 +15,10 @@ abstract class AbstractBaseMob extends AbstractMob
         string  $description,
         ?string $icon = null,
         array   $combatStats = [],
-        array   $onDefeats = [],
+        array   $rewardOnDefeats = [],
     )
     {
-        parent::__construct($id, $name, $description, $maxHealth, $combatStats, $onDefeats);
+        parent::__construct($id, $name, $description, $maxHealth, $combatStats, $rewardOnDefeats);
         $this->icon = $icon ?? '/mob/' . strtolower(get_class($this)) . '.png';
     }
 }

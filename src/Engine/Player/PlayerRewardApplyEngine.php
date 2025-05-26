@@ -5,43 +5,38 @@ namespace App\Engine\Player;
 use App\Engine\Item\ItemInstantiator;
 use App\Engine\Reward\MasteryReward;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Core\GameObject\GameObjectEngine;
-use App\GameElement\Core\Token\TokenEngine;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Mastery\Engine\MasteryTypeRepository;
 use App\GameElement\Notification\Engine\NotificationEngine;
+use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
 use App\GameObject\Item\AbstractBaseItemPrototype;
 use App\Repository\Data\PlayerCharacterRepository;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler]
-readonly class PlayerRewardApplyEngine
+readonly class PlayerRewardApplyEngine implements RewardApplierInterface
 {
     public function __construct(
         private PlayerCharacterRepository $repository,
         private PlayerItemEngine          $playerEngine,
         private NotificationEngine        $notificationEngine,
         private ItemInstantiator          $instantiator,
-        private TokenEngine               $tokenEngine,
         private MasteryTypeRepository     $masteryEngine,
-        private GameObjectEngine         $gameObjectEngine,
     )
     {
     }
 
-    public function __invoke(RewardApply $rewardApplication): void
+    public function supports(RewardApply $rewardApply): bool
     {
-        $recipeToken = $rewardApplication->getRecipeToken();
-        if (!$recipeToken instanceof PlayerToken) {
-            return;
-        }
+        return $rewardApply->getRecipe() instanceof PlayerCharacter;
+    }
 
+    public function apply(RewardApply $rewardApply): void
+    {
         /** @var PlayerCharacter $player */
-        $player = $this->tokenEngine->exchange($recipeToken);
+        $player = $rewardApply->getRecipe();
 
-        $reward = $rewardApplication->getReward();
+        $reward = $rewardApply->getReward();
         if ($reward instanceof MasteryReward) {
             $player->increaseMasteryExperience($reward->getMasteryId(), $reward->getExperience());
             $this->repository->save($player);

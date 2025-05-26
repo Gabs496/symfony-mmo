@@ -21,16 +21,16 @@ abstract class AbstractMob extends AbstractGameObject
         protected string $description,
         float            $maxHealth,
         /** @var AbstractStat[] $combatStats */
-        array  $combatStats = [],
-        array  $onDefeats = [],
-        array  $components = [],
+        array            $combatStats = [],
+        protected  array $rewardOnDefeats = [],
+        array            $components = [],
     )
     {
         $components = array_merge(
             $components,
             [
                 new Health($maxHealth, $maxHealth),
-                new Combat($combatStats, $onDefeats),
+                new Combat($combatStats),
             ],
         );
         parent::__construct($id, $components);
@@ -42,9 +42,9 @@ abstract class AbstractMob extends AbstractGameObject
         return $this->getComponent(Combat::class)->getStats();
     }
 
-    public function getOnDefeats(): array
+    public function getRewardOnDefeats(): array
     {
-        return $this->getComponent(Combat::class)->getOnDefeats();
+        return $this->rewardOnDefeats;
     }
 
     /** @return OffensiveStat[] */

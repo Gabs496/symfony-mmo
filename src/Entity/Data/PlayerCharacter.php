@@ -16,7 +16,6 @@ use App\GameElement\Health\HasHealthComponentInterface;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameElement\Mastery\MasteryType;
-use App\GameElement\Reward\RewardRecipe;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 class PlayerCharacter extends AbstractCharacter
-    implements UserInterface, TokenizableInterface, HasHealthComponentInterface, HasCombatComponentInterface, RewardRecipe
+    implements UserInterface, TokenizableInterface, HasHealthComponentInterface, HasCombatComponentInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]

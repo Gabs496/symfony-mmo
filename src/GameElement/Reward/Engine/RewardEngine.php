@@ -2,32 +2,42 @@
 
 namespace App\GameElement\Reward\Engine;
 
-use App\GameElement\Drop\Component\Drop;
-use App\GameElement\Drop\Engine\DropEngine;
+use App\GameElement\Core\Token\TokenEngine;
+use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
+use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[AsMessageHandler(method: 'handleApply')]
 class RewardEngine
 {
     public function __construct(
         protected MessageBusInterface $messageBus,
-        protected DropEngine $dropEngine,
+        protected TokenEngine $tokenEngine,
+        /** @var iterable<RewardApplierInterface> */
+        #[AutowireIterator('reward.applier')]
+        protected iterable $rewardAppliers,
     )
     {
     }
 
     public function apply(RewardApply $rewardApply): void
     {
-        $reward = $rewardApply->getReward();
-        foreach ($reward->getAttributes() as $attribute) {
-            if($attribute instanceof Drop) {
-                if (!$this->dropEngine->isLucky($attribute)) {
-                    return;
-                }
-            }
-        }
-
         $rewardApply->clear();
         $this->messageBus->dispatch($rewardApply);
+    }
+
+    public function handleApply(RewardApply $rewardApply): void
+    {
+        $rewardApply->setRecipe($this->tokenEngine->exchange($rewardApply->getRecipeToken()));
+        foreach ($this->rewardAppliers as $rewardApplier) {
+            if ($rewardApplier->supports($rewardApply)) {
+                $rewardApplier->apply($rewardApply);
+                return;
+            }
+        }
+        throw new RuntimeException("Reward apply not supported: " . serialize($rewardApply));
     }
 }

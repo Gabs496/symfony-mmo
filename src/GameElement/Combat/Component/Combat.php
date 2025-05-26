@@ -10,7 +10,6 @@ readonly class Combat implements GameComponentInterface
     public function __construct(
         /** @var AbstractStat[] $stats */
         protected array $stats,
-        protected array $onDefeats = [],
     )
     {
     }
@@ -18,11 +17,6 @@ readonly class Combat implements GameComponentInterface
     public function getStats(): array
     {
         return $this->stats;
-    }
-
-    public function getOnDefeats(): array
-    {
-        return $this->onDefeats;
     }
 
     public function getOffensiveStats(): array

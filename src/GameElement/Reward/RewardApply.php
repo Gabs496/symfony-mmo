@@ -28,7 +28,7 @@ class RewardApply
         return $this->recipeToken;
     }
 
-    public function getRecipe(): RewardRecipe
+    public function getRecipe(): TokenizableInterface
     {
         return $this->recipe;
     }

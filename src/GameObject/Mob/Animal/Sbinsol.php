@@ -12,7 +12,7 @@ use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
 
 /**
- * This mob is wanted and created from my small brother
+ * This mob is wanted and created from my young brother
  */
 class Sbinsol extends AbstractBaseAnimalMob
 {
@@ -28,9 +28,9 @@ class Sbinsol extends AbstractBaseAnimalMob
                 new PhysicalDefenseStat(0.02),
                 new PhysicalAttackStat(0.01),
             ],
-            onDefeats: [
+            rewardOnDefeats: [
                 new MasteryReward(PhysicalAttack::getId(), 0.01),
-                new ItemReward(new WoodenSwordPrototype(), 1, [new Drop(0.1)]),
+                new ItemReward(new WoodenSwordPrototype(), 0.1, [new Drop(0.1)]),
             ]
         );
     }
