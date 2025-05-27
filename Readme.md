@@ -28,14 +28,9 @@ Then:
     docker-compose up -d
     bin/console doctrine:database:create
     bin/console doctrine:migrations:migrate
+    bin/console doctrine:fixtures:load
     bin/console sass:build
     ```
 3. launch app with `symfony server:start -d`
 4. connect to http://localhost:8000 (or create your own proxy domain with Symfony Web Server)
-   
-
-After you need to manually create (this will be made automatically in future):
-
-- a record into security_user table
-- a new record into data_item_bag
-- a new record into data_player_character
+5. login with user `dev@dev.org` and password `devpassword`

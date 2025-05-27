@@ -82,9 +82,11 @@ class PlayerCharacter extends AbstractCharacter
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function setName(?string $name): PlayerCharacter
     {
         $this->name = $name;
+
+        return $this;
     }
 
     public function getMasteryExperience(MasteryType $masteryType): float
@@ -199,9 +201,11 @@ class PlayerCharacter extends AbstractCharacter
         return $this->currentHealth;
     }
 
-    public function setCurrentHealth(float $currentHealth): void
+    public function setCurrentHealth(float $currentHealth): PlayerCharacter
     {
         $this->currentHealth = $currentHealth;
+
+        return $this;
     }
 
     public function getHealth(): Health
