@@ -2,19 +2,26 @@
 
 namespace App\GameElement\Item;
 
-use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
+use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 
-abstract class AbstractItemPrototype extends AbstractGameObject
+abstract class AbstractItemPrototype implements GameObjectInterface, GameComponentOwnerInterface
 {
+    use GameComponentOwnerTrait;
     public function __construct(
-        string $id,
+        protected string $id,
         protected string $name,
         protected string $description = '',
         protected bool $stackable = false,
-        array $components = [],
+        protected array $components = [],
     )
     {
-        parent::__construct($id, $components);
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     public function getName(): string

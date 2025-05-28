@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <turbo-frame id="recipes">
                         {% for recipe in recipes %}
-                            {% include 'map/recipe_row.html.twig' %}
+                            {{ component('Crafting:Recipe', {recipe: recipe, playerCharacter: player}) }}
                         {% endfor %}
                     </turbo-frame>
                 </div>

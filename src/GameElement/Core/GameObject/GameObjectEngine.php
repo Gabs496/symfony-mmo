@@ -41,11 +41,11 @@ class GameObjectEngine
         }
     }
 
-    public function get(string $id): AbstractGameObject
+    public function get(string $id): GameObjectInterface
     {
         //TODO: try to optimize it
         foreach ($this->gameObjectCollection as $gameObject) {
-            if (!$gameObject instanceof AbstractGameObject) {
+            if (!$gameObject instanceof GameObjectInterface) {
                 throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
             }
 
@@ -65,7 +65,7 @@ class GameObjectEngine
         $result = [];
         //TODO: try to optimize it
         foreach ($this->gameObjectCollection as $gameObject) {
-            if (!$gameObject instanceof AbstractGameObject) {
+            if (!$gameObject instanceof GameObjectInterface) {
                 throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
             }
 

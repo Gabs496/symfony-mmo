@@ -1,7 +1,7 @@
 <div class="bg-dark border-primary rounded m-1 row">
     <div style="width: 5em; height: 5em;" class="col-auto">
-        {% for reward in recipe.itemRewards %}
-            <img src="{{ asset('images/items/' ~ reward.item.id|lower ~ '.png') }}" alt="{{ reward.item.name }}" title="{{ reward.item.name }}" class="h-100"/>
+        {% for item in this.itemRewardeds %}
+            <img src="{{ asset('images/items/' ~ item.id|lower ~ '.png') }}" alt="{{ item.name }}" title="{{ item.name }}" class="h-100"/>
         {% endfor %}
     </div>
     <div class="col">
@@ -12,10 +12,10 @@
         <div class="d-flex align-items-center">
             {% for ingredient in recipe.ingredients %}
                 <div class="ms-auto">
-                    {% include 'item/item.widget.html.twig' with {item: ingredient.item, quantity: ingredient.quantity, maskedDanger: not player.backpack.has(ingredient.item, ingredient.quantity)} %}
+                    {% include 'item/item.widget.html.twig' with {item: ingredient.item, quantity: ingredient.quantity, maskedDanger: not playerCharacter.backpack.has(ingredient.item, ingredient.quantity)} %}
                 </div>
             {% endfor %}
-            <div class="activity_panel ms-2" id="playerActivity_RECIPE_CRAFTING">
+            <div class="activity_panel ms-2">
                 <div class="ms-auto">
                     <a href="{{ path('app_map_craft', {id: recipe.id}) }}" class="btn btn-primary activity_event_starter">{{ 'craft'|trans|upper }}</a>
                 </div>

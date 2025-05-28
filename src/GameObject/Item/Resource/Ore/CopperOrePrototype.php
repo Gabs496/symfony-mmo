@@ -6,10 +6,11 @@ use App\GameObject\Item\AbstractItemResourcePrototype;
 
 class CopperOrePrototype extends AbstractItemResourcePrototype
 {
+    public const string ID = 'RESOURCE_ORE_COPPER';
     public function __construct()
     {
         parent::__construct(
-            id: 'RESOURCE_ORE_COPPER',
+            id: self::ID,
             name: 'Coppper Ore',
             description: 'A piece of copper ore.',
             weight: 0.1,

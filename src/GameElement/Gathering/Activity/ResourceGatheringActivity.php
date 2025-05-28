@@ -33,6 +33,6 @@ class ResourceGatheringActivity extends AbstractActivity
 
     public function getRewards(): iterable
     {
-        yield new ItemReward($this->resource->getRewardItem(), 1);
+        yield new ItemReward($this->resource->getRewardItemId(), 1);
     }
 }

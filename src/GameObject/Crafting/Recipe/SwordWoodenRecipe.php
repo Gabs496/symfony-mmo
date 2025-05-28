@@ -28,7 +28,7 @@ class SwordWoodenRecipe extends AbstractRecipe
             ],
             rewards: [
                 new MasteryReward(masteryId: SwordCrafting::getId(), experience: 0.01),
-                new ItemReward(item: new WoodenSwordPrototype(), quantity: 1),
+                new ItemReward(itemPrototypeId: WoodenSwordPrototype::ID, quantity: 1),
             ]
         );
     }
