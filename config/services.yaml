@@ -34,8 +34,6 @@ services:
             tags: [ 'mastery.type' ]
         App\GameElement\Reward\RewardApplierInterface:
             tags: [ 'reward.applier' ]
-        App\GameElement\Item\AbstractItemPrototype:
-            tags: ['item.prototype']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

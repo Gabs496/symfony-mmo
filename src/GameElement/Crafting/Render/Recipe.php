@@ -3,9 +3,9 @@
 namespace App\GameElement\Crafting\Render;
 
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Gathering\Reward\ItemReward;
-use App\GameElement\Item\Engine\ItemPrototypeEngine;
 use Generator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -18,7 +18,7 @@ class Recipe
     protected PlayerCharacter $playerCharacter;
 
     public function __construct(
-        protected ItemPrototypeEngine $itemPrototypeEngine,
+        protected GameObjectEngine $gameObjectEngine,
     )
     {
     }
@@ -47,8 +47,15 @@ class Recipe
     {
         foreach ($this->recipe->getRewards() as $reward) {
             if ($reward instanceof ItemReward) {
-                yield $this->itemPrototypeEngine->get($reward->getItemPrototypeId());
+                yield $this->gameObjectEngine->get($reward->getItemPrototypeId());
             }
+        }
+    }
+
+    public function getItemIngredients(): Generator
+    {
+        foreach ($this->recipe->getIngredients() as $ingredient) {
+            yield $this->gameObjectEngine->get($ingredient->getItemPrototypeId());
         }
     }
 }

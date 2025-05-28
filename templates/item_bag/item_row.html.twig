@@ -1,7 +1,7 @@
 <div class="bg-dark border-primary rounded m-1">
     <div class="dropdown">
         <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
-            {% include 'item/item.widget.html.twig' with {item: itemInstance.item, quantity: itemInstance.quantity} %}
+            {{ component('Item:Prototype', {id: itemInstance.itemPrototypeId, quantity: itemInstance.quantity}) }}
         </a>
         <div class="dropdown-menu border">
             {% for action in itemActionEngine.availableActions(itemInstance) %}

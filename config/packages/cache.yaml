@@ -15,5 +15,8 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
+        pools:
             #my.dedicated.cache: null
+            game_object_cache:
+                adapter: cache.adapter.apcu
+                default_lifetime: 3600

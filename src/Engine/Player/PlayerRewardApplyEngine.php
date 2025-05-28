@@ -5,8 +5,8 @@ namespace App\Engine\Player;
 use App\Engine\Item\ItemInstantiator;
 use App\Engine\Reward\MasteryReward;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Gathering\Reward\ItemReward;
-use App\GameElement\Item\Engine\ItemPrototypeEngine;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Mastery\Engine\MasteryTypeRepository;
 use App\GameElement\Notification\Engine\NotificationEngine;
@@ -23,7 +23,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         private NotificationEngine        $notificationEngine,
         private ItemInstantiator          $instantiator,
         private MasteryTypeRepository     $masteryEngine,
-        protected ItemPrototypeEngine     $itemPrototypeEngine,
+        protected GameObjectEngine        $gameObjectEngine,
     )
     {
     }
@@ -48,7 +48,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         if ($reward instanceof ItemReward) {
             try {
                 /** @var AbstractBaseItemPrototype $item */
-                $item = $this->itemPrototypeEngine->get($reward->getItemPrototypeId());
+                $item = $this->gameObjectEngine->get($reward->getItemPrototypeId());
                 $this->playerEngine->giveItem($player, $this->instantiator->createFrom($item, $reward->getQuantity()));
                 $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%s %s', $reward->getQuantity(), $reward->getItemPrototypeId()->getName()));
             } catch (MaxBagSizeReachedException $e) {

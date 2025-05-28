@@ -9,6 +9,8 @@ use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
 use ReflectionObject;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @template T
@@ -19,6 +21,7 @@ class GameObjectEngine
     public function __construct(
         #[AutowireIterator('game.object')]
         protected iterable $gameObjectCollection,
+        protected CacheInterface $gameObjectCache,
     )
     {
     }
@@ -43,17 +46,18 @@ class GameObjectEngine
 
     public function get(string $id): GameObjectInterface
     {
-        //TODO: try to optimize it
-        foreach ($this->gameObjectCollection as $gameObject) {
-            if (!$gameObject instanceof GameObjectInterface) {
-                throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
-            }
+        return $this->gameObjectCache->get($id,function (ItemInterface $item) use ($id) {
+            foreach ($this->gameObjectCollection as $gameObject) {
+                if (!$gameObject instanceof GameObjectInterface) {
+                    throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
+                }
 
-            if ($gameObject->getId() === $id) {
-                return $gameObject;
+                if ($gameObject->getId() === $id) {
+                    return $gameObject;
+                }
             }
-        }
-        throw new GameObjectNotFound('Game object for class "'.$id.'" not found');
+            throw new GameObjectNotFound('Game object for class "'.$id.'" not found');
+        });
     }
 
     /**
@@ -62,22 +66,24 @@ class GameObjectEngine
      */
     public function getByClass(string $class): array
     {
-        $result = [];
-        //TODO: try to optimize it
-        foreach ($this->gameObjectCollection as $gameObject) {
-            if (!$gameObject instanceof GameObjectInterface) {
-                throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
+        return $this->gameObjectCache->get($class,function (ItemInterface $item) use ($class) {
+            $result = [];
+            //TODO: try to optimize it
+            foreach ($this->gameObjectCollection as $gameObject) {
+                if (!$gameObject instanceof GameObjectInterface) {
+                    throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, AbstractGameObject::class));
+                }
+
+                if ($gameObject instanceof $class) {
+                    $result[] = $gameObject;
+                }
             }
 
-            if ($gameObject instanceof $class) {
-                $result[] = $gameObject;
+            if (empty($result)) {
+                throw new GameObjectNotFound('Game object for class "'.$class.'" not found');
             }
-        }
 
-        if (empty($result)) {
-            throw new GameObjectNotFound('Game object for class "'.$class.'" not found');
-        }
-
-        return $result;
+            return $result;
+        });
     }
 }

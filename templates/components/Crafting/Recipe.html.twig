@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center">
             {% for ingredient in recipe.ingredients %}
                 <div class="ms-auto">
-                    {% include 'item/item.widget.html.twig' with {item: ingredient.item, quantity: ingredient.quantity, maskedDanger: not playerCharacter.backpack.has(ingredient.item, ingredient.quantity)} %}
+                    {{ component('Item:Prototype', {id: ingredient.itemPrototypeId, quantity: ingredient.quantity, maskedDanger: false}) }}
                 </div>
             {% endfor %}
             <div class="activity_panel ms-2">

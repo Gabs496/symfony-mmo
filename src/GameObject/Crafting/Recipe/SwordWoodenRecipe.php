@@ -21,7 +21,7 @@ class SwordWoodenRecipe extends AbstractRecipe
             name: 'Wooden Sword',
             description: 'A simple sword made of chestnut wood.',
             ingredients: [
-                new RecipeIngredient(new ChestnutLogPrototype(), 10),
+                new RecipeIngredient(ChestnutLogPrototype::ID, 10),
             ],
             craftingTime: 5.0,
             requirements: [
