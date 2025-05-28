@@ -38,13 +38,13 @@ class MasterySet
         $this->masteries[] = $mastery;
     }
 
-    /** @deprecated non utilizzare */
+    /** @deprecated don't use */
     public function getMasteries(): array
     {
         return $this->masteries;
     }
 
-    /** @deprecated non utilizzare */
+    /** @deprecated don't use */
     public function setMasteries(array $masteries): void
     {
         $this->masteries = $masteries;

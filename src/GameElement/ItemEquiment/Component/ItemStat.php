@@ -2,9 +2,7 @@
 
 namespace App\GameElement\ItemEquiment\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
-
-class ItemStatComponent implements GameComponentInterface
+class ItemStat
 {
     public function __construct(
         protected array $stats,

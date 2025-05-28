@@ -9,13 +9,13 @@ use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\HasCombatComponentInterface;
+use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\HasHealthComponentInterface;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
-use App\GameElement\Mastery\MasteryType;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -61,8 +61,8 @@ class PlayerCharacter extends AbstractCharacter
     #[ORM\JoinColumn(nullable: true)]
     private ?Activity $currentActivity;
 
-    #[ORM\Column(type: 'float', nullable: false)]
-    private float $currentHealth = 1.0;
+    #[ORM\Column(type: 'json_document', nullable: false)]
+    private Health $health;
 
     public function __construct()
     {
@@ -70,6 +70,7 @@ class PlayerCharacter extends AbstractCharacter
         $this->masterySet = new MasterySet();
         $this->backpack = new BackpackItemBag($this);
         $this->equipment = new EquippedItemBag($this);
+        $this->health = new Health(0.25, 0.25);
     }
 
     public function getId(): string
@@ -89,7 +90,7 @@ class PlayerCharacter extends AbstractCharacter
         return $this;
     }
 
-    public function getMasteryExperience(MasteryType $masteryType): float
+    public function getMasteryExperience(string $masteryType): float
     {
         return $this->masterySet->getMastery($masteryType)->getExperience();
     }
@@ -196,28 +197,35 @@ class PlayerCharacter extends AbstractCharacter
         return $this->currentActivity === $activity;
     }
 
-    public function getCurrentHealth(): float
-    {
-        return $this->currentHealth;
-    }
-
-    public function setCurrentHealth(float $currentHealth): PlayerCharacter
-    {
-        $this->currentHealth = $currentHealth;
-
-        return $this;
-    }
-
     public function getHealth(): Health
     {
-        return new Health(0.5, $this->getCurrentHealth());
+        return $this->health;
+    }
+
+    public function setHealth(Health $health): void
+    {
+        $this->health = $health;
+    }
+
+    public function getCurrentHealth(): float
+    {
+        return $this->health->getCurrentHealth();
     }
 
     public function getCombatComponent(): Combat
     {
-        return new Combat([
-            new PhysicalAttackStat($this->getMasteryExperience(new PhysicalAttack()))
-        ]);
+        $statCollection  = new StatCollection();
+        $statCollection->increase(PhysicalAttackStat::class, $this->getMasteryExperience(PhysicalAttack::getId()));
+
+        foreach ($this->equipment->getItems() as $equipmentItem) {
+            if ($combat = $equipmentItem->getComponent(Combat::class)) {
+                /** @var Combat $combat */
+                foreach ($combat->getStats() as $stat) {
+                    $statCollection->increase($stat::class, $stat->getValue());
+                }
+            }
+        }
+        return new Combat($statCollection->getStats());
     }
 
     public static function getCombatManagerClass(): string

@@ -27,24 +27,12 @@ class PlayerHealthEngine implements EventSubscriberInterface
     {
         return [
             HealthDecreasedEvent::class => [
-                ['saveNewHealth', 0],
                 ['updateHealthBar', 0],
             ],
             HealthReachedZeroEvent::class => [
                 ['notifyGameOver', 0],
             ]
         ];
-    }
-
-    public function saveNewHealth(HealthDecreasedEvent $event): void
-    {
-        $player = $event->getObject();
-        if (!$player instanceof PlayerCharacter) {
-            return;
-        }
-
-        $player->setCurrentHealth($event->getHealth()->getCurrentHealth());
-        $this->playerCharacterRepository->save($player);
     }
 
     public function updateHealthBar(HealthDecreasedEvent $event): void

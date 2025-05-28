@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Health\Engine;
 
+use App\Engine\Math;
 use App\GameElement\Health\Event\HealthDecreasedEvent;
 use App\GameElement\Health\Event\HealthReachedZeroEvent;
 use App\GameElement\Health\HasHealthComponentInterface;
@@ -17,7 +18,7 @@ readonly class HealthEngine
     {
         $health = $object->getHealth();
         $currentHealth = $health->getCurrentHealth();
-        $newHealth = max($currentHealth - $value, 0.0);
+        $newHealth = max(Math::sub($currentHealth, $value), 0.0);
         $health->setCurrentHealth($newHealth);
 
         $this->eventDispatcher->dispatch(new HealthDecreasedEvent($object, $health));

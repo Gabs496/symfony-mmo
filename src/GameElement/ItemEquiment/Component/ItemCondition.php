@@ -2,9 +2,7 @@
 
 namespace App\GameElement\ItemEquiment\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
-
-class ItemConditionComponent implements GameComponentInterface
+class ItemCondition
 {
     public function __construct(
         protected float $maxCondition,
