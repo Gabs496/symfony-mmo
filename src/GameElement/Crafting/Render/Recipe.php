@@ -43,19 +43,12 @@ class Recipe
         $this->playerCharacter = $playerCharacter;
     }
 
-    public function getItemRewardeds(): Generator
+    public function getItemRewards(): Generator
     {
         foreach ($this->recipe->getRewards() as $reward) {
             if ($reward instanceof ItemReward) {
-                yield $this->gameObjectEngine->get($reward->getItemPrototypeId());
+                yield $reward;
             }
-        }
-    }
-
-    public function getItemIngredients(): Generator
-    {
-        foreach ($this->recipe->getIngredients() as $ingredient) {
-            yield $this->gameObjectEngine->get($ingredient->getItemPrototypeId());
         }
     }
 }

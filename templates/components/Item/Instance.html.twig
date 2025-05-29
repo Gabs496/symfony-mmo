@@ -1,0 +1,6 @@
+<div style="width: 4em; height: 4em;" class="position-relative" title="{{ render.name }}">
+    <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100 w-100"/>
+    {% if instance.quantity > 1.0 %}
+        <span class="badge bg-secondary position-absolute bottom-0 end-0">{{ instance.quantity }}</span>
+    {% endif %}
+</div>

@@ -123,7 +123,7 @@ abstract class AbstractItemBag
         $items = iterator_to_array($this->items);
         return array_reduce($items,
             fn($carry, AbstractItemInstance $instance)
-                => (float)bcadd($carry, bcmul($instance->getItemPrototype()->getComponent(ItemWeightComponent::class)->getWeight(), $instance->getQuantity(), 2), 2),
+                => (float)bcadd($carry, bcmul($instance->getComponent(ItemWeightComponent::class)->getWeight(), $instance->getQuantity(), 2), 2),
             0.0
         );
     }

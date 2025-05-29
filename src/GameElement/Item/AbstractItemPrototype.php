@@ -2,36 +2,32 @@
 
 namespace App\GameElement\Item;
 
-use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Render\Component\Render;
 
-abstract class AbstractItemPrototype implements GameObjectInterface, GameComponentOwnerInterface
+abstract class AbstractItemPrototype implements GameObjectPrototypeInterface
 {
     use GameComponentOwnerTrait;
     public function __construct(
         protected string $id,
-        protected string $name,
-        protected string $description = '',
+        string $name,
+        string $description = '',
+        ?string $iconPath = null,
         protected bool $stackable = false,
         protected array $components = [],
     )
     {
+        $this->setComponent(Render::class, new Render(
+            name: $name,
+            description: $description,
+            iconPath:  $iconPath ?? '/items/' . strtolower($id) . '.png',
+        ));
     }
 
     public function getId(): string
     {
         return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 
     public function isStackable(): bool

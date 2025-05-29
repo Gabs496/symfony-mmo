@@ -6,7 +6,7 @@ use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
 
-abstract class AbstractGameObject implements GameObjectInterface, GameComponentOwnerInterface
+abstract class AbstractGameObject implements GameObjectInterface
 {
     use GameComponentOwnerTrait;
 

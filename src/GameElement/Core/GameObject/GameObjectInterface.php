@@ -2,7 +2,9 @@
 
 namespace App\GameElement\Core\GameObject;
 
-interface GameObjectInterface
+use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
+
+interface GameObjectInterface extends GameComponentOwnerInterface
 {
     public function getId(): string;
 }

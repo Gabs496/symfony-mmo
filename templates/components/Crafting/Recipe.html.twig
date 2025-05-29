@@ -1,7 +1,7 @@
 <div class="bg-dark border-primary rounded m-1 row">
     <div style="width: 5em; height: 5em;" class="col-auto">
-        {% for item in this.itemRewardeds %}
-            <img src="{{ asset('images/items/' ~ item.id|lower ~ '.png') }}" alt="{{ item.name }}" title="{{ item.name }}" class="h-100"/>
+        {% for reward in recipe.itemRewards %}
+            {{ component('Item:Prototype', {id: reward.itemPrototypeId}) }}
         {% endfor %}
     </div>
     <div class="col">

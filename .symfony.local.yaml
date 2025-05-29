@@ -13,9 +13,6 @@ workers:
   messenger_consume_game_activity:
     cmd: [ 'symfony', 'console', 'messenger:consume', 'game_activity', '--sleep', '0.05' ]
     watch: [ 'config', 'src', 'templates', 'vendor' ]
-  messenger_consume_scheduler_game_map_resource_fullfill:
-    cmd: [ 'symfony', 'console', 'messenger:consume', 'scheduler_game_map_resource_fullfill' ]
-    watch: ['config', 'src', 'templates', 'vendor']
-  messenger_consume_scheduler_game_map_mob_fullfill:
-    cmd: [ 'symfony', 'console', 'messenger:consume', 'scheduler_game_map_mob_fullfill' ]
+  messenger_consume_scheduler_game_map_spawn:
+    cmd: [ 'symfony', 'console', 'messenger:consume', 'scheduler_game_map_spawn' ]
     watch: [ 'config', 'src', 'templates', 'vendor' ]

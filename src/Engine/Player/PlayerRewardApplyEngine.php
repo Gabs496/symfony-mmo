@@ -10,6 +10,7 @@ use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Mastery\Engine\MasteryTypeRepository;
 use App\GameElement\Notification\Engine\NotificationEngine;
+use App\GameElement\Render\Component\Render;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
 use App\GameObject\Item\AbstractBaseItemPrototype;
@@ -48,9 +49,10 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         if ($reward instanceof ItemReward) {
             try {
                 /** @var AbstractBaseItemPrototype $item */
-                $item = $this->gameObjectEngine->get($reward->getItemPrototypeId());
-                $this->playerEngine->giveItem($player, $this->instantiator->createFrom($item, $reward->getQuantity()));
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%s %s', $reward->getQuantity(), $reward->getItemPrototypeId()->getName()));
+                $item = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
+                $itemInstance = $this->instantiator->createFrom($item, $reward->getQuantity());
+                $this->playerEngine->giveItem($player, $itemInstance);
+                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%s %s', $itemInstance->getQuantity(), $itemInstance->getComponent(Render::class)->getName()));
             } catch (MaxBagSizeReachedException $e) {
                 $this->notificationEngine->danger($player->getId(), 'Your bag is full, you cannot receive the item.');
                 return;

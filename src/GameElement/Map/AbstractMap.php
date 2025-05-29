@@ -11,10 +11,11 @@ abstract class AbstractMap extends AbstractGameObject
         protected string $name,
         protected float $coordinateX,
         protected float $coordinateY,
-        protected string $description = ''
+        protected string $description = '',
+        array $components = [],
     )
     {
-        parent::__construct($id);
+        parent::__construct($id, $components);
     }
 
     public function getId(): string

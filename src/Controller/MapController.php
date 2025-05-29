@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
-use App\Engine\Gathering\Activity\ResourceGatheringActivity;
 use App\Engine\Item\ItemActionEngine;
 use App\Engine\Player\PlayerCombatManager;
 use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
-use App\Entity\Game\MapSpawnedMob;
-use App\Entity\Game\MapSpawnedResource;
+use App\Entity\Game\MapObject;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
+use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Map\Engine\MapEngine;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,20 +36,19 @@ class MapController extends AbstractController
 
         return $this->render('map/home.html.twig', [
             'player' => $user,
-            'spawnedResources' => $mapEngine->getSpawnedResources($user->getMap()),
+            'mapObjects' => $mapEngine->getMapObjects($user->getMap()),
             'recipes' => $gameObjectEngine->getByClass(AbstractRecipe::class),
-            'spawnedMobs' => $mapEngine->getSpawnedMobs($user->getMap()),
         ]);
     }
 
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
-    public function startGathering(MapSpawnedResource $spawnedResource, ActivityEngine $gameActivity, Request $request): Response
+    public function startGathering(MapObject $resource, ActivityEngine $gameActivity, Request $request): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
 
-        $gameActivity->run(new ResourceGatheringActivity($player, $spawnedResource->getResource(), $spawnedResource->getId()));
+        $gameActivity->run(new ResourceGatheringActivity($player, $resource));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

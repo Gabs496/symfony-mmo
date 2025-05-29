@@ -4,6 +4,7 @@ namespace App\GameElement\Item\Render;
 
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Item\AbstractItemPrototype;
+use App\GameElement\Render\Component\Render;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -19,6 +20,9 @@ class Prototype
     #[ExposeInTemplate]
     protected $maskedDanger = false;
 
+    #[ExposeInTemplate]
+    protected Render $render;
+
     public function __construct(
         protected GameObjectEngine $gameObjectEngine
     )
@@ -28,8 +32,9 @@ class Prototype
     public function mount(string $id): void
     {
         /** @var AbstractItemPrototype $item */
-        $item = $this->gameObjectEngine->get($id);
+        $item = $this->gameObjectEngine->getPrototype($id);
         $this->item = $item;
+        $this->render = $item->getComponent(Render::class);
     }
 
     public function getItem(): AbstractItemPrototype
@@ -60,5 +65,15 @@ class Prototype
     public function setMaskedDanger(bool $maskedDanger): void
     {
         $this->maskedDanger = $maskedDanger;
+    }
+
+    public function getRender(): Render
+    {
+        return $this->render;
+    }
+
+    public function setRender(Render $render): void
+    {
+        $this->render = $render;
     }
 }

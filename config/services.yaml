@@ -30,6 +30,8 @@ services:
             tags: [ 'token.exchanger' ]
         App\GameElement\Core\GameObject\GameObjectInterface:
             tags: [ 'game.object' ]
+        App\GameElement\Core\GameObject\GameObjectPrototypeInterface:
+            tags: [ 'game.object.prototype' ]
         App\GameElement\Mastery\MasteryType:
             tags: [ 'mastery.type' ]
         App\GameElement\Reward\RewardApplierInterface:

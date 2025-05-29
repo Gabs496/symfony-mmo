@@ -1,0 +1,14 @@
+{% extends 'components/Render/GenericObject.html.twig' %}
+{#{% block moreInfo %}#}
+{#    <div>#}
+{#        <div class="d-flex">#}
+{#            <div class="small badge bg-white text-black">{{ math_stat_view(health.currentHealth) }}</div>#}
+{#            <div class="w-100">#}
+{#                {% include 'parts/progressBar.html.twig' with {percentage: health.currentHealth/health.maxHealth} %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}
+{% block action %}
+    <a href="{{ path('app_map_resource_gather', {id: object.id}) }}" class="btn btn-primary">{{ 'gather'|trans|upper }}</a>
+{% endblock %}

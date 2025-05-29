@@ -37,7 +37,7 @@ readonly class PlayerCraftingEngine implements EventSubscriberInterface
         try {
             foreach ($recipe->getIngredients() as $ingredient) {
                 /** @var AbstractItemPrototype $itemPrototype */
-                $itemPrototype = $this->gameObjectEngine->get($ingredient->getItemPrototypeId());
+                $itemPrototype = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId());
                 $this->itemEngine->takeItem($player, $itemPrototype, $ingredient->getQuantity());
             }
             $event->setProcessed();

@@ -2,54 +2,44 @@
 
 namespace App\GameElement\Gathering;
 
-use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameObject\AbstractGameObjectPrototype;
+use App\GameElement\Gathering\Component\Gathering;
+use App\GameElement\Render\Component\Render;
+use App\GameElement\Reward\RewardInterface;
 
-abstract class AbstractResource extends AbstractGameObject
+abstract class AbstractResource extends AbstractGameObjectPrototype
 {
     public function __construct(
-        string                  $id,
-        private readonly string $name,
-        private readonly float  $difficulty,
-        private readonly string $involvedMastery,
-        private readonly string $rewardItemId,
-        private readonly float  $gatheringTime,
+        string          $id,
+        string          $name,
+        float           $difficulty,
+        string          $involvedMastery,
+        /** @param RewardInterface[] $rewards */
+        protected array $rewards,
+        float           $gatheringTime,
+        array           $components = [],
     )
     {
-        parent::__construct($id);
+        parent::__construct($id, array_merge(
+            $components,
+            [
+                new Render(
+                    name: $name,
+                    iconPath: '/resource_gathering/' . strtolower($id) . '.png',
+                    template: 'Gathering:ResourceRender',
+                ),
+                new Gathering(
+                    difficulty: $difficulty,
+                    involvedMastery: $involvedMastery,
+                    gatheringTime: $gatheringTime,
+
+                )
+            ]
+        ));
     }
 
-    public function getId(): string
+    public function getRewards(): array
     {
-        return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getDifficulty(): float
-    {
-        return $this->difficulty;
-    }
-
-    public function getInvolvedMastery(): string
-    {
-        return $this->involvedMastery;
-    }
-
-    public function getRewardItemId(): string
-    {
-        return $this->rewardItemId;
-    }
-
-    public function getGatheringTime(): float
-    {
-        return $this->gatheringTime;
-    }
-
-    public function getIcon(): string
-    {
-        return '/resource_gathering/' . strtolower($this->id) . '.png';
+        return $this->rewards;
     }
 }
