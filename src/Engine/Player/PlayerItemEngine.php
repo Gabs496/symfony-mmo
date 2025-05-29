@@ -102,13 +102,13 @@ readonly class PlayerItemEngine
         try {
             $this->hub->publish(new Update(
                 'player_gui_' . $player->getId(),
-                $this->twig->render('item_bag/space.stream.html.twig', ['bag' => $event->getItemBag()]),
+                $this->twig->render('streams/space.stream.html.twig', ['bag' => $event->getItemBag()]),
                 true
             ));
 
             $this->hub->publish(new Update(
                 'player_gui_' . $player->getId(),
-                $this->twig->render('item_bag/items_update.stream.html.twig', ['bag' => $event->getItemBag()]),
+                $this->twig->render('streams/items_update.stream.html.twig', ['bag' => $event->getItemBag()]),
                 true
             ));
         } catch (RuntimeError $twigError) {

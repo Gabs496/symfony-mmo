@@ -3,7 +3,7 @@
 {% block update %}
     <turbo-stream action="update" target="player_health_{{ player_id }}">
         <template>
-            {% include 'parts/progressBar.html.twig' with {percentage: health.percentage, bg: 'bg-danger'} %}
+            {{ component('Health:Bar', {health: health}) }}
         </template>
     </turbo-stream>
 {% endblock %}
