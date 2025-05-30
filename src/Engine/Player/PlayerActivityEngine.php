@@ -65,7 +65,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
         $this->hub->publish(new Update(
             'player_gui_' . $player->getId(),
-            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()]),
+            $this->twig->load('streams/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()]),
             true
         ));
     }
@@ -84,7 +84,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
         $this->hub->publish(new Update(
             'player_gui_' . $player->getId(),
-            $this->twig->load('map/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $activityEntity]),
+            $this->twig->load('streams/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $activityEntity]),
             true
         ));
     }

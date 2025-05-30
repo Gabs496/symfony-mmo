@@ -57,18 +57,6 @@
                     {% endfor %}
                 </turbo-frame>
             </div>
-
-{#            <div class="card">#}
-{#                <div class="card-header bg-info">#}
-{#                    {{ 'mobs'|trans|capitalize }}#}
-{#                </div>#}
-{#                <turbo-frame class="card-body" id="map_spawned_mobs" {{ custom_turbo_stream_listen('map_spawned_mobs_' ~ player.position) }}>#}
-{#                    {% for entity in spawnedMobs %}#}
-{#                        {% set id = entity.id %}#}
-{#                        {{ block('create', 'map/spawned_mob_list.stream.html.twig') }}#}
-{#                    {% endfor %}#}
-{#                </turbo-frame>#}
-{#            </div>#}
         </div>
     </div>
 {% endblock %}
