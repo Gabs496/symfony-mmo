@@ -3,7 +3,6 @@
 namespace App\Entity\Data;
 
 use App\GameElement\Core\GameObject\GameObjectPrototypeReference;
-use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Item\AbstractItemBag;
 use App\GameElement\Item\AbstractItemInstance;
 use App\GameElement\Item\AbstractItemPrototype;
@@ -33,7 +32,7 @@ class ItemInstance extends AbstractItemInstance
     protected string $itemPrototypeId;
 
     /** @var AbstractBaseItemPrototype|null  */
-    #[GameObjectPrototypeReference(AbstractBaseItemPrototype::class, objectPrototypeIdProperty: 'itemPrototypeId')]
+    #[GameObjectPrototypeReference(objectPrototypeIdProperty: 'itemPrototypeId')]
     protected ?AbstractItemPrototype $itemPrototype = null;
 
     public function __construct()

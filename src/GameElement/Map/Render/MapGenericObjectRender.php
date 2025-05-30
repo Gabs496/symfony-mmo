@@ -1,18 +1,17 @@
 <?php
 
-namespace App\GameElement\Render;
+namespace App\GameElement\Map\Render;
 
 use App\Entity\Game\MapObject;
-use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Render\Component\Render;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
-#[AsTwigComponent(name: 'Render:GenericObject')]
-class GenericObject
+#[AsTwigComponent(name: 'Map:GenericObjectRender')]
+class MapGenericObjectRender
 {
     #[ExposeInTemplate]
-    protected GameObjectInterface $object;
+    protected MapObject $object;
 
     #[ExposeInTemplate]
     protected Render $render;
@@ -22,7 +21,7 @@ class GenericObject
         $this->object = $object;
         $this->render = $this->object->getComponent(Render::class);
     }
-    public function getObject(): GameObjectInterface
+    public function getObject(): MapObject
     {
         return $this->object;
     }

@@ -2,11 +2,11 @@
 
 namespace App\GameElement\Gathering\Render;
 
-use App\GameElement\Render\GenericObject;
+use App\GameElement\Map\Render\MapGenericObjectRender;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: 'Gathering:ResourceRender')]
-class ResourceRender extends GenericObject
+class ResourceRender extends MapGenericObjectRender
 {
 
 }

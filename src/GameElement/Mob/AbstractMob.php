@@ -35,7 +35,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
                     name: $name,
                     description: $description,
                     iconPath: $iconPath ?? '/mob/' . strtolower($id) . '.png',
-                    template: 'Mob:MobRender'
+                    template: 'Mob:MapRender'
                 ),
                 new Health($maxHealth, $maxHealth),
                 new Combat($combatStats),

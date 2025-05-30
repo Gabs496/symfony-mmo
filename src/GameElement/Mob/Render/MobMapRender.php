@@ -2,19 +2,17 @@
 
 namespace App\GameElement\Mob\Render;
 
+use App\Entity\Game\MapObject;
 use App\GameElement\Combat\Component\Combat;
-use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Health\Component\Health;
+use App\GameElement\Map\Render\MapGenericObjectRender;
 use App\GameElement\Render\Component\Render;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
-#[AsTwigComponent(name: 'Mob:MobRender')]
-class MobRender
+#[AsTwigComponent(name: 'Mob:MapRender')]
+class MobMapRender extends MapGenericObjectRender
 {
-    #[ExposeInTemplate]
-    protected GameObjectInterface $mob;
-
     #[ExposeInTemplate]
     protected Health $health;
 
@@ -24,22 +22,12 @@ class MobRender
     #[ExposeInTemplate]
     protected Render $render;
 
-    public function mount(GameObjectInterface $object): void
+    public function mount(MapObject $object): void
     {
-        $this->mob = $object;
+        $this->object = $object;
         $this->health = $object->getComponent(Health::class);
         $this->combat = $object->getComponent(Combat::class);
         $this->render = $object->getComponent(Render::class);
-    }
-
-    public function getMob(): GameObjectInterface
-    {
-        return $this->mob;
-    }
-
-    public function setMob(GameObjectInterface $mob): void
-    {
-        $this->mob = $mob;
     }
 
     public function getHealth(): Health

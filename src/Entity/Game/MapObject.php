@@ -2,10 +2,10 @@
 
 namespace App\Entity\Game;
 
-use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObject\GameObjectPrototypeReference;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Core\Token\TokenInterface;
 use App\GameElement\Core\Token\TokenizableInterface;
@@ -35,8 +35,11 @@ class MapObject implements TokenizableInterface, GameObjectInterface
     #[ORM\Column(type: 'json_document', nullable: false)]
     protected array $components = [];
 
-    #[GameObjectReference(class: AbstractBaseMap::class,objectIdProperty: 'mapId')]
+    #[GameObjectReference(objectIdProperty: 'mapId')]
     protected AbstractBaseMap $map;
+
+    #[GameObjectPrototypeReference(objectPrototypeIdProperty: 'objectId')]
+    protected GameObjectPrototypeInterface $prototype;
 
     public function __construct(AbstractBaseMap $map, GameObjectPrototypeInterface $object, array $components = [])
     {
@@ -74,6 +77,16 @@ class MapObject implements TokenizableInterface, GameObjectInterface
     public function getObjectId(): ?string
     {
         return $this->objectId;
+    }
+
+    public function getPrototype(): GameObjectPrototypeInterface
+    {
+        return $this->prototype;
+    }
+
+    public function setPrototype(GameObjectPrototypeInterface $prototype): void
+    {
+        $this->prototype = $prototype;
     }
 
     public function cloneComponent(): void

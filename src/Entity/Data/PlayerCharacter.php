@@ -54,7 +54,7 @@ class PlayerCharacter extends AbstractCharacter
     private ?string $position = null;
     private array $roles = [];
 
-    #[GameObjectReference(AbstractMap::class, objectIdProperty: 'position')]
+    #[GameObjectReference(objectIdProperty: 'position')]
     private AbstractMap $map;
 
     #[ORM\ManyToOne(targetEntity: Activity::class, cascade: ['all'])]

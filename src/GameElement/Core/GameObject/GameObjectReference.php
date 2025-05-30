@@ -8,14 +8,8 @@ use Attribute;
 readonly class GameObjectReference
 {
     public function __construct(
-        private string $class,
         private string $objectIdProperty,
     ) {
-    }
-
-    public function getClass(): string
-    {
-        return $this->class;
     }
 
     public function getObjectIdProperty(): string
