@@ -1,9 +1,7 @@
 {% block create %}
     <turbo-stream action="append" target="map_objects">
         <template>
-            <div id="map_object_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
-                {{ game_object_render(entity) }}
-            </div>
+            {{ game_object_render(entity) }}
         </template>
     </turbo-stream>
 {% endblock %}

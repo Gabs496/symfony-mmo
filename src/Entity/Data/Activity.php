@@ -2,14 +2,10 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\Mastery\MasterySet;
 use App\Repository\Data\ActivityRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-//use Symfony\UX\Turbo\Attribute\Broadcast;
-
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
-//#[Broadcast(topics: ['@="playerActivity"'], private: true, template: 'map/PlayerActivity.stream.html.twig')]
 class Activity
 {
     #[ORM\Id]

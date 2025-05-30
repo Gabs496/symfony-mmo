@@ -1,8 +1,0 @@
-{% block update %}
-    <turbo-stream action="update" target="player_current_activity">
-        <template>
-            {% set entity = app.user.currentActivity %}
-            {% include 'parts/activity.html.twig' %}
-        </template>
-    </turbo-stream>
-{% endblock %}

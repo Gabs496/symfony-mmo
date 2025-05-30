@@ -4,13 +4,6 @@
     <div class="row">
         <div class="col-lg-4">
             <div class="card">
-{#                <div class="card-header bg-info">{{ 'resources'|trans|capitalize }}</div>#}
-{#                <turbo-frame class="card-body" id="map_available_activities" {{ custom_turbo_stream_listen('mapAvailableActivities_' ~ player.position) }}>#}
-{#                    {% for entity in spawnedResources %}#}
-{#                        {% set id = entity.id %}#}
-{#                        {{ block('create', 'map/MapAvailableActivity.stream.html.twig') }}#}
-{#                    {% endfor %}#}
-{#                </turbo-frame>#}
                 <div class="card-header bg-info">{{ 'field'|trans|capitalize }}</div>
                 <turbo-frame class="card-body" id="map_objects" {{ custom_turbo_stream_listen('map_objects_' ~ player.position) }}>
                     {% for mapObject in mapObjects %}

@@ -1,7 +1,7 @@
 <div class="bg-dark border-primary rounded m-1">
     <div class="dropdown">
         <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
-            {{ component('Item:Instance', {instance: itemInstance}) }}
+            {{ component('Item:Prototype', {id: itemInstance.itemPrototype.id, quantity: itemInstance.quantity}) }}
         </a>
         <div class="dropdown-menu border">
             {% for action in itemActionEngine.availableActions(itemInstance) %}

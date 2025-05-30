@@ -1,22 +1,24 @@
-<div class="bg-dark border-primary rounded my-1">
-    <div class="row align-items-center">
-        <div class="col-auto">
-            {% block icon %}
-            <div style="width: 5em; height: 5em;">
-                <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100">
+<div id="map_object_{{ object.id }}" class="animate__animated animate__zoomIn animate__faster">
+    <div class="bg-dark border-primary rounded my-1">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                {% block icon %}
+                <div style="width: 5em; height: 5em;">
+                    <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100">
+                </div>
+                {% endblock %}
             </div>
-            {% endblock %}
-        </div>
-        <div class="col">
-            {% block name %}
-            <div class="fw-bold">{{ render.name }}</div>
-            {% endblock %}
-            {% block moreInfo %}
-            {% endblock %}
-        </div>
-        <div class="col-lg-3 ms-auto">
-            {% block action %}
-            {% endblock %}
+            <div class="col">
+                {% block name %}
+                <div class="fw-bold">{{ render.name }}</div>
+                {% endblock %}
+                {% block moreInfo %}
+                {% endblock %}
+            </div>
+            <div class="col-lg-3 ms-auto">
+                {% block action %}
+                {% endblock %}
+            </div>
         </div>
     </div>
 </div>
