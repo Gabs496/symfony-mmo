@@ -4,7 +4,7 @@
         <div class="d-flex">
             <div class="small badge bg-white text-black">{{ math_stat_view(health.currentHealth) }}</div>
             <div class="w-100">
-                {% include 'parts/progressBar.html.twig' with {percentage: health.currentHealth/health.maxHealth} %}
+                {% include 'parts/progressBar.html.twig' with {percentage: health.currentHealth/health.maxHealth } %}
             </div>
         </div>
     </div>

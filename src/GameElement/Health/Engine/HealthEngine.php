@@ -3,9 +3,10 @@
 namespace App\GameElement\Health\Engine;
 
 use App\Engine\Math;
+use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\Event\HealthDecreasedEvent;
 use App\GameElement\Health\Event\HealthReachedZeroEvent;
-use App\GameElement\Health\HasHealthComponentInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class HealthEngine
@@ -14,9 +15,9 @@ readonly class HealthEngine
         protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
-    public function decreaseCurrentHealth(HasHealthComponentInterface $object, float $value): void
+    public function decreaseCurrentHealth(GameObjectInterface $object, float $value): void
     {
-        $health = $object->getHealth();
+        $health = $object->getComponent(Health::class);
         $currentHealth = $health->getCurrentHealth();
         $newHealth = max(Math::sub($currentHealth, $value), 0.0);
         $health->setCurrentHealth($newHealth);

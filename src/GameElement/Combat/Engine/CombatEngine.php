@@ -5,12 +5,13 @@ namespace App\GameElement\Combat\Engine;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Combat\Activity\AttackActivity;
-use App\GameElement\Combat\HasCombatComponentInterface;
+use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\DefenseFinished;
 use App\GameElement\Combat\StatCollection;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\Token\TokenEngine;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -54,17 +55,26 @@ class CombatEngine implements EventSubscriberInterface
         $attacker = $this->tokenEngine->exchange($attackerToken);
         $defender = $this->tokenEngine->exchange($defenderToken);
 
-        if (!$attacker instanceof HasCombatComponentInterface || !$defender instanceof HasCombatComponentInterface) {
-            throw new RuntimeException(sprintf("Both %s and %s must implement %s", $attacker::class, $defender::class, HasCombatComponentInterface::class));
+        if (!$attacker instanceof GameObjectInterface || !$defender instanceof GameObjectInterface) {
+            throw new RuntimeException(sprintf("Both %s and %s must implement %s", $attacker::class, $defender::class, GameObjectInterface::class));
         }
 
         $this->attack($attacker, $defender, $activity->getPreCalculatedStatCollection());
     }
 
-    public function attack(HasCombatComponentInterface $attacker, HasCombatComponentInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
+    public function attack(GameObjectInterface $attacker, GameObjectInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
     {
-        $attackManager = $this->getCombatManager($attacker::class);
-        $defenderManager = $this->getCombatManager($defender::class);
+        $attackerCombat = $attacker->getComponent(Combat::class);
+        if (!$attackerCombat) {
+            throw new RuntimeException(sprintf('Attacker %s does not have %s component', $attacker::class, Combat::class));
+        }
+        $defenderCombat = $defender->getComponent(Combat::class);
+        if (!$defenderCombat) {
+            throw new RuntimeException(sprintf('Defender %s does not have %s component', $defender::class, Combat::class));
+        }
+
+        $attackManager = $this->getCombatManager($attackerCombat);
+        $defenderManager = $this->getCombatManager($defenderCombat);
 
         if ($preCalculatedStatCollection) {
             $attack = new Attack($attacker, $preCalculatedStatCollection);
@@ -90,20 +100,19 @@ class CombatEngine implements EventSubscriberInterface
         $defenderDispatcher->dispatch(new DefenseFinished($attack, $defense, $attackResult));
     }
 
-    /** @param class-string<HasCombatComponentInterface> $combatOpponentClass */
-    public function getCombatManager(string $combatOpponentClass): CombatManagerInterface
+    public function getCombatManager(Combat $combat): CombatManagerInterface
     {
-        $combatManager = $this->registeredCombatManagers[$combatOpponentClass::getCombatManagerClass()] ?? null;
+        $combatManager = $this->registeredCombatManagers[$combat->getManagerClass()] ?? null;
         if ($combatManager) {
             return $combatManager;
         }
 
         foreach ($this->combatManagers as $combatManager) {
             $this->registeredCombatManagers[$combatManager::class] = $combatManager;
-            if ($combatManager::class === $combatOpponentClass::getCombatManagerClass()) {
+            if ($combatManager::class === $combat->getManagerClass()) {
                 return $combatManager;
             }
         }
-        throw new RuntimeException('Invalid combat manager class: ' . $combatOpponentClass::getCombatManagerClass() . ' defined in ' . $combatOpponentClass::class);
+        throw new RuntimeException('Invalid combat manager class: ' . $combat->getManagerClass());
     }
 }

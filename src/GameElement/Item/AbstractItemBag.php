@@ -5,6 +5,7 @@ namespace App\GameElement\Item;
 use App\GameElement\Item\Component\ItemWeightComponent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
+use App\GameElement\Render\Component\Render;
 use Symfony\Component\Uid\Uuid;
 
 abstract class AbstractItemBag
@@ -43,7 +44,7 @@ abstract class AbstractItemBag
     public function findAndExtract(AbstractItemPrototype $item, int $quantity = 1): ItemInstanceInterface
     {
         if (!$this->has($item, $quantity)) {
-            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getName(), $quantity));
+            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(Render::class)->getName(), $quantity));
         }
 
         $newInstance = null;
@@ -79,7 +80,7 @@ abstract class AbstractItemBag
             }
         }
 
-        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $itemInstance->getItemPrototype()->getName(), $quantity));
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $itemInstance->getComponent(Render::class)->getName(), $quantity));
     }
 
     public function has(AbstractItemPrototype $item, int $quantity = 1): bool

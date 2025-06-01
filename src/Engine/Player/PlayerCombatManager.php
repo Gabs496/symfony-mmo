@@ -5,9 +5,7 @@ namespace App\Engine\Player;
 use App\Engine\Combat\CombatSystem;
 use App\Engine\Math;
 use App\Entity\Data\PlayerCharacter;
-use App\Entity\Game\MapSpawnedMob;
 use App\GameElement\Combat\Activity\AttackActivity;
-use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
@@ -16,10 +14,13 @@ use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\Token\TokenizableInterface;
+use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
+use App\GameElement\Render\Component\Render;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -59,14 +60,14 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
     }
 
     /** @param PlayerCharacter $attacker */
-    public function generateAttack(HasCombatComponentInterface $attacker, HasCombatComponentInterface $defender): Attack
+    public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack
     {
         $statCollection = $this->getAttackStatCollection($attacker);
         return new Attack($attacker, $statCollection);
     }
 
     /** @param PlayerCharacter $defender */
-    public function generateDefense(Attack $attack, HasCombatComponentInterface $defender): Defense
+    public function generateDefense(Attack $attack, GameObjectInterface $defender): Defense
     {
         $statCollection = new StatCollection();
         $this->calculateBaseDefense($statCollection);
@@ -85,7 +86,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
 
         $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($damage->getValue()) . ' damage');
 
-        return new AttackResult($attack, $defense, $damage, !$player->getHealth()->isAlive());
+        return new AttackResult($attack, $defense, $damage, !$player->getComponent(Health::class)->isAlive());
     }
 
     public function handleAttackResult(AttackResult $attackResult): void
@@ -97,8 +98,8 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         $defender = $attackResult->getDefense()->getDefender();
 
         if ($attackResult->isDefeated()) {
-            if ($defender instanceof MapSpawnedMob) {
-                $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $defender->getMob()->getName());
+            if ($render = $defender->getComponent(Render::class)) {
+                $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $render->getName());
             }
         }
     }

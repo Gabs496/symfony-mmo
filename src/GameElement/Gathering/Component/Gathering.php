@@ -9,7 +9,7 @@ readonly class Gathering implements GameComponentInterface
     public function __construct(
         private float  $difficulty,
         private string $involvedMastery,
-        private float  $gatheringTime,
+        private float  $gatheringTime
     ){
 
     }

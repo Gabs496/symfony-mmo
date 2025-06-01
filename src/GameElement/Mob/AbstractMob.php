@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Mob;
 
+use App\Engine\Mob\MobCombatManager;
 use App\GameElement\Combat\Component\AbstractStat;
 use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
@@ -10,6 +11,7 @@ use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObjectPrototype;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Render\Component\Render;
+use App\GameElement\Reward\RewardInterface;
 
 abstract class AbstractMob extends AbstractGameObjectPrototype
 {
@@ -23,6 +25,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
         float           $maxHealth,
         /** @var AbstractStat[] $combatStats */
         array           $combatStats = [],
+        /** @var RewardInterface[] */
         protected array $rewardOnDefeats = [],
         ?string         $iconPath = null,
         array           $components = [],
@@ -38,7 +41,8 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
                     template: 'Mob:MapRender'
                 ),
                 new Health($maxHealth, $maxHealth),
-                new Combat($combatStats),
+                //TODO: separate domains
+                new Combat($combatStats, MobCombatManager::class),
             ],
         );
         parent::__construct($id, $components);
@@ -50,6 +54,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
         return $this->getComponent(Combat::class)->getStats();
     }
 
+    /** @return RewardInterface[] */
     public function getRewardOnDefeats(): array
     {
         return $this->rewardOnDefeats;
@@ -64,15 +69,5 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
     public function getDefensiveStats(): array
     {
         return array_filter($this->getCombatStats(), fn(AbstractStat $stat) => !$stat instanceof DefensiveStat);
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 }

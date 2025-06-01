@@ -48,7 +48,7 @@ readonly class ActivityEngine
         $activityEntity->setStartedAt(microtime(true));
         $this->activityRepository->save($activityEntity);
 
-        $activity->setSubject(null);
+        $activity->clear();
         $this->messageBus->dispatch(new ActivityTimeout($activity),[new DelayStamp($this->getMillisecondsDuration($activity))]);
     }
 

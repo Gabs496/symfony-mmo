@@ -74,11 +74,11 @@ class MapController extends AbstractController
     }
 
     #[Route('/mob-fight/{id}', name: 'app_map_mob_fight')]
-    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapSpawnedMob $mapSpawnedMob, PlayerCombatManager $combatEngine): Response
+    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapObject $mob, PlayerCombatManager $combatEngine): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $gameActivity->run($combatEngine->generateAttackActivity($player, $mapSpawnedMob));
+        $gameActivity->run($combatEngine->generateAttackActivity($player, $mob));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

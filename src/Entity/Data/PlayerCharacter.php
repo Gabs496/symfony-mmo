@@ -8,12 +8,12 @@ use App\Entity\Security\User;
 use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
-use App\GameElement\Combat\HasCombatComponentInterface;
 use App\GameElement\Combat\StatCollection;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Health\Component\Health;
-use App\GameElement\Health\HasHealthComponentInterface;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
@@ -28,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 class PlayerCharacter extends AbstractCharacter
-    implements UserInterface, TokenizableInterface, HasHealthComponentInterface, HasCombatComponentInterface
+    implements GameObjectInterface, UserInterface, TokenizableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -225,16 +225,39 @@ class PlayerCharacter extends AbstractCharacter
                 }
             }
         }
-        return new Combat($statCollection->getStats());
-    }
-
-    public static function getCombatManagerClass(): string
-    {
-        return PlayerCombatManager::class;
+        return new Combat($statCollection->getStats(), PlayerCombatManager::class);
     }
 
     public function getToken(): PlayerToken
     {
         return new PlayerToken($this->id);
+    }
+
+    public function getComponents(): array
+    {
+        return [
+            Combat::class => $this->getCombatComponent(),
+            Health::class => $this->getHealth(),
+        ];
+    }
+
+    public function setComponent(string $componentId, GameComponentInterface $component): void
+    {
+        return;
+    }
+
+    public function removeComponent(string $componentId): void
+    {
+        return;
+    }
+
+    public function hasComponent(string $componentClass): bool
+    {
+        return isset($this->getComponents()[$componentClass]);
+    }
+
+    public function getComponent(string $componentClass): ?GameComponentInterface
+    {
+        return $this->getComponents()[$componentClass] ?? null;
     }
 }

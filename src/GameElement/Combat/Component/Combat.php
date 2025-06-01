@@ -10,6 +10,7 @@ readonly class Combat implements GameComponentInterface
     public function __construct(
         /** @var AbstractStat[] $stats */
         protected array $stats,
+        protected string $managerClass,
     )
     {
     }
@@ -27,5 +28,10 @@ readonly class Combat implements GameComponentInterface
     public function getDefensiveStats(): array
     {
         return array_filter($this->stats, fn(AbstractStat $stat) => !$stat instanceof OffensiveStat);
+    }
+
+    public function getManagerClass(): string
+    {
+        return $this->managerClass;
     }
 }

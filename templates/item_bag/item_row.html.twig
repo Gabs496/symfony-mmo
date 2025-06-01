@@ -1,4 +1,4 @@
-<div class="bg-dark border-primary rounded m-1">
+<div id="item-instance-{{ itemInstance.id }}" class="bg-dark border-primary rounded m-1">
     <div class="dropdown">
         <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
             {{ component('Item:Prototype', {id: itemInstance.itemPrototype.id, quantity: itemInstance.quantity}) }}

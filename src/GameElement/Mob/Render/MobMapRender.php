@@ -24,10 +24,9 @@ class MobMapRender extends MapGenericObjectRender
 
     public function mount(MapObject $object): void
     {
-        $this->object = $object;
+        parent::mount($object);
         $this->health = $object->getComponent(Health::class);
         $this->combat = $object->getComponent(Combat::class);
-        $this->render = $object->getComponent(Render::class);
     }
 
     public function getHealth(): Health
@@ -35,28 +34,8 @@ class MobMapRender extends MapGenericObjectRender
         return $this->health;
     }
 
-    public function setHealth(Health $health): void
-    {
-        $this->health = $health;
-    }
-
     public function getCombat(): Combat
     {
         return $this->combat;
-    }
-
-    public function setCombat(Combat $combat): void
-    {
-        $this->combat = $combat;
-    }
-
-    public function getRender(): Render
-    {
-        return $this->render;
-    }
-
-    public function setRender(Render $render): void
-    {
-        $this->render = $render;
     }
 }

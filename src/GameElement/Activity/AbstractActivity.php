@@ -78,4 +78,9 @@ abstract class AbstractActivity
     {
         $this->scheduledAt = new DateTimeImmutable();
     }
+
+    public function clear(): void
+    {
+        $this->subject = null;
+    }
 }

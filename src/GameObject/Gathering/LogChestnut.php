@@ -3,7 +3,7 @@
 namespace App\GameObject\Gathering;
 
 use App\Engine\Reward\MasteryReward;
-use App\GameElement\Gathering\AbstractResource;
+use App\GameElement\Gathering\GameObject\AbstractResource;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
 use App\GameObject\Mastery\Gathering\Woodcutting;

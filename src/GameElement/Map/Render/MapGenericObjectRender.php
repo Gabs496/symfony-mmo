@@ -19,7 +19,7 @@ class MapGenericObjectRender
     public function mount(MapObject $object): void
     {
         $this->object = $object;
-        $this->render = $this->object->getComponent(Render::class);
+        $this->render = $object->getComponent(Render::class);
     }
     public function getObject(): MapObject
     {

@@ -7,8 +7,10 @@ use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;
+use App\GameElement\Map\Event\Spawn\PreMapObjectSpawn;
 use App\Repository\Game\MapObjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -18,6 +20,7 @@ readonly class ObjectSpawnHandler
     public function __construct(
         protected MapObjectRepository $mapObjectRepository,
         protected GameObjectEngine $gameObjectEngine,
+        protected EventDispatcherInterface $eventDispatcher,
     )
     {
 
@@ -41,6 +44,7 @@ readonly class ObjectSpawnHandler
     {
         $object = $this->gameObjectEngine->getPrototype($objectSpawn->getObjectId());
         $instance = (new MapObject($map, $object, $object->getComponents()));
+        $this->eventDispatcher->dispatch(new PreMapObjectSpawn($instance, $objectSpawn));
         $this->mapObjectRepository->save($instance);
     }
 

@@ -7,7 +7,9 @@
                 <div class="card-header bg-info">{{ 'field'|trans|capitalize }}</div>
                 <turbo-frame class="card-body" id="map_objects" {{ custom_turbo_stream_listen('map_objects_' ~ player.position) }}>
                     {% for mapObject in mapObjects %}
-                        {{ game_object_render(mapObject) }}
+                        <div id="map_object_{{ mapObject.id }}" class="animate__animated animate__zoomIn animate__faster">
+                            {{ game_object_render(mapObject) }}
+                        </div>
                     {% endfor %}
                 </turbo-frame>
             </div>

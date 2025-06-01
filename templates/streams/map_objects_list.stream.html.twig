@@ -1,21 +1,38 @@
 {% block create %}
     <turbo-stream action="append" target="map_objects">
         <template>
-            {{ game_object_render(entity) }}
+            <div id="map_object_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
+                {{ game_object_render(entity) }}
+            </div>
         </template>
     </turbo-stream>
 {% endblock %}
 
 {% block update %}
-    <turbo-stream action="update" target="map_object_{{ id }}">
+    <turbo-stream action="replace" target="map_object_{{ id }}" method="morph">
         <template>
-            {{ game_object_render(entity) }}
+            <div id="map_object_{{ id }}">
+                {{ game_object_render(entity) }}
+            </div>
         </template>
     </turbo-stream>
 {% endblock %}
 
 {% block remove %}
-    <turbo-stream action="remove" target="map_object_{{ id }}">
-        <template></template>
+    <turbo-stream action="replace" target="map_object_{{ id }}">
+        <template>
+            <div id="map_object_{{ id }}" class="animate__animated animate__zoomOut animate__faster" style="transition: all .5s;">
+                {{ game_object_render(entity) }}
+                <script>
+                    document.getElementById('map_object_{{ id }}').style.height = document.getElementById('map_object_{{ id }}').offsetHeight + 'px';
+                    setTimeout(function(){
+                        document.getElementById('map_object_{{ id }}').style.height = 0;
+                        setTimeout(function(){
+                            document.getElementById('map_object_{{ id }}').remove();
+                        }, 500);
+                    }, 50);
+                </script>
+            </div>
+        </template>
     </turbo-stream>
 {% endblock %}

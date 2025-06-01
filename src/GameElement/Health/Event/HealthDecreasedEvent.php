@@ -2,18 +2,18 @@
 
 namespace App\GameElement\Health\Event;
 
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Health\Component\Health;
-use App\GameElement\Health\HasHealthComponentInterface;
 
 class HealthDecreasedEvent
 {
     public function __construct(
-        protected HasHealthComponentInterface $object,
+        protected GameObjectInterface $object,
         protected Health $health,
     ) {
     }
 
-    public function getObject(): HasHealthComponentInterface
+    public function getObject(): GameObjectInterface
     {
         return $this->object;
     }

@@ -5,9 +5,9 @@ namespace App\GameElement\Map\Component\Spawn;
 readonly class ObjectSpawn
 {
     public function __construct(
-        private string $objectId,
-        private int    $maxAvailability,
-        private float  $spawnRate,
+        protected string $objectId,
+        protected int    $maxAvailability,
+        protected float  $spawnRate
     )
     {
     }
@@ -25,5 +25,10 @@ readonly class ObjectSpawn
     public function getSpawnRate(): float
     {
         return $this->spawnRate;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

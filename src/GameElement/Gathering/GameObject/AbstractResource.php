@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\Gathering;
+namespace App\GameElement\Gathering\GameObject;
 
 use App\GameElement\Core\GameObject\AbstractGameObjectPrototype;
 use App\GameElement\Gathering\Component\Gathering;

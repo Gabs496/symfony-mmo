@@ -30,7 +30,7 @@ class Sbinsol extends AbstractBaseAnimalMob
             ],
             rewardOnDefeats: [
                 new MasteryReward(PhysicalAttack::getId(), 0.01),
-                new ItemReward(WoodenSwordPrototype::ID, 0.1, [new Drop(0.1)]),
+                new ItemReward(WoodenSwordPrototype::ID, 1, [new Drop(0.1)]),
             ]
         );
     }

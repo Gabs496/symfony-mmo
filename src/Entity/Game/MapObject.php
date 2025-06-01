@@ -98,7 +98,7 @@ class MapObject implements TokenizableInterface, GameObjectInterface
         }
     }
 
-    public function getToken(): TokenInterface
+    public function getToken(): MapObjectToken
     {
         return new MapObjectToken($this->id);
     }
