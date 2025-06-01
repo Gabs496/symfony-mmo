@@ -25,11 +25,11 @@ Then:
     ```
     git clone git@github.com:Gabs496/symfony-mmo.git
     cd symfony-mmo
+    composer install
     docker-compose up -d
     bin/console doctrine:database:create
     bin/console doctrine:migrations:migrate
     bin/console doctrine:fixtures:load
-    bin/console sass:build
     ```
 3. launch app with `symfony server:start -d`
 4. connect to http://localhost:8000 (or create your own proxy domain with Symfony Web Server)
