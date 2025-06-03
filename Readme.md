@@ -1,4 +1,21 @@
-# Symfony MMO
+# Symfony MMO: Build Your Legend in a Player-Driven Persistent World
+
+Dive into **Symfony MMO**, an ambitious open-source video game currently in development that masterfully blends the Massively Multiplayer Online genre with deep management elements. Using **PHP and Symfony**, we're creating a dynamic universe where player specialization and interaction are at the heart of the experience.
+
+In Symfony MMO, your progression is tied to your ability to master various skills. Choose your path:
+
+-   **Combat:** Hone your techniques and become a formidable warrior.
+-   **Resource Economy:** Dedicate yourself to **Gathering** precious lumber, ores, fibers, and metals.
+-   **Sustenance:** Cultivate fields through **Farming** or tend to livestock with **Animal Husbandry**.
+-   **Craftsmanship:** Become a master in **Cooking**, **Potion/Drug Preparation**, or **Crafting** essential weapons, armor, and tools.
+-   **Maintenance:** Ensure the longevity of items through **Equipment Repair** and **Material Recycling** from broken objects.
+
+A crucial aspect of the game is its player-driven economy: **all weapons are crafted and sold by players themselves** in various local markets. Weapon wear adds a strategic layer, making repair a costly but essential choice for rarer equipment.
+
+Explore a vast and varied world, with **distinct cities and locations**, each characterized by unique resources, specific mobs, interactive NPCs, and dynamic markets that reflect the local economy.
+
+**Symfony MMO is more than just a game; it's a collaborative project.
+** Being open-source, we aim to create an environment where anyone can contribute to the evolution of mechanics, the enrichment of the story, and the expansion of content. If you're a developer, a designer, a storyteller, or simply an enthusiast with ideas, join us on this journey and help forge the future of Symfony MMO!
 ![Schermata del 2025-03-17 18-30-22](https://github.com/user-attachments/assets/7a9e7420-128a-4869-93c8-f298ba6829bc)
 
 Please, if you like this project, follow me on Patreon: your follow will be a motivation for me 😃
