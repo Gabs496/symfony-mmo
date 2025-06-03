@@ -14,8 +14,7 @@ A crucial aspect of the game is its player-driven economy: **all weapons are cra
 
 Explore a vast and varied world, with **distinct cities and locations**, each characterized by unique resources, specific mobs, interactive NPCs, and dynamic markets that reflect the local economy.
 
-**Symfony MMO is more than just a game; it's a collaborative project.
-** Being open-source, we aim to create an environment where anyone can contribute to the evolution of mechanics, the enrichment of the story, and the expansion of content. If you're a developer, a designer, a storyteller, or simply an enthusiast with ideas, join us on this journey and help forge the future of Symfony MMO!
+**Symfony MMO is more than just a game; it's a collaborative project.** Being open-source, we aim to create an environment where anyone can contribute to the evolution of mechanics, the enrichment of the story, and the expansion of content. If you're a developer, a designer, a storyteller, or simply an enthusiast with ideas, join us on this journey and help forge the future of Symfony MMO!
 ![Schermata del 2025-03-17 18-30-22](https://github.com/user-attachments/assets/7a9e7420-128a-4869-93c8-f298ba6829bc)
 
 Please, if you like this project, follow me on Patreon: your follow will be a motivation for me 😃
