@@ -20,6 +20,9 @@ Explore a vast and varied world, with **distinct cities and locations**, each ch
 Please, if you like this project, follow me on Patreon: your follow will be a motivation for me 😃
 Link: [Click here to follow](https://patreon.com/user?u=99509619)
 
+## Roadmap
+Link to the discussion: [https://github.com/Gabs496/symfony-mmo/discussions/6#discussion-8411611](https://github.com/Gabs496/symfony-mmo/discussions/6#discussion-8411611)
+
 ## How to install and run (Linux)
 
 Requirements:
