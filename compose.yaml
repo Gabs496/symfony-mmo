@@ -5,7 +5,6 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: 'symfony-mmo'
-      MYSQL_USER: 'root'
       MYSQL_ROOT_PASSWORD: 'password'
     ports:
       - '3306:3306'
