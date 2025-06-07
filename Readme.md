@@ -1,4 +1,4 @@
-# Symfony MMO: Build Your Legend in a Player-Driven Persistent World
+# ⚔️ Symfony MMO: Build Your Legend in a Player-Driven Persistent World
 
 Dive into **Symfony MMO**, an ambitious open-source video game currently in development that masterfully blends the Massively Multiplayer Online genre with deep management elements. Using **PHP and Symfony**, we're creating a dynamic universe where player specialization and interaction are at the heart of the experience.
 
@@ -20,10 +20,15 @@ Explore a vast and varied world, with **distinct cities and locations**, each ch
 Please, if you like this project, follow me on Patreon: your follow will be a motivation for me 😃
 Link: [Click here to follow](https://patreon.com/user?u=99509619)
 
-## Roadmap
+## 🚶 Roadmap
 Link to the discussion: [https://github.com/Gabs496/symfony-mmo/discussions/6#discussion-8411611](https://github.com/Gabs496/symfony-mmo/discussions/6#discussion-8411611)
 
-## How to install and run (Linux)
+## 🟢 Live demo
+You can try the game in a live demo at ---> [http://37.114.41.235](http://37.114.41.235)  
+Username: `dev@dev.org`  
+Password: `devpassword`
+
+## How to install and run locally (Linux)
 
 Requirements:
 
