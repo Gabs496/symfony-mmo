@@ -93,7 +93,7 @@ class GameObjectEngine
      */
     public function getByClass(string $class): array
     {
-        return $this->gameObjectCache->get($class,function (ItemInterface $item) use ($class) {
+        return $this->gameObjectCache->get(hash('md5', $class),function (ItemInterface $item) use ($class) {
             $result = [];
             //TODO: try to optimize it
             foreach ($this->gameObjectCollection as $gameObject) {
