@@ -1,17 +1,18 @@
 services:
 ###> doctrine/doctrine-bundle ###
   database:
-    image: mysql
+    image: mysql:8.0
     restart: always
     environment:
-      MYSQL_DATABASE: 'symfony-mmo'
+      MYSQL_USERNAME: 'symfony-mmo'
+      MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
     ports:
       - '3306:3306'
     expose:
       - '3306'
     volumes:
-      - symfony-mmo-db:/var/lib/mysql
+      - ./environment/mysql/db:/var/lib/mysql
   mercure:
     image: dunglas/mercure
     restart: unless-stopped
@@ -19,6 +20,8 @@ services:
       MERCURE_PUBLISHER_JWT_KEY: '12345678901234567890123456789012'
       MERCURE_SUBSCRIBER_JWT_KEY: '12345678901234567890123456789012'
       SERVER_NAME: ':80'
+    volumes:
+      - ./environment/dev.Caddyfile:/etc/caddy/dev.Caddyfile
     # Uncomment the following line to enable the development mode
 #    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
     ports:
@@ -30,5 +33,3 @@ services:
     ports:
       - 15672:15672 # HTTP
       - 5672:5672 # AMQP
-volumes:
-  symfony-mmo-db:
