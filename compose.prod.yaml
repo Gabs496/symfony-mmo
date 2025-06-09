@@ -24,6 +24,7 @@ services:
       - ./:/var/www/html
     depends_on:
       - php-fpm
+      - database
   worker_database:
     extends:
       service: worker
