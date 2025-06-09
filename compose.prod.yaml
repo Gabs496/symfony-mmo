@@ -1,4 +1,16 @@
 services:
+  database:
+    extends:
+      service: database
+      file: compose.yaml
+  mercure:
+    extends:
+      service: mercure
+      file: compose.yaml
+  lavinmq:
+    extends:
+      service: lavinmq
+      file: compose.yaml
   web:
     image: nginx:alpine
     restart: always
