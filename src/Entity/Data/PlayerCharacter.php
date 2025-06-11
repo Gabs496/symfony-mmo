@@ -12,6 +12,7 @@ use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObject\GameObjectReference;
+use App\GameElement\Core\GameObject\GameObjectTrait;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Map\AbstractMap;
@@ -30,9 +31,10 @@ use Symfony\Component\Uid\Uuid;
 class PlayerCharacter extends AbstractCharacter
     implements GameObjectInterface, UserInterface, TokenizableInterface
 {
+    use GameObjectTrait;
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
-    private string $id;
+    protected string $id;
 
     #[ORM\Column(length: 50)]
     protected ?string $name = null;

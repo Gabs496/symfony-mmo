@@ -17,7 +17,7 @@ class ItemInstance extends AbstractItemInstance
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
-    private string $id;
+    protected string $id;
 
     #[ORM\ManyToOne(targetEntity: ItemBag::class, inversedBy: 'items')]
     protected ?AbstractItemBag $bag = null;
@@ -37,7 +37,7 @@ class ItemInstance extends AbstractItemInstance
 
     public function __construct()
     {
-        $this->id = Uuid::v7();
+        parent::__construct(Uuid::v7());
     }
 
     public function getId(): string
