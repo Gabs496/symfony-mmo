@@ -43,7 +43,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
         }
 
         $this->hub->publish(new Update('player_gui_' . $player->getId(),
-            $this->twig->load('streams/player_health.stream.html.twig')->renderBlock('update', ['player_id' => $player->getId(), 'health' => $player->getHealth()]),
+            $this->twig->load('streams/player_health.stream.html.twig')->renderBlock('update', ['player' => $player]),
             true
         ));
     }

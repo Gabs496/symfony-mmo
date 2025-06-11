@@ -2,11 +2,30 @@
 
 namespace App\GameElement\Activity\Engine;
 
+use App\GameElement\Activity\AbstractActivity;
+
 /**
- * @template T
- * @template S
+ * @template S of AbstractActivity
  */
-//TODO: manage cancel operation
 interface ActivityEngineExtensionInterface
 {
+    public function supports(AbstractActivity $activity): bool;
+
+    /**
+     * In seconds
+     * @param S $activity
+     */
+    public function getDuration(AbstractActivity $activity): float;
+
+    /** @param S $activity */
+    public function beforeStart(AbstractActivity $activity): void;
+
+    /** @param S $activity */
+    public function onComplete(AbstractActivity $activity): void;
+
+    /** @param S $activity */
+    public function onFinish(AbstractActivity $activity): void;
+
+    /** @param S $activity */
+    public function cancel(AbstractActivity $activity): void;
 }

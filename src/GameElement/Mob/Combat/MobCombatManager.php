@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Engine\Mob;
+namespace App\GameElement\Mob\Combat;
 
-use App\Engine\Combat\CombatSystem;
 use App\Entity\Game\MapObject;
-use App\GameElement\Combat\Activity\CombatActivityEngine;
 use App\GameElement\Combat\Component\Combat;
+use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
+use App\GameElement\Combat\Engine\CombatSystemInterface;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Damage;
@@ -28,9 +28,9 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
     public function __construct(
         protected MapObjectRepository      $mapObjectRepository,
         protected HealthEngine             $healthEngine,
-        protected CombatSystem             $combatSystem,
+        protected CombatSystemInterface    $combatSystem,
         protected EventDispatcherInterface $eventDispatcher,
-        protected CombatActivityEngine     $combatEngine,
+        protected CombatEngine             $combatEngine,
     )
     {
     }
@@ -39,9 +39,14 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
     {
         return [
             DefenseFinished::class => [
-                ['counterAttack', 0],
+                ['onDefenseFinished', 0],
             ]
         ];
+    }
+
+    public static function getId(): string
+    {
+        return 'mob_combat_manager';
     }
 
     /** @param MapObject $attacker */
@@ -90,11 +95,12 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
     }
 
 
-    public function counterAttack(DefenseFinished $defenseFinished): void
+    public function onDefenseFinished(DefenseFinished $defenseFinished): void
     {
         /** @var MapObject $defender */
         $defender = $defenseFinished->getDefense()->getDefender();
         $attacker = $defenseFinished->getAttack()->getAttacker();
+
         if ($defenseFinished->getAttackResult()->isDefeated()) {
             $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender));
         }
@@ -126,7 +132,7 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
     private function calculateBonusAttack(StatCollection $statCollection): void
     {
         foreach ($statCollection->getStats() as $stat) {
-            $statCollection->increase($stat::class, CombatSystem::getBonusAttack($stat->getValue()));
+            $statCollection->increase($stat::class, $this->combatSystem::getBonusAttack($stat->getValue()));
 
         }
     }

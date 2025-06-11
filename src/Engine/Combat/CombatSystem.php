@@ -5,11 +5,12 @@ namespace App\Engine\Combat;
 use App\Engine\Math;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
+use App\GameElement\Combat\Engine\CombatSystemInterface;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
 
-class CombatSystem
+class CombatSystem implements CombatSystemInterface
 {
     protected const float MINIMUM_DAMAGE = 0.01;
     protected const float MAXIMUM_BONUS_ATTACK_PERCENTAGE = 0.1;

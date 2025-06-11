@@ -36,21 +36,6 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
 
     public function onComplete(AbstractActivity $activity): void
     {
-        $this->startAttack($activity);
-    }
-
-    public function onFinish(AbstractActivity $activity): void
-    {
-        return;
-    }
-
-    public function cancel(AbstractActivity $activity): void
-    {
-        // TODO: Implement cancel() method.
-    }
-
-    protected function startAttack(AttackActivity $activity): void
-    {
         $attackerToken = $activity->getAttackerToken();
         $defenderToken = $activity->getDefenderToken();
 
@@ -62,5 +47,15 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
         }
 
         $this->combatEngine->attack($attacker, $defender, $activity->getPreCalculatedStatCollection());
+    }
+
+    public function onFinish(AbstractActivity $activity): void
+    {
+        return;
+    }
+
+    public function cancel(AbstractActivity $activity): void
+    {
+        // TODO: Implement cancel() method.
     }
 }

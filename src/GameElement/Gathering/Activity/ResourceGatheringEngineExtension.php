@@ -3,9 +3,8 @@
 namespace App\GameElement\Gathering\Activity;
 
 use App\Entity\Game\MapObject;
+use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
-use App\GameElement\Activity\Event\ActivityEndEvent;
-use App\GameElement\Activity\Event\ActivityTimeoutEvent;
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Core\Token\TokenEngine;
 use App\GameElement\Crafting\AbstractRecipe;
@@ -17,9 +16,9 @@ use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
 use App\Repository\Game\MapObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface, EventSubscriberInterface
+/** @extends ActivityEngineExtensionInterface<ResourceGatheringActivity> */
+readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface
 {
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
@@ -32,44 +31,55 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
     {
     }
 
-    public static function getSubscribedEvents(): array
+    public function supports(AbstractActivity $activity): bool
     {
-        return [
-            ActivityTimeoutEvent::class => [
-                ['dispatchGathering', 0]
-            ],
-            ActivityEndEvent::class => [
-                ['dispatchEnd', 0]
-            ],
-        ];
+        return $activity instanceof ResourceGatheringActivity;
     }
 
-    public function dispatchGathering(ActivityTimeoutEvent $event): void
+    public function getDuration(AbstractActivity $activity): float
     {
-        $activity = $event->getActivity();
-        if (!$activity instanceof ResourceGatheringActivity) {
-            return;
-        }
+        return $activity->getGathering()->getGatheringTime();
+    }
 
+    public function beforeStart(AbstractActivity $activity): void
+    {
+        return;
+    }
+
+    public function onComplete(AbstractActivity $activity): void
+    {
+        $this->consume($activity);
+        $this->eventDispatcher->dispatch(new ResourceGatheringEvent($activity));
+        $this->handleReward($activity);
+    }
+
+    public function onFinish(AbstractActivity $activity): void
+    {
+        $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($activity));
+    }
+
+    public function cancel(AbstractActivity $activity): void
+    {
+        // TODO: Implement cancel() method.
+    }
+
+    protected function consume(ResourceGatheringActivity $activity): void
+    {
         /** @var MapObject $resource */
         $resource = $this->tokenEngine->exchange($activity->getResourceToken());
         $activity->setResource($resource);
 
-        if ($resource->hasComponent(Health::class)) {
+        $health = $resource->getComponent(Health::class);
+        if ($health) {
             $this->healthEngine->decreaseCurrentHealth($resource, 1.0);
         }
 
-        $health = $resource->getComponent(Health::class);
         $isDepealed = !$health || !$health->isAlive();
         if ($isDepealed) {
             $this->mapObjectRepository->remove($resource);
         } else {
             $this->mapObjectRepository->save($resource);
         }
-
-        $this->eventDispatcher->dispatch(new ResourceGatheringEvent($activity));
-
-        $this->handleReward($activity);
     }
 
     protected function handleReward(ResourceGatheringActivity $activity): void
@@ -79,15 +89,5 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
         foreach ($recipePrototype->getRewards() as $reward) {
             $this->rewardEngine->apply(new RewardApply($reward, $activity->getSubject()));
         }
-    }
-
-    public function dispatchEnd(ActivityEndEvent $event): void
-    {
-        $activity = $event->getActivity();
-        if (!$activity instanceof ResourceGatheringActivity) {
-            return;
-        }
-
-        $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($activity));
     }
 }

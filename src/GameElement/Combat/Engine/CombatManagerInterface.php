@@ -9,6 +9,7 @@ use App\GameElement\Core\GameObject\GameObjectInterface;
 
 interface CombatManagerInterface
 {
+    public static function getId(): string;
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack;
     public function generateDefense(Attack $attack, GameObjectInterface $defender): Defense;
     public function defend(Attack $attack, Defense $defense): AttackResult;

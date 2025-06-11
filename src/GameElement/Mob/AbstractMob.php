@@ -2,7 +2,6 @@
 
 namespace App\GameElement\Mob;
 
-use App\Engine\Mob\MobCombatManager;
 use App\GameElement\Combat\Component\AbstractStat;
 use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
@@ -10,6 +9,7 @@ use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObjectPrototype;
 use App\GameElement\Health\Component\Health;
+use App\GameElement\Mob\Combat\MobCombatManager;
 use App\GameElement\Render\Component\Render;
 use App\GameElement\Reward\RewardInterface;
 
@@ -42,7 +42,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
                 ),
                 new Health($maxHealth, $maxHealth),
                 //TODO: separate domains
-                new Combat($combatStats, MobCombatManager::class),
+                new Combat($combatStats, MobCombatManager::getId()),
             ],
         );
         parent::__construct($id, $components);

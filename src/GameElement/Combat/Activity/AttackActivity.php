@@ -2,13 +2,11 @@
 
 namespace App\GameElement\Combat\Activity;
 
-use App\GameElement\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\Token\TokenInterface;
 use App\GameElement\Core\Token\TokenizableInterface;
 
-#[Activity(id: 'COMBAT')]
 class AttackActivity extends AbstractActivity
 {
     public function __construct(

@@ -5,7 +5,7 @@ namespace App\GameElement\Health\Event;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Health\Component\Health;
 
-class HealthDecreasedEvent
+class HealthModiefiedEvent
 {
     public function __construct(
         protected GameObjectInterface $object,

@@ -10,7 +10,7 @@ use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class MobCombatEngine implements EventSubscriberInterface
+class MobCombatListener implements EventSubscriberInterface
 {
 
     public function __construct(

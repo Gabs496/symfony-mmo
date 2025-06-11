@@ -225,7 +225,7 @@ class PlayerCharacter extends AbstractCharacter
                 }
             }
         }
-        return new Combat($statCollection->getStats(), PlayerCombatManager::class);
+        return new Combat($statCollection->getStats(), PlayerCombatManager::getId());
     }
 
     public function getToken(): PlayerToken

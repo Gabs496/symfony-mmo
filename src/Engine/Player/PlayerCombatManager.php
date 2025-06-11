@@ -2,7 +2,6 @@
 
 namespace App\Engine\Player;
 
-use App\Engine\Combat\CombatSystem;
 use App\Engine\Math;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Combat\Activity\AttackActivity;
@@ -10,6 +9,7 @@ use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
+use App\GameElement\Combat\Engine\CombatSystemInterface;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
@@ -31,7 +31,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         protected PlayerCharacterRepository $playerCharacterRepository,
         protected NotificationEngine        $notificationEngine,
         protected HealthEngine              $healthEngine,
-        protected CombatSystem              $combatSystem,
+        protected CombatSystemInterface     $combatSystem,
     )
     {
     }
@@ -45,18 +45,20 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         ];
     }
 
+    public static function getId(): string
+    {
+        return 'player_combat_manager';
+    }
+
     public function generateAttackActivity(PlayerCharacter $player, TokenizableInterface $opponent): AttackActivity
     {
         $playerToken = $player->getToken();
-        //TODO: calculate attack duration
-        $activity = new AttackActivity(
+        return new AttackActivity(
             $player,
             $playerToken,
             $opponent->getToken(),
             $this->getAttackStatCollection($player),
         );
-        $activity->setDuration(1.0);
-        return $activity;
     }
 
     /** @param PlayerCharacter $attacker */
@@ -134,7 +136,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
     private function calculateBonusAttack(StatCollection $statCollection): void
     {
         foreach ($statCollection->getStats() as $stat) {
-            $statCollection->increase($stat::class, CombatSystem::getBonusAttack($stat->getValue()));
+            $statCollection->increase($stat::class, $this->combatSystem::getBonusAttack($stat->getValue()));
 
         }
     }

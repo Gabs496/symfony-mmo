@@ -21,6 +21,7 @@ readonly class CombatEngine
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         #[AutowireIterator('combat.manager')]
+        /** @var iterable<CombatManagerInterface> */
         private iterable $combatManagers,
         private CacheInterface $gameObjectCache,
     )
@@ -69,13 +70,13 @@ readonly class CombatEngine
     public function getCombatManager(Combat $combat): CombatManagerInterface
     {
         //TODO: handle exception
-        return $this->gameObjectCache->get('combat_manager_' . str_replace("\\", "_", $combat->getManagerClass()), function (ItemInterface $item) use ($combat) {
+        return $this->gameObjectCache->get('combat_manager_' .$combat->getManagerId(), function (ItemInterface $item) use ($combat) {
             foreach ($this->combatManagers as $combatManager) {
-                if ($combatManager::class === $combat->getManagerClass()) {
+                if ($combatManager::getId() === $combat->getManagerId()) {
                     return $combatManager;
                 }
             }
-            throw new RuntimeException('Invalid combat manager class: ' . $combat->getManagerClass());
+            throw new RuntimeException('Invalid combat manager class: ' . $combat->getManagerId());
         });
     }
 }

@@ -95,7 +95,6 @@ class GameObjectEngine
     {
         return $this->gameObjectCache->get(hash('md5', $class),function (ItemInterface $item) use ($class) {
             $result = [];
-            //TODO: try to optimize it
             foreach ($this->gameObjectCollection as $gameObject) {
                 if (!$gameObject instanceof GameObjectInterface) {
                     throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, GameObjectInterface::class));
