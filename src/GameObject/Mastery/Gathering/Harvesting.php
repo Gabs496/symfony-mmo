@@ -4,15 +4,15 @@ namespace App\GameObject\Mastery\Gathering;
 
 use App\GameElement\Mastery\MasteryType;
 
-readonly class FoodGathering extends MasteryType
+readonly class Harvesting extends MasteryType
 {
     public static function getId(): string
     {
-        return 'FOOD_GATHERING';
+        return 'HARVESTING';
     }
 
     public static function getName(): string
     {
-        return 'Gathering';
+        return 'Harvesting';
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Engine\Item\Action;
 
-readonly class Heal extends AbstractAvailableAction
+readonly class Eat extends AbstractAvailableAction
 {
     public function __construct(
         string $verb = 'eat',

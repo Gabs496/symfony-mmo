@@ -2,12 +2,10 @@
 
 namespace App\Entity\Game;
 
-use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Core\GameObject\GameObjectPrototypeReference;
 use App\GameElement\Core\GameObject\GameObjectReference;
-use App\GameElement\Core\Token\TokenInterface;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Map\Token\MapObjectToken;
 use App\GameObject\Map\AbstractBaseMap;
@@ -18,13 +16,12 @@ use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapObjectRepository::class)]
 #[Broadcast(topics: ['@="map_objects_" ~ entity.getMapId()'], private: true, template: 'streams/map_objects_list.stream.html.twig')]
-class MapObject implements TokenizableInterface, GameObjectInterface
+class MapObject extends AbstractGameObject implements TokenizableInterface
 {
-    use GameComponentOwnerTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'guid')]
-    private string $id;
+    protected string $id;
 
     #[ORM\Column(length: 50)]
     private ?string $mapId;
@@ -43,23 +40,10 @@ class MapObject implements TokenizableInterface, GameObjectInterface
 
     public function __construct(AbstractBaseMap $map, GameObjectPrototypeInterface $object, array $components = [])
     {
-        $this->id = Uuid::v7();
+        parent::__construct(Uuid::v7(), $components);
         $this->map = $map;
         $this->mapId = $map->getId();
-        $this->components = $components;
         $this->objectId = $object->getId();
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getMapId(): ?string

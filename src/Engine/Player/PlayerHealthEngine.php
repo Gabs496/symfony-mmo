@@ -3,7 +3,7 @@
 namespace App\Engine\Player;
 
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Health\Event\HealthDecreasedEvent;
+use App\GameElement\Health\Event\HealthModifiedEvent;
 use App\GameElement\Health\Event\HealthReachedZeroEvent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
@@ -26,7 +26,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            HealthDecreasedEvent::class => [
+            HealthModifiedEvent::class => [
                 ['updateHealthBar', 0],
             ],
             HealthReachedZeroEvent::class => [
@@ -35,7 +35,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
         ];
     }
 
-    public function updateHealthBar(HealthDecreasedEvent $event): void
+    public function updateHealthBar(HealthModifiedEvent $event): void
     {
         $player = $event->getObject();
         if (!$player instanceof PlayerCharacter) {

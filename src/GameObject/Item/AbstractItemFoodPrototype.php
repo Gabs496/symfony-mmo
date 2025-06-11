@@ -9,14 +9,16 @@ abstract class AbstractItemFoodPrototype extends AbstractBaseItemPrototype
         string $name,
         string $description,
         float $weight,
+        array $components = [],
     )
     {
         parent::__construct(
             id: $id,
             name: $name,
             description: $description,
-            stackable: true,
+            stackable: false,
             weight: $weight,
+            components: $components,
         );
     }
 }

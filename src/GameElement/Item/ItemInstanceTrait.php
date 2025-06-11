@@ -2,12 +2,12 @@
 
 namespace App\GameElement\Item;
 
-use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
+use App\GameElement\Core\GameObject\GameObjectTrait;
 use RuntimeException;
 
 trait ItemInstanceTrait
 {
-    use GameComponentOwnerTrait;
+    use GameObjectTrait;
     protected ?AbstractItemPrototype $itemPrototype = null;
     protected int $quantity = 1;
 
