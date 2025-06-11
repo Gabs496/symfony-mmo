@@ -1957,3 +1957,8 @@ ldap.max_links = -1
 
 ; List of headers files to preload, wildcard patterns allowed.
 ;ffi.preload=
+
+[xdebug]
+xdebug.mode=debug
+xdebug.client_host=172.17.0.1
+xdebug.client_port=9003

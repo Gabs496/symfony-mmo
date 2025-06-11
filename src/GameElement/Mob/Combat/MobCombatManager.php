@@ -4,8 +4,8 @@ namespace App\Engine\Mob;
 
 use App\Engine\Combat\CombatSystem;
 use App\Entity\Game\MapObject;
+use App\GameElement\Combat\Activity\CombatActivityEngine;
 use App\GameElement\Combat\Component\Combat;
-use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
@@ -30,7 +30,7 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         protected HealthEngine             $healthEngine,
         protected CombatSystem             $combatSystem,
         protected EventDispatcherInterface $eventDispatcher,
-        protected CombatEngine             $combatEngine,
+        protected CombatActivityEngine     $combatEngine,
     )
     {
     }

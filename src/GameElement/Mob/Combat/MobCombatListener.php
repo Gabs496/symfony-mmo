@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\Mob\Engine;
+namespace App\GameElement\Mob\Combat;
 
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Drop\Engine\DropEngine;

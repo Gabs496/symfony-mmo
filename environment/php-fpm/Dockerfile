@@ -4,5 +4,5 @@ RUN apt update && apt install -y \
     libssh-dev \
     libzip-dev \
     && docker-php-ext-install bcmath mysqli pdo_mysql \
-    && pecl install apcu amqp \
-    && docker-php-ext-enable apcu bcmath mysqli amqp \
+    && pecl install apcu amqp xdebug \
+    && docker-php-ext-enable apcu bcmath mysqli amqp xdebug \
