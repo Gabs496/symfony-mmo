@@ -13,13 +13,13 @@
             </div>
         </div>
         <div class="col">
-            <div class="nav bg-dark">
+            <div class="nav bg-dark position-sticky" style="top: 0; z-index: 2">
                 <div class="nav--item">
                     {{ 'player'|trans|upper }}: {{ app.user.name }}
                 </div>
                 <div class="nav--item w-25">
                     <turbo-frame id="player_health_{{ app.user.id }}">
-                        {{ component('Health:Bar', {health: app.user.health}) }}
+                        {{ component('Health:Bar', {gameObject: app.user}) }}
                     </turbo-frame>
                 </div>
             </div>

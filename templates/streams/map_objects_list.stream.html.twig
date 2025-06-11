@@ -21,7 +21,7 @@
 {% block remove %}
     <turbo-stream action="replace" target="map_object_{{ id }}">
         <template>
-            <div id="map_object_{{ id }}" class="animate__animated animate__zoomOut animate__faster" style="transition: all .5s;">
+            <div id="map_object_{{ id }}" class="animate__animated animate__zoomOut animate__faster" style="transition: height .5s;">
                 {{ game_object_render(entity) }}
                 <script>
                     document.getElementById('map_object_{{ id }}').style.height = document.getElementById('map_object_{{ id }}').offsetHeight + 'px';
@@ -30,7 +30,7 @@
                         setTimeout(function(){
                             document.getElementById('map_object_{{ id }}').remove();
                         }, 500);
-                    }, 50);
+                    }, 500);
                 </script>
             </div>
         </template>

@@ -1,9 +1,9 @@
 {# Learn how to use Turbo Streams: https://github.com/symfony/ux-turbo#broadcast-doctrine-entities-update #}
 
 {% block update %}
-    <turbo-stream action="update" target="player_health_{{ player_id }}">
+    <turbo-stream action="update" target="player_health_{{ player.id }}" method="morph">
         <template>
-            {{ component('Health:Bar', {health: health}) }}
+            {{ component('Health:Bar', {gameObject: player}) }}
         </template>
     </turbo-stream>
 {% endblock %}
