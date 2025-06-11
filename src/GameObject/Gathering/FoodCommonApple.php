@@ -8,9 +8,9 @@ use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameObject\Item\Food\CommonApplePrototype;
 use App\GameObject\Mastery\Gathering\Harvesting;
 
-class CommonApple extends AbstractResource
+class FoodCommonApple extends AbstractResource
 {
-    public const string ID = 'COMMON_APPLE';
+    public const string ID = 'FOOD_COMMON_APPLE';
 
     public function __construct()
     {

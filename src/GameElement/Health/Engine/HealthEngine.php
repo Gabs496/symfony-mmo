@@ -24,7 +24,7 @@ readonly class HealthEngine
 
         $health = $object->getComponent(Health::class);
         $currentHealth = $health->getCurrentHealth();
-        $newHealth = max(Math::add($currentHealth, $value), 0.0);
+        $newHealth = min(max(0.0, Math::add($currentHealth, $value)), $health->getMaxHealth());
         $health->setCurrentHealth($newHealth);
 
         $this->eventDispatcher->dispatch(new HealthModifiedEvent($object, $health));

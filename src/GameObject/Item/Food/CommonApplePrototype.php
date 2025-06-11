@@ -7,7 +7,7 @@ use App\GameObject\Item\AbstractItemFoodPrototype;
 
 class CommonApplePrototype extends AbstractItemFoodPrototype
 {
-    public const string ID = 'FOOD_COMMON_APPLE';
+    public const string ID = 'RESOURCE_FOOD_COMMON_APPLE';
     public function __construct()
     {
         parent::__construct(

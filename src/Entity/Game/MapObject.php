@@ -10,6 +10,7 @@ use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Map\Token\MapObjectToken;
 use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapObjectRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\UX\Turbo\Attribute\Broadcast;
@@ -38,12 +39,16 @@ class MapObject extends AbstractGameObject implements TokenizableInterface
     #[GameObjectPrototypeReference(objectPrototypeIdProperty: 'objectId')]
     protected GameObjectPrototypeInterface $prototype;
 
+    #[ORM\Column(type: 'datetime_immutable')]
+    protected DateTimeImmutable $spawnedAt;
+
     public function __construct(AbstractBaseMap $map, GameObjectPrototypeInterface $object, array $components = [])
     {
         parent::__construct(Uuid::v7(), $components);
         $this->map = $map;
         $this->mapId = $map->getId();
         $this->objectId = $object->getId();
+        $this->spawnedAt = new DateTimeImmutable();
     }
 
     public function getMapId(): ?string
@@ -80,6 +85,11 @@ class MapObject extends AbstractGameObject implements TokenizableInterface
         foreach ($components as $component) {
             $this->setComponent($component::class, clone $component);
         }
+    }
+
+    public function getSpawnedAt(): DateTimeImmutable
+    {
+        return $this->spawnedAt;
     }
 
     public function getToken(): MapObjectToken
