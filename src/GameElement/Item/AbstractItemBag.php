@@ -28,7 +28,7 @@ abstract class AbstractItemBag
             throw new MaxBagSizeReachedException();
         }
 
-        $item = $itemInstance->getItemPrototype();
+        $item = $itemInstance->getPrototype();
         if ($item->isStackable()) {
             foreach ($this->getItems() as $existingItem) {
                 if ($existingItem->isInstanceOf($item)) {

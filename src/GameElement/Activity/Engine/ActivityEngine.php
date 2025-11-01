@@ -51,7 +51,7 @@ readonly class ActivityEngine
 
         $this->eventDispatcher->dispatch(new ActivityStartEvent($activity));
 
-        $activityEntity->setStartedAt(microtime(true));
+        $activityEntity->start();
         $this->activityRepository->save($activityEntity);
 
         $activity->clear();
@@ -82,10 +82,13 @@ readonly class ActivityEngine
             $extension->onFinish($activity);
             $this->eventDispatcher->dispatch(new ActivityEndEvent($activity));
         } catch (Throwable $e) {
+            throw new ActivityUnexpectedStopException($activity, $e);
+        }
+        finally {
             if (isset($extension)) {
                 $extension->cancel($activity);
             }
-            throw new ActivityUnexpectedStopException($activity, $e);
+            $this->eventDispatcher->dispatch(new ActivityEndEvent($activity, false));
         }
     }
 

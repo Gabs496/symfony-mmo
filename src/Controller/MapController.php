@@ -48,7 +48,7 @@ class MapController extends AbstractController
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
 
-        $gameActivity->run(new ResourceGatheringActivity($player, $resource));
+        $gameActivity->run(new ResourceGatheringActivity($player, $resource->getGameObject()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -78,7 +78,7 @@ class MapController extends AbstractController
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $gameActivity->run($combatEngine->generateAttackActivity($player, $mob));
+        $gameActivity->run($combatEngine->generateAttackActivity($player, $mob->getGameObject()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

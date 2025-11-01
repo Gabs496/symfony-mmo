@@ -22,7 +22,7 @@ class SpawnListener implements EventSubscriberInterface
 
     public function onPreMapObjectSpawn(PreMapObjectSpawn $event): void
     {
-        $object = $event->getObject();
+        $object = $event->getMapObject()->getGameObject();
         if (!$object->getComponent(Gathering::class)) {
             return;
         }

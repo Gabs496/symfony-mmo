@@ -10,8 +10,9 @@ use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectReference;
+use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Core\GameObject\GameObjectTrait;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Health\Component\Health;
@@ -29,7 +30,7 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 class PlayerCharacter extends AbstractCharacter
-    implements GameObjectInterface, UserInterface, TokenizableInterface
+    implements GameObjectInterface, UserInterface, TokenizableInterface, GameObjectPrototypeInterface
 {
     use GameObjectTrait;
     #[ORM\Id]
@@ -261,5 +262,10 @@ class PlayerCharacter extends AbstractCharacter
     public function getComponent(string $componentClass): ?GameComponentInterface
     {
         return $this->getComponents()[$componentClass] ?? null;
+    }
+
+    public function getPrototype(): GameObjectPrototypeInterface
+    {
+        return $this;
     }
 }

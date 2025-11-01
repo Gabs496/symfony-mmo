@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Mob\Combat;
 
-use App\Entity\Game\MapObject;
+use App\Entity\Game\GameObject;
 use App\GameElement\Combat\Component\Combat;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
@@ -17,7 +17,7 @@ use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\Mob\Event\MobDefeatEvent;
-use App\Repository\Game\MapObjectRepository;
+use App\Repository\Game\GameObjectRepository;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -26,7 +26,7 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 {
 
     public function __construct(
-        protected MapObjectRepository      $mapObjectRepository,
+        protected GameObjectRepository     $gameObjectRepository,
         protected HealthEngine             $healthEngine,
         protected CombatSystemInterface    $combatSystem,
         protected EventDispatcherInterface $eventDispatcher,
@@ -49,7 +49,6 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         return 'mob_combat_manager';
     }
 
-    /** @param MapObject $attacker */
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack
     {
         if (!$combat = $attacker->getComponent(Combat::class)) {
@@ -61,7 +60,6 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         return new Attack($attacker, $statCollection);
     }
 
-    /** @param MapObject $defender */
     public function generateDefense(Attack $attack, GameObjectInterface $defender): Defense
     {
         if (!$combat = $defender->getComponent(Combat::class)) {
@@ -81,13 +79,12 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         $attackResult = new AttackResult($attack, $defense, $damage);
 
 
-        /** @var MapObject $defender */
         $defender = $defense->getDefender();
         if (!$health = $defender->getComponent(Health::class)) {
             throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), Health::class));
         }
         if (!$health->isAlive()) {
-            $this->mapObjectRepository->remove($defender);
+            $this->gameObjectRepository->remove($defender);
             $attackResult->setIsDefeated(true);
         }
 
@@ -97,7 +94,6 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 
     public function onDefenseFinished(DefenseFinished $defenseFinished): void
     {
-        /** @var MapObject $defender */
         $defender = $defenseFinished->getDefense()->getDefender();
         $attacker = $defenseFinished->getAttack()->getAttacker();
 
@@ -116,10 +112,9 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 
     private function receiveDamage(Defense $defense, Damage $damage): void
     {
-        /** @var MapObject $defender */
         $defender = $defense->getDefender();
         $this->healthEngine->decreaseCurrentHealth($defender, $damage->getValue());
-        $this->mapObjectRepository->save($defender);
+        $this->gameObjectRepository->save($defender);
     }
 
     private function calculateBaseAttack(Combat $attacker, StatCollection $statCollection): void

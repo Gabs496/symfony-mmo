@@ -21,7 +21,7 @@ class ResourceRender extends MapGenericObjectRender
     public function mount(MapObject $object): void
     {
         parent::mount($object);
-        $this->health = $object->getComponent(Health::class);
+        $this->health = $object->getGameObject()->getComponent(Health::class);
     }
 
     public function getHealth(): Health

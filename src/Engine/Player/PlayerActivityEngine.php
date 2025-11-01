@@ -6,18 +6,14 @@ use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
-use App\GameElement\Activity\Exception\ActivityUnexpectedStopException;
 use App\GameElement\Notification\Exception\UserNotificationException;
 use App\Repository\Data\ActivityRepository;
 use App\Repository\Data\PlayerCharacterRepository;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
 
-#[AsEventListener(event: 'kernel.exception', method: 'onActivityUnexpectedStopException')]
 readonly class PlayerActivityEngine implements EventSubscriberInterface
 {
     public function __construct(
@@ -34,6 +30,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
     {
         return [
             BeforeActivityStartEvent::class => [
+                ['unlockIfShouldBeUnlocked', 0],
                 ['checkIfPlayerLocked', 0],
             ],
             ActivityStartEvent::class => [
@@ -84,25 +81,13 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
         $this->unlockPlayer($player);
     }
 
-    public function onActivityUnexpectedStopException(ExceptionEvent $event): void
-    {
-        $exception = $event->getThrowable();
-        if (!$exception instanceof ActivityUnexpectedStopException) {
-            return;
-        }
-
-        $activity = $exception->getActivity();
-        $subject = $activity->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
-            return;
-        }
-
-        $this->unlockPlayer($subject);
-    }
-
     public function unlockPlayer(PlayerCharacter $player): void
     {
         $activityEntity = $player->getCurrentActivity();
+        if (!$activityEntity) {
+            return;
+        }
+
         $player->endCurrentActivity();
         $this->playerCharacterRepository->save($player);
 
@@ -113,5 +98,20 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
             $this->twig->load('streams/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $activityEntity]),
             true
         ));
+    }
+
+    public function unlockIfShouldBeUnlocked(BeforeActivityStartEvent $event): void
+    {
+        $player = $event->getActivity()->getSubject();
+        if (!$player instanceof PlayerCharacter) {
+            return;
+        }
+        if (!$currentActivity = $player->getCurrentActivity()) {
+            return;
+        }
+
+        if ($currentActivity->getCompletedAt() || $currentActivity->shouldBeFinished()) {
+            $this->unlockPlayer($player);
+        }
     }
 }

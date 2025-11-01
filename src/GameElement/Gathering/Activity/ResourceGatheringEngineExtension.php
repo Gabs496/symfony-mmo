@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Gathering\Activity;
 
-use App\Entity\Game\MapObject;
+use App\Entity\Game\GameObject;
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
 use App\GameElement\Core\GameObject\GameObjectEngine;
@@ -14,19 +14,19 @@ use App\GameElement\Health\Component\Health;
 use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
-use App\Repository\Game\MapObjectRepository;
+use App\Repository\Game\GameObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /** @extends ActivityEngineExtensionInterface<ResourceGatheringActivity> */
 readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface
 {
     public function __construct(
-        protected EventDispatcherInterface $eventDispatcher,
-        protected RewardEngine $rewardEngine,
-        protected GameObjectEngine $gameObjectEngine,
-        protected MapObjectRepository $mapObjectRepository,
-        protected TokenEngine $tokenEngine,
-        protected HealthEngine $healthEngine,
+        private EventDispatcherInterface $eventDispatcher,
+        private RewardEngine $rewardEngine,
+        private GameObjectEngine $gameObjectEngine,
+        private GameObjectRepository $gameObjectRepository,
+        private TokenEngine $tokenEngine,
+        private HealthEngine $healthEngine,
     )
     {
     }
@@ -65,27 +65,27 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
 
     protected function consume(ResourceGatheringActivity $activity): void
     {
-        /** @var MapObject $resource */
-        $resource = $this->tokenEngine->exchange($activity->getResourceToken());
-        $activity->setResource($resource);
+        /** @var GameObject $gameObject */
+        $gameObject = $this->tokenEngine->exchange($activity->getResourceToken());
+        $activity->setResource($gameObject);
 
-        $health = $resource->getComponent(Health::class);
+        $health = $gameObject->getComponent(Health::class);
         if ($health) {
-            $this->healthEngine->decreaseCurrentHealth($resource, 1.0);
+            $this->healthEngine->decreaseCurrentHealth($gameObject, 1.0);
         }
 
         $isDepealed = !$health || !$health->isAlive();
         if ($isDepealed) {
-            $this->mapObjectRepository->remove($resource);
+            $this->gameObjectRepository->remove($gameObject);
         } else {
-            $this->mapObjectRepository->save($resource);
+            $this->gameObjectRepository->save($gameObject);
         }
     }
 
     protected function handleReward(ResourceGatheringActivity $activity): void
     {
         /** @var AbstractRecipe $recipePrototype */
-        $recipePrototype = $this->gameObjectEngine->getPrototype($activity->getResource()->getObjectId());
+        $recipePrototype = $this->gameObjectEngine->getPrototype($activity->getResource()->getType());
         foreach ($recipePrototype->getRewards() as $reward) {
             $this->rewardEngine->apply(new RewardApply($reward, $activity->getSubject()));
         }

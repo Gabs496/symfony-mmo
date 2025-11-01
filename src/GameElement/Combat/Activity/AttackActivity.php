@@ -12,7 +12,7 @@ class AttackActivity extends AbstractActivity
     public function __construct(
         TokenizableInterface                          $subject,
         private readonly TokenInterface               $attackerToken,
-        private readonly TokenInterface               $defenderToken,
+        private readonly TokenInterface|string               $defenderToken,
         private readonly ?StatCollection $preCalculatedStatCollection = null,
     )
     {
@@ -29,7 +29,7 @@ class AttackActivity extends AbstractActivity
         return $this->preCalculatedStatCollection;
     }
 
-    public function getDefenderToken(): TokenInterface
+    public function getDefenderToken(): TokenInterface|string
     {
         return $this->defenderToken;
     }

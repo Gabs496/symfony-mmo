@@ -8,7 +8,7 @@ interface ItemInstanceInterface extends GameObjectInterface
 {
     public function isInstanceOf(AbstractItemPrototype $item): bool;
 
-    public function getItemPrototype(): AbstractItemPrototype;
+    public function getPrototype(): AbstractItemPrototype;
 
     public function getQuantity(): int;
 

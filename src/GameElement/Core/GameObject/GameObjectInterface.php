@@ -8,5 +8,7 @@ use Stringable;
 interface GameObjectInterface extends GameComponentOwnerInterface, Stringable
 {
     public function getId(): string;
+
+    public function getPrototype(): GameObjectPrototypeInterface;
     public function __toString(): string;
 }

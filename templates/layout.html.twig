@@ -24,7 +24,9 @@
                 </div>
             </div>
             <div class="p-2">
-                {% block main %}{% endblock %}
+                <turbo-frame id="page">
+                    {% block main %}{% endblock %}
+                </turbo-frame>
             </div>
         </div>
     </div>

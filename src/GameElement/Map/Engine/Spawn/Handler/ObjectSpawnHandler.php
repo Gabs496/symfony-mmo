@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Map\Engine\Spawn\Handler;
 
+use App\Entity\Game\GameObject;
 use App\Entity\Game\MapObject;
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Map\AbstractMap;
@@ -42,10 +43,11 @@ readonly class ObjectSpawnHandler
 
     private function spawnNewObject(AbstractMap $map, ObjectSpawn $objectSpawn): void
     {
-        $object = $this->gameObjectEngine->getPrototype($objectSpawn->getObjectId());
-        $instance = (new MapObject($map, $object, $object->getComponents()));
-        $this->eventDispatcher->dispatch(new PreMapObjectSpawn($instance, $objectSpawn));
-        $this->mapObjectRepository->save($instance);
+        $prototype = $this->gameObjectEngine->getPrototype($objectSpawn->getObjectId());
+        $instance = (new GameObject($prototype, $prototype->getComponents()));
+        $mapObject = new MapObject($map, $instance);
+        $this->eventDispatcher->dispatch(new PreMapObjectSpawn($mapObject, $objectSpawn));
+        $this->mapObjectRepository->save($mapObject);
     }
 
     private function hasFreeSpace(AbstractMap $map, ObjectSpawn $objectSpawn): bool
@@ -61,7 +63,8 @@ readonly class ObjectSpawnHandler
 
     private function getSpaceTaken(AbstractMap $map, ObjectSpawn $objectSpawn): int
     {
-        $spots = $this->mapObjectRepository->findBy(['mapId' => $map->getId(), 'objectId' => $objectSpawn->getObjectId()]);
+        $spots = $this->mapObjectRepository->findBy(['mapId' => $map->getId()]);
+        $spots = array_filter($spots, fn(MapObject $mapObject) => $mapObject->getGameObject()->getType() === $objectSpawn->getObjectId());
         return (new ArrayCollection($spots))->reduce(function (int $carry) {
             return $carry + 1;
         }, 0);

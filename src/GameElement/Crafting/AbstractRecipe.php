@@ -3,10 +3,11 @@
 namespace App\GameElement\Crafting;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Reward\RewardInterface;
 
-abstract class AbstractRecipe extends AbstractGameObject
+abstract class AbstractRecipe extends AbstractGameObject implements GameObjectPrototypeInterface
 {
     public function __construct(
         string $id,
@@ -61,5 +62,10 @@ abstract class AbstractRecipe extends AbstractGameObject
     public function getItemRewards(): array
     {
         return array_filter($this->rewards, fn($reward) => $reward instanceof ItemReward);
+    }
+
+    public function getPrototype(): GameObjectPrototypeInterface
+    {
+        return $this;
     }
 }

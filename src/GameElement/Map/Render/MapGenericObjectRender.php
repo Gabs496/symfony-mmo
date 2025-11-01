@@ -7,7 +7,7 @@ use App\GameElement\Render\Component\Render;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
-#[AsTwigComponent(name: 'Map:GenericObjectRender')]
+#[AsTwigComponent(name: 'Map:GenericObjectRender', template: 'components/Map/Render/GenericObjectRender.html.twig')]
 class MapGenericObjectRender
 {
     #[ExposeInTemplate]
@@ -19,7 +19,7 @@ class MapGenericObjectRender
     public function mount(MapObject $object): void
     {
         $this->object = $object;
-        $this->render = $object->getComponent(Render::class);
+        $this->render = $object->getGameObject()->getComponent(Render::class);
     }
     public function getObject(): MapObject
     {

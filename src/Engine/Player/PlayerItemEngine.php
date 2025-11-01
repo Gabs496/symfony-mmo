@@ -32,7 +32,7 @@ readonly class PlayerItemEngine
     {
     }
     /** @throws MaxBagSizeReachedException */
-    public function  giveItem(PlayerCharacter $player, ItemInstance $itemInstance): void
+    public function giveItem(PlayerCharacter $player, ItemInstance $itemInstance): void
     {
         $backPack = $player->getBackpack();
         $itemInstance->setBag($backPack);

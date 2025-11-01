@@ -4,6 +4,7 @@ namespace App\Engine\Player;
 
 use App\Engine\Math;
 use App\Entity\Data\PlayerCharacter;
+use App\Entity\Game\GameObject;
 use App\GameElement\Combat\Activity\AttackActivity;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
@@ -50,13 +51,13 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         return 'player_combat_manager';
     }
 
-    public function generateAttackActivity(PlayerCharacter $player, TokenizableInterface $opponent): AttackActivity
+    public function generateAttackActivity(PlayerCharacter $player, GameObject|TokenizableInterface $opponent): AttackActivity
     {
         $playerToken = $player->getToken();
         return new AttackActivity(
             $player,
             $playerToken,
-            $opponent->getToken(),
+            $opponent instanceof GameObject ? $opponent->getId() : $opponent->getToken(),
             $this->getAttackStatCollection($player),
         );
     }

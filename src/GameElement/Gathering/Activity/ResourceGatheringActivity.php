@@ -2,24 +2,23 @@
 
 namespace App\GameElement\Gathering\Activity;
 
-use App\Entity\Game\MapObject;
+use App\Entity\Game\GameObject;
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Core\Token\TokenizableInterface;
 use App\GameElement\Gathering\Component\Gathering;
-use App\GameElement\Map\Token\MapObjectToken;
 
 class ResourceGatheringActivity extends AbstractActivity
 {
     protected Gathering $gathering;
-    protected MapObjectToken $resourceToken;
+    protected string $resourceToken;
 
     public function __construct(
         TokenizableInterface $subject,
-        protected ?MapObject  $resource,
+        protected ?GameObject  $resource,
     )
     {
         parent::__construct($subject);
-        $this->resourceToken = $resource->getToken();
+        $this->resourceToken = $resource->getId();
         $this->gathering = $resource->getComponent(Gathering::class);
     }
 
@@ -28,17 +27,17 @@ class ResourceGatheringActivity extends AbstractActivity
         return $this->gathering;
     }
 
-    public function getResource(): MapObject
+    public function getResource(): GameObject
     {
         return $this->resource;
     }
 
-    public function setResource(MapObject $resource): void
+    public function setResource(GameObject $resource): void
     {
         $this->resource = $resource;
     }
 
-    public function getResourceToken(): MapObjectToken
+    public function getResourceToken(): string
     {
         return $this->resourceToken;
     }

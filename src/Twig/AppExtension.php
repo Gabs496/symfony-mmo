@@ -3,14 +3,13 @@
 namespace App\Twig;
 
 use App\Engine\Math;
+use App\Entity\Game\MapObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Render\Component\Render;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\UX\StimulusBundle\Helper\StimulusHelper;
 use Symfony\UX\StimulusBundle\Twig\StimulusTwigExtension;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
-use Symfony\UX\TwigComponent\Twig\ComponentRuntime;
-use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -19,7 +18,7 @@ class AppExtension extends AbstractExtension
     public function __construct(
         private readonly StimulusHelper $stimulusHelper,
         private readonly HubInterface $hub,
-        private readonly ComponentRendererInterface $renderer,
+        private readonly ComponentRendererInterface $renderer
     )
     {
 
@@ -48,17 +47,18 @@ class AppExtension extends AbstractExtension
         return Math::getStatViewValue($value);
     }
 
-    public function gameObjectRender(GameObjectInterface $object): string
+    //TODO: split logic
+    public function gameObjectRender(MapObject $mapObject): string
     {
-        $render = $object->getComponent(Render::class);
+        $render = $mapObject->getGameObject()->getComponent(Render::class);
         if (!$render) {
             return '';
         }
 
         if ($render->getTemplate()) {
-            return $this->renderer->createAndRender($render->getTemplate(), ['object' => $object]);
+            return $this->renderer->createAndRender($render->getTemplate(), ['object' => $mapObject]);
         }
 
-        return $this->renderer->createAndRender('Render:GenericObject', ['object' => $object]);
+        return $this->renderer->createAndRender('Render:GenericObject', ['object' => $mapObject]);
     }
 }

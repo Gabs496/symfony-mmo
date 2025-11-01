@@ -15,6 +15,6 @@ readonly class MapEngine
 
     public function getMapObjects(AbstractMap $map)
     {
-        return $this->mapObjectRepository->findBy(['mapId' => $map->getId()]);
+        return $this->mapObjectRepository->findByMap($map);
     }
 }

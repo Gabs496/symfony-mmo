@@ -2,7 +2,7 @@
 
 namespace App\Entity\Data;
 
-use App\GameElement\Core\GameObject\GameObjectPrototypeReference;
+use App\GameElement\Core\GameObject\Attribute\GameObjectPrototypeReference;
 use App\GameElement\Item\AbstractItemBag;
 use App\GameElement\Item\AbstractItemInstance;
 use App\GameElement\Item\AbstractItemPrototype;
@@ -20,6 +20,7 @@ class ItemInstance extends AbstractItemInstance
     protected string $id;
 
     #[ORM\ManyToOne(targetEntity: ItemBag::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(nullable: false)]
     protected ?AbstractItemBag $bag = null;
 
     #[ORM\Column(type: 'integer')]
@@ -80,9 +81,9 @@ class ItemInstance extends AbstractItemInstance
         return $this;
     }
 
-    /** @deprecated Use {@link ItemInstance::getItemPrototype()} */
+    /** @deprecated Use {@link ItemInstance::getPrototype()} */
     public function getItem(): AbstractItemPrototype
     {
-        return $this->getItemPrototype();
+        return $this->getPrototype();
     }
 }

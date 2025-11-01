@@ -8,8 +8,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 readonly class PlayerGatheringEngine implements EventSubscriberInterface
 {
     public function __construct(
-//        private MapObjectRepository $mapObjectRepository,
-//        private ActivityEngine      $activityEngine,
     )
     {
     }
@@ -24,16 +22,5 @@ readonly class PlayerGatheringEngine implements EventSubscriberInterface
 
     public function continueUntillEmpty(ResourceGatheringEndedEvent $event): void
     {
-//        $activity = $event->getActivity();
-//
-//        /** @var MapObjectRepository $mapSpawnedResource */
-//        $mapSpawnedResource = $this->mapObjectRepository->find($activity->getResource()->getId());
-//        if (!$mapSpawnedResource) {
-//            return;
-//        }
-
-//        if ($mapSpawnedResource->getQuantity() > 0) {
-//            $this->activityEngine->run(new ResourceGatheringActivity($activity->getSubject(), $activity->getResource(), $mapSpawnedResource->getId()));
-//        }
     }
 }

@@ -3,8 +3,9 @@
 namespace App\GameElement\Map;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 
-abstract class AbstractMap extends AbstractGameObject
+abstract class AbstractMap extends AbstractGameObject implements GameObjectPrototypeInterface
 {
     public function __construct(
         string $id,
@@ -41,5 +42,10 @@ abstract class AbstractMap extends AbstractGameObject
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getPrototype(): GameObjectPrototypeInterface
+    {
+        return $this;
     }
 }

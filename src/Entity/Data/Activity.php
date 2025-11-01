@@ -54,11 +54,6 @@ class Activity
         return $this->startedAt;
     }
 
-    public function setStartedAt(?float $startedAt): void
-    {
-        $this->startedAt = $startedAt;
-    }
-
     public function getDuration(): float
     {
         return $this->duration;
@@ -79,10 +74,25 @@ class Activity
         $this->completedAt = $completedAt;
     }
 
+    public function start(): void
+    {
+        $this->startedAt = microtime(true);
+    }
+
     public function getSecondsToFinish(): ?float
     {
-        $microseconds = bcsub(bcadd($this->scheduledAt, $this->getDurationMicrosecond(), 4), microtime(true), 4);
+        $scheduledEnd = bcadd($this->scheduledAt, $this->getDurationMicrosecond(), 4);
+        $microseconds = bcsub($scheduledEnd, microtime(true), 4);
         return (float)bcdiv($microseconds, 1000000, 4);
+    }
+
+    public function shouldBeFinished(): bool
+    {
+        if ($this->completedAt !== null) {
+            return true;
+        }
+
+        return round($this->getSecondsToFinish(), 4) < 0.00000;
     }
 
     private function getDurationMicrosecond(): int

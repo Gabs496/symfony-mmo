@@ -2,12 +2,7 @@
 
 namespace App\Entity\Game;
 
-use App\GameElement\Core\GameObject\AbstractGameObject;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
-use App\GameElement\Core\GameObject\GameObjectPrototypeReference;
-use App\GameElement\Core\GameObject\GameObjectReference;
-use App\GameElement\Core\Token\TokenizableInterface;
-use App\GameElement\Map\Token\MapObjectToken;
+use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
 use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapObjectRepository;
 use DateTimeImmutable;
@@ -16,38 +11,34 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapObjectRepository::class)]
+#[ORM\Index(fields: ['mapId'])]
 #[Broadcast(topics: ['@="map_objects_" ~ entity.getMapId()'], private: true, template: 'streams/map_objects_list.stream.html.twig')]
-class MapObject extends AbstractGameObject implements TokenizableInterface
+class MapObject
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'guid')]
-    protected string $id;
+    private string $id;
 
     #[ORM\Column(length: 50)]
     private ?string $mapId;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: false)]
-    private ?string $objectId;
-
-    #[ORM\Column(type: 'json_document', nullable: false)]
-    protected array $components = [];
-
     #[GameObjectReference(objectIdProperty: 'mapId')]
-    protected AbstractBaseMap $map;
-
-    #[GameObjectPrototypeReference(objectPrototypeIdProperty: 'objectId')]
-    protected GameObjectPrototypeInterface $prototype;
+    private AbstractBaseMap $map;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    protected DateTimeImmutable $spawnedAt;
+    private DateTimeImmutable $spawnedAt;
 
-    public function __construct(AbstractBaseMap $map, GameObjectPrototypeInterface $object, array $components = [])
+    #[ORM\OneToOne(cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private GameObject $gameObject;
+
+    public function __construct(AbstractBaseMap $map, GameObject $gameObject)
     {
-        parent::__construct(Uuid::v7(), $components);
+        $this->id = Uuid::v7();
         $this->map = $map;
         $this->mapId = $map->getId();
-        $this->objectId = $object->getId();
+        $this->gameObject = $gameObject;
         $this->spawnedAt = new DateTimeImmutable();
     }
 
@@ -63,37 +54,35 @@ class MapObject extends AbstractGameObject implements TokenizableInterface
         return $this;
     }
 
-    public function getObjectId(): ?string
-    {
-        return $this->objectId;
-    }
-
-    public function getPrototype(): GameObjectPrototypeInterface
-    {
-        return $this->prototype;
-    }
-
-    public function setPrototype(GameObjectPrototypeInterface $prototype): void
-    {
-        $this->prototype = $prototype;
-    }
-
-    public function cloneComponent(): void
-    {
-        $components = $this->getComponents();
-        $this->components = [];
-        foreach ($components as $component) {
-            $this->setComponent($component::class, clone $component);
-        }
-    }
-
     public function getSpawnedAt(): DateTimeImmutable
     {
         return $this->spawnedAt;
     }
 
-    public function getToken(): MapObjectToken
+    public function getMap(): AbstractBaseMap
     {
-        return new MapObjectToken($this->id);
+        return $this->map;
+    }
+
+    public function getGameObject(): ?GameObject
+    {
+        return $this->gameObject;
+    }
+
+    public function setGameObject(GameObject $gameObject): static
+    {
+        $this->gameObject = $gameObject;
+
+        return $this;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return '';
     }
 }

@@ -8,15 +8,15 @@ use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 class PreMapObjectSpawn
 {
     public function __construct(
-        protected MapObject $object,
+        protected MapObject   $mapObject,
         protected ObjectSpawn $objectSpawn,
     )
     {
     }
 
-    public function getObject(): MapObject
+    public function getMapObject(): MapObject
     {
-        return $this->object;
+        return $this->mapObject;
     }
 
     public function getObjectSpawn(): ObjectSpawn

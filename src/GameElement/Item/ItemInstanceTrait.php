@@ -16,7 +16,7 @@ trait ItemInstanceTrait
         return $this->itemPrototype::class === $item::class;
     }
 
-    public function getItemPrototype(): AbstractItemPrototype
+    public function getPrototype(): AbstractItemPrototype
     {
         return $this->itemPrototype;
     }
@@ -41,8 +41,8 @@ trait ItemInstanceTrait
 
     public function merge(ItemInstanceInterface $itemInstance): void
     {
-        if (!$this->isInstanceOf($itemInstance->getItemPrototype())) {
-            throw new RuntimeException(sprintf('Cannot merge different items: "%s" and "%s"', $this->getItemPrototype()::class, $itemInstance->getItemPrototype()::class));
+        if (!$this->isInstanceOf($itemInstance->getPrototype())) {
+            throw new RuntimeException(sprintf('Cannot merge different items: "%s" and "%s"', $this->getPrototype()::class, $itemInstance->getPrototype()::class));
         }
 
         $this->quantity += $itemInstance->getQuantity();

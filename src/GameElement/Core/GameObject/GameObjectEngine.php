@@ -2,6 +2,8 @@
 
 namespace App\GameElement\Core\GameObject;
 
+use App\GameElement\Core\GameObject\Attribute\GameObjectPrototypeReference;
+use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
 use App\GameElement\Core\GameObject\Exception\GameObjectNotFound;
 use App\GameElement\Core\GameObject\Exception\RegisteredANonGameObjectException;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
@@ -20,10 +22,10 @@ class GameObjectEngine
 {
     public function __construct(
         #[AutowireIterator('game.object')]
-        protected iterable $gameObjectCollection,
+        private  iterable $gameObjectCollection,
         #[AutowireIterator('game.object.prototype')]
-        protected iterable $gameObjectPrototypeCollection,
-        protected CacheInterface $gameObjectCache,
+        private  iterable $gameObjectPrototypeCollection,
+        private  CacheInterface $gameObjectCache
     )
     {
     }
