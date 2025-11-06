@@ -2,38 +2,43 @@
 
 namespace App\GameElement\ItemEquiment\Component;
 
+use App\GameElement\Combat\Component\AbstractStat;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 
 class ItemEquipmentComponent implements GameComponentInterface
 {
-    protected ItemStat $itemStatComponent;
-    protected ItemCondition $itemConditionComponent;
+    protected ItemCondition $condition;
 
     public function __construct(
-        array $stats = [],
+        /** @var array<AbstractStat> */
+        private array $stats = [],
         float $maxCondition = 0.0,
     ) {
-        $this->itemStatComponent = new ItemStat($stats);
-        $this->itemConditionComponent = new ItemCondition($maxCondition);
+        $this->condition = new ItemCondition($maxCondition);
     }
 
-    public function getItemStatComponent(): ItemStat
+    public function getStats(): array
     {
-        return $this->itemStatComponent;
+        return $this->stats;
     }
 
-    public function setItemStatComponent(ItemStat $itemStatComponent): void
+    public function setStats(array $stats): void
     {
-        $this->itemStatComponent = $itemStatComponent;
+        $this->stats = $stats;
     }
 
-    public function getItemConditionComponent(): ItemCondition
+    public function getCondition(): ItemCondition
     {
-        return $this->itemConditionComponent;
+        return $this->condition;
     }
 
-    public function setItemConditionComponent(ItemCondition $itemConditionComponent): void
+    public function setCondition(ItemCondition $condition): void
     {
-        $this->itemConditionComponent = $itemConditionComponent;
+        $this->condition = $condition;
+    }
+
+    public static function getId(): string
+    {
+        return 'item_equipment_component';
     }
 }

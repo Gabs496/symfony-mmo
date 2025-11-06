@@ -18,5 +18,5 @@ framework:
         pools:
             #my.dedicated.cache: null
             game_object_cache:
-                adapter: cache.adapter.apcu
+                adapter: cache.adapter.array
                 default_lifetime: 3600

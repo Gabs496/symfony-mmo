@@ -4,7 +4,7 @@ namespace App\GameElement\Health\Engine;
 
 use App\Engine\Math;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Health\Event\HealthModifiedEvent;
 use App\GameElement\Health\Event\HealthReachedZeroEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,7 +22,7 @@ readonly class HealthEngine
             return;
         }
 
-        $health = $object->getComponent(Health::class);
+        $health = $object->getComponent(HealthComponent::class);
         $currentHealth = $health->getCurrentHealth();
         $newHealth = min(max(0.0, Math::add($currentHealth, $value)), $health->getMaxHealth());
         $health->setCurrentHealth($newHealth);

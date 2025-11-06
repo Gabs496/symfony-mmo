@@ -17,8 +17,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
@@ -33,7 +31,6 @@ readonly class ActivityEngine
         /** @var iterable<ActivityEngineExtensionInterface> */
         #[AutowireIterator('activity.engine_extension')]
         protected iterable               $extensions,
-        private CacheInterface           $gameObjectCache,
     )
     {
     }
@@ -94,15 +91,13 @@ readonly class ActivityEngine
 
     protected function getExtension(AbstractActivity $activity): ActivityEngineExtensionInterface
     {
-        return $this->gameObjectCache->get('activity_extension_' . str_replace('\\', '', $activity->getId()), function (ItemInterface $item) use ($activity) {
-            foreach ($this->extensions as $extension) {
-                if ($extension->supports($activity)) {
-                    return $extension;
-                }
+        foreach ($this->extensions as $extension) {
+            if ($extension->supports($activity)) {
+                return $extension;
             }
+        }
 
-            //TODO: create a custom exception for this case
-            throw new InvalidArgumentException('Extension not found for activity ' . $activity::class);
-        });
+        //TODO: create a custom exception for this case
+        throw new InvalidArgumentException('Extension not found for activity ' . $activity::class);
     }
 }

@@ -4,7 +4,7 @@ namespace App\GameElement\Map\Engine\Spawn\Scheduler;
 
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Map\AbstractMap;
-use App\GameElement\Map\Component\Spawn\Spawn;
+use App\GameElement\Map\Component\Spawn\SpawnComponent;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
@@ -42,7 +42,7 @@ class ObjectSpawnScheduleProvider implements ScheduleProviderInterface
     {
         $maps = $this->gameObjectEngine->getByClass(AbstractMap::class);
         foreach ($maps as $map) {
-            $spawn = $map->getComponent(Spawn::class);
+            $spawn = $map->getComponent(SpawnComponent::class);
             if (!$spawn) {
                 continue;
             }

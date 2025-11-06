@@ -16,12 +16,11 @@ use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\Token\TokenizableInterface;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
-use App\GameElement\Render\Component\Render;
+use App\GameElement\Render\Component\RenderComponent;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -51,13 +50,13 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         return 'player_combat_manager';
     }
 
-    public function generateAttackActivity(PlayerCharacter $player, GameObject|TokenizableInterface $opponent): AttackActivity
+    public function generateAttackActivity(PlayerCharacter $player, GameObjectInterface $opponent): AttackActivity
     {
-        $playerToken = $player->getToken();
+        $playerToken = $player->getId();
         return new AttackActivity(
             $player,
             $playerToken,
-            $opponent instanceof GameObject ? $opponent->getId() : $opponent->getToken(),
+            $opponent->getId(),
             $this->getAttackStatCollection($player),
         );
     }
@@ -89,7 +88,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
 
         $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($damage->getValue()) . ' damage');
 
-        return new AttackResult($attack, $defense, $damage, !$player->getComponent(Health::class)->isAlive());
+        return new AttackResult($attack, $defense, $damage, !$player->getComponent(HealthComponent::class)->isAlive());
     }
 
     public function handleAttackResult(AttackResult $attackResult): void
@@ -101,7 +100,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         $defender = $attackResult->getDefense()->getDefender();
 
         if ($attackResult->isDefeated()) {
-            if ($render = $defender->getComponent(Render::class)) {
+            if ($render = $defender->getComponent(RenderComponent::class)) {
                 $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $render->getName());
             }
         }
@@ -123,10 +122,11 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
 
     private function calculateEquipmentAttack(PlayerCharacter $attacker, StatCollection $statCollection): void
     {
-        foreach ($attacker->getEquipment()->getItems() as $itemInstance) {
-            /** @var ItemEquipmentComponent $equipmentComponent */
-            $equipmentComponent = $itemInstance->getComponent(ItemEquipmentComponent::class);
-            foreach ($equipmentComponent->getItemStatComponent()->getStats() as $stat) {
+        foreach ($attacker->getEquipment()->getItems() as $itemObject) {
+            /** @var GameObject $item */
+            $item = $itemObject->getGameObject();
+            $equipmentComponent = $item->getComponent(ItemEquipmentComponent::class);
+            foreach ($equipmentComponent->getStats() as $stat) {
                 if ($stat instanceof OffensiveStat) {
                     $statCollection->increase($stat::class, $stat->getValue());
                 }
@@ -149,10 +149,11 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
 
     private function calculateEquipmentDefense(PlayerCharacter $defender, StatCollection $statCollection): void
     {
-        foreach ($defender->getEquipment()->getItems() as $itemInstance) {
-            /** @var ItemEquipmentComponent $equipmentComponent */
-            $equipmentComponent = $itemInstance->getComponent(ItemEquipmentComponent::class);
-            foreach ($equipmentComponent->getItemStatComponent()->getStats() as $stat) {
+        foreach ($defender->getEquipment()->getItems() as $itemObject) {
+            /** @var GameObject $item */
+            $item = $itemObject->getGameObject();
+            $equipmentComponent = $item->getComponent(ItemEquipmentComponent::class);
+            foreach ($equipmentComponent->getStats() as $stat) {
                 if ($stat instanceof DefensiveStat) {
                     $statCollection->increase($stat::class, $stat->getValue());
                 }

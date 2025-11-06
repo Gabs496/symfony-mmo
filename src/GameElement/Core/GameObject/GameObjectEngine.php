@@ -18,14 +18,14 @@ use Symfony\Contracts\Cache\ItemInterface;
  * @template T
  */
 #[AsDoctrineListener(event: Events::postLoad)]
-class GameObjectEngine
+readonly class GameObjectEngine
 {
     public function __construct(
         #[AutowireIterator('game.object')]
-        private  iterable $gameObjectCollection,
+        private iterable       $gameObjectCollection,
         #[AutowireIterator('game.object.prototype')]
-        private  iterable $gameObjectPrototypeCollection,
-        private  CacheInterface $gameObjectCache
+        private iterable       $gameObjectPrototypeCollection,
+        private CacheInterface $gameObjectCache
     )
     {
     }

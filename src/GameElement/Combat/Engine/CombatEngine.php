@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Combat\Engine;
 
-use App\GameElement\Combat\Component\Combat;
+use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\Phase\Attack;
@@ -31,13 +31,13 @@ readonly class CombatEngine
 
     public function attack(GameObjectInterface $attacker, GameObjectInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
     {
-        $attackerCombat = $attacker->getComponent(Combat::class);
+        $attackerCombat = $attacker->getComponent(CombatComponent::class);
         if (!$attackerCombat) {
-            throw new RuntimeException(sprintf('Attacker %s does not have %s component', $attacker::class, Combat::class));
+            throw new RuntimeException(sprintf('Attacker %s does not have %s component', $attacker::class, CombatComponent::class));
         }
-        $defenderCombat = $defender->getComponent(Combat::class);
+        $defenderCombat = $defender->getComponent(CombatComponent::class);
         if (!$defenderCombat) {
-            throw new RuntimeException(sprintf('Defender %s does not have %s component', $defender::class, Combat::class));
+            throw new RuntimeException(sprintf('Defender %s does not have %s component', $defender::class, CombatComponent::class));
         }
 
         $attackManager = $this->getCombatManager($attackerCombat);
@@ -67,7 +67,7 @@ readonly class CombatEngine
         $defenderDispatcher->dispatch(new DefenseFinished($attack, $defense, $attackResult));
     }
 
-    public function getCombatManager(Combat $combat): CombatManagerInterface
+    public function getCombatManager(CombatComponent $combat): CombatManagerInterface
     {
         //TODO: handle exception
         return $this->gameObjectCache->get('combat_manager_' .$combat->getManagerId(), function (ItemInterface $item) use ($combat) {

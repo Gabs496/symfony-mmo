@@ -8,11 +8,9 @@ use App\Repository\Game\MapObjectRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
-use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: MapObjectRepository::class)]
 #[ORM\Index(fields: ['mapId'])]
-#[Broadcast(topics: ['@="map_objects_" ~ entity.getMapId()'], private: true, template: 'streams/map_objects_list.stream.html.twig')]
 class MapObject
 {
     #[ORM\Id]

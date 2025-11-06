@@ -16,14 +16,13 @@ class MapObjectRepository extends ServiceEntityRepository
 {
     use SaveEntityTrait { save as saveEntityTrait; }
     use RemoveEntityTrait;
-    public function __construct(ManagerRegistry $registry, private readonly GameObjectRepository $gameObjectRepository)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MapObject::class);
     }
 
     public function save(MapObject $entity): void
     {
-        $this->gameObjectRepository->save($entity->getGameObject());
         self::saveEntityTrait($entity);
     }
 

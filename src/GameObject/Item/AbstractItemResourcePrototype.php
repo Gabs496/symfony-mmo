@@ -9,14 +9,15 @@ abstract class AbstractItemResourcePrototype extends AbstractBaseItemPrototype
         string $name,
         string $description,
         float $weight,
+        array $components,
     )
     {
         parent::__construct(
             id: $id,
             name: $name,
             description: $description,
-            stackable: true,
             weight: $weight,
+            components: $components,
         );
     }
 }

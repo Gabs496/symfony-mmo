@@ -5,12 +5,7 @@
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header bg-info">{{ 'field'|trans|capitalize }}</div>
-                <turbo-frame class="card-body" id="map_objects" {{ custom_turbo_stream_listen('map_objects_' ~ player.position) }}>
-                    {% for mapObject in mapObjects %}
-                        <div id="map_object_{{ mapObject.id }}" class="animate__animated animate__zoomIn animate__faster">
-                            {{ game_object_render(mapObject) }}
-                        </div>
-                    {% endfor %}
+                <turbo-frame id="map_objects" class="card-body" {{ custom_turbo_stream_listen('map_objects_' ~ player.position) }} src="{{ path('app_map_field') }}" loading="lazy">
                 </turbo-frame>
             </div>
         </div>
@@ -19,9 +14,9 @@
                 <div class="card-header bg-info">{{ 'recipes'|trans|capitalize }}</div>
                 <div class="card-body">
                     <turbo-frame id="recipes">
-                        {% for recipe in recipes %}
-                            {{ component('Crafting:Recipe', {recipe: recipe, playerCharacter: player}) }}
-                        {% endfor %}
+{#                        {% for recipe in recipes %}#}
+{#                            {{ component('Crafting:Recipe', {recipe: recipe, playerCharacter: player}) }}#}
+{#                        {% endfor %}#}
                     </turbo-frame>
                 </div>
             </div>
@@ -32,15 +27,12 @@
                 <div class="card-header bg-info">
                     {{ 'backpack'|trans|capitalize }}
                     <div>
-                        <turbo-frame class="progress" id="item_bag_fullness_{{ bag.id }}">
+                        <turbo-frame class="progress" id="item_bag_fullness_{{ bag.id }}" turbo->
                             <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ bag.fullness*100 }}%;"></div>
                         </turbo-frame>
                     </div>
                 </div>
-                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_items_{{ bag.id }}">
-                    {% for itemInstance in bag.items %}
-                        {% include 'item_bag/item_row.html.twig' %}
-                    {% endfor %}
+                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
                 </turbo-frame>
             </div>
             {% set bag = player.equipment %}
@@ -53,10 +45,7 @@
                         </turbo-frame>
                     </div>
                 </div>
-                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_items_{{ bag.id }}">
-                    {% for itemInstance in bag.items %}
-                        {% include 'item_bag/item_row.html.twig' %}
-                    {% endfor %}
+                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}">
                 </turbo-frame>
             </div>
         </div>

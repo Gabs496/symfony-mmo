@@ -42,10 +42,6 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
         $attacker = $this->tokenEngine->exchange($attackerToken);
         $defender = $this->tokenEngine->exchange($defenderToken);
 
-        if (!$attacker instanceof GameObjectInterface || !$defender instanceof GameObjectInterface) {
-            throw new RuntimeException(sprintf("Both %s and %s must implement %s", $attacker::class, $defender::class, GameObjectInterface::class));
-        }
-
         $this->combatEngine->attack($attacker, $defender, $activity->getPreCalculatedStatCollection());
     }
 

@@ -21,6 +21,14 @@ trait GameObjectTrait
         return $this->id;
     }
 
+    public function isInstanceOf(GameObjectInterface|GameObjectPrototypeInterface $object): bool
+    {
+        if ($object instanceof GameObjectPrototypeInterface) {
+            return $this->getPrototype()->getId() === $object->getId();
+        }
+        return $this->getPrototype()->getId() === $object->getPrototype()->getId();
+    }
+
     public  function __toString(): string
     {
         return $this::class . '::' . $this->getId();

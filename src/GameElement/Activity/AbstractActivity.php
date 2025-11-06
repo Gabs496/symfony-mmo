@@ -2,33 +2,32 @@
 
 namespace App\GameElement\Activity;
 
-use App\GameElement\Core\Token\TokenInterface;
-use App\GameElement\Core\Token\TokenizableInterface;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 
 abstract class AbstractActivity
 {
-    protected TokenInterface $subjectToken;
-    protected ?TokenizableInterface $subject;
+    protected string $subjectToken;
+    protected ?GameObjectInterface $subject;
     /** Duration in seconds */
     protected string $entityId;
 
-    public function __construct(TokenizableInterface $subject)
+    public function __construct(GameObjectInterface $subject)
     {
         $this->subject = $subject;
-        $this->subjectToken = $subject->getToken();
+        $this->subjectToken = $subject->getId();
     }
 
-    public function getSubjectToken(): TokenInterface
+    public function getSubjectToken(): string
     {
         return $this->subjectToken;
     }
 
-    public function getSubject(): TokenizableInterface
+    public function getSubject(): GameObjectInterface
     {
         return $this->subject;
     }
 
-    public function setSubject(?TokenizableInterface $subject): void
+    public function setSubject(?GameObjectInterface $subject): void
     {
         $this->subject = $subject;
     }

@@ -2,7 +2,7 @@
     <turbo-stream action="append" target="map_objects">
         <template>
             <div id="map_object_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
-                {{ game_object_render(entity) }}
+                {{ map_object_render(entity) }}
             </div>
         </template>
     </turbo-stream>
@@ -12,7 +12,7 @@
     <turbo-stream action="replace" target="map_object_{{ id }}" method="morph">
         <template>
             <div id="map_object_{{ id }}">
-                {{ game_object_render(entity) }}
+                {{ map_object_render(entity) }}
             </div>
         </template>
     </turbo-stream>
@@ -22,7 +22,7 @@
     <turbo-stream action="replace" target="map_object_{{ id }}">
         <template>
             <div id="map_object_{{ id }}" class="animate__animated animate__zoomOut animate__faster" style="transition: height .5s;">
-                {{ game_object_render(entity) }}
+                {{ map_object_render(entity) }}
                 <script>
                     document.getElementById('map_object_{{ id }}').style.height = document.getElementById('map_object_{{ id }}').offsetHeight + 'px';
                     setTimeout(function(){

@@ -16,7 +16,6 @@ abstract class AbstractItemFoodPrototype extends AbstractBaseItemPrototype
             id: $id,
             name: $name,
             description: $description,
-            stackable: false,
             weight: $weight,
             components: $components,
         );

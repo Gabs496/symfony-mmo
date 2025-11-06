@@ -2,6 +2,7 @@
 
 namespace App\Entity\Game;
 
+use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Core\GameObject\Attribute\GameObjectPrototypeReference;
 use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
@@ -25,9 +26,6 @@ class GameObject extends AbstractGameObject
 
     #[GameObjectPrototypeReference(objectPrototypeIdProperty: 'type')]
     protected GameObjectPrototypeInterface $prototype;
-
-    #[ORM\OneToOne(mappedBy: 'gameObject', cascade: ['persist', 'remove'])]
-    private MapObject $mapObject;
 
     public function __construct(GameObjectPrototypeInterface $prototype, array $components)
     {
@@ -72,4 +70,15 @@ class GameObject extends AbstractGameObject
         }
     }
 
+    public function getComponent(string $componentClass): ?GameComponentInterface
+    {
+        $component = parent::getComponent($componentClass);
+        if (!$component) {
+            return null;
+        }
+
+        $component = clone $component;
+        $this->setComponent($componentClass, $component);
+        return $component;
+    }
 }

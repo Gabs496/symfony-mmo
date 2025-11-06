@@ -2,15 +2,18 @@
 
 namespace App\GameElement\Item;
 
+use App\Entity\Data\ItemObject;
+use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Item\Component\ItemWeightComponent;
+use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
-use App\GameElement\Render\Component\Render;
-use Symfony\Component\Uid\Uuid;
+use App\GameElement\Render\Component\RenderComponent;
 
 abstract class AbstractItemBag
 {
-    /** @var ItemInstanceInterface[] $items */
+    /** @var ItemObject[] $items */
     protected iterable $items = [];
 
     protected function __construct(
@@ -22,73 +25,80 @@ abstract class AbstractItemBag
     /**
      * @throws MaxBagSizeReachedException
      */
-    public function addItem(ItemInstanceInterface $itemInstance): void
+    public function addItem(GameObjectInterface $itemObject): void
     {
         if ($this->isFull()) {
             throw new MaxBagSizeReachedException();
         }
 
-        $item = $itemInstance->getPrototype();
-        if ($item->isStackable()) {
-            foreach ($this->getItems() as $existingItem) {
-                if ($existingItem->isInstanceOf($item)) {
-                    $existingItem->addQuantity($itemInstance->getQuantity());
-                    return;
-                }
+        $stack = $itemObject->getComponent(StackComponent::class);
+        foreach ($this->getItems() as $existingItemObject) {
+            $existingItem = $existingItemObject->getGameObject();
+            $existingStack = $existingItem->getComponent(StackComponent::class);
+            if ($existingItem->isInstanceOf($itemObject) && !$existingStack->isFull()) {
+                $existingStack->increaseBy($stack->getCurrentQuantity());
+                return;
             }
         }
 
-        $this->items[] = $itemInstance;
+        $this->items[] = new ItemObject($itemObject, $this);
     }
 
-    public function findAndExtract(AbstractItemPrototype $item, int $quantity = 1): ItemInstanceInterface
+    public function findAndExtract(GameObjectPrototypeInterface $prototype, int $quantity = 1): GameObjectInterface
     {
-        if (!$this->has($item, $quantity)) {
-            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(Render::class)->getName(), $quantity));
+        if (!$this->has($prototype, $quantity)) {
+            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $prototype->getComponent(RenderComponent::class)->getName(), $quantity));
         }
 
         $newInstance = null;
-        foreach ($this->items as $itemInstance) {
-            if ($itemInstance->isInstanceOf($item)) {
-                $extractedInstance = $this->extract($itemInstance, $quantity);
-                if ($newInstance) {
-                    $newInstance->merge($extractedInstance);
-                } else {
+        $stack = new StackComponent();
+        foreach ($this->items as $itemObject) {
+            $item = $itemObject->getGameObject();
+            if ($item->getPrototype()->getId() === $prototype->getId()) {
+                $extractedInstance = $this->extract($itemObject, $quantity);
+                if (!$newInstance) {
                     $newInstance = $extractedInstance;
                 }
+                $stack->increaseBy($extractedInstance->getComponent(StackComponent::class)->getCurrentQuantity());
             }
         }
 
+        $newInstance->setComponent(StackComponent::class, $stack);
         return $newInstance;
     }
 
     /**
      * @throws ItemQuantityNotAvailableException
      */
-    public function extract(ItemInstanceInterface $itemInstance, int $quantity = 0): ItemInstanceInterface
+    public function extract(GameObjectInterface $item, int $quantity = 0): GameObjectInterface
     {
-        foreach ($this->items as $key => $itemInstanceInBag) {
-            if ($itemInstanceInBag == $itemInstance) {
-                $itemInstanceInBag->setQuantity($itemInstanceInBag->getQuantity() - $quantity);
-                $extracted = clone $itemInstanceInBag;
-                $extracted->setId(Uuid::v7()->toString());
-                $extracted->setQuantity($quantity);
-                if ($itemInstanceInBag->getQuantity() <= 0) {
+        foreach ($this->items as $key => $itemObjecInBag) {
+            if ($itemObjecInBag->getGameObject()->getId() === $item->getId()) {
+                $stack = $item->getComponent(StackComponent::class);
+                if ($stack->getCurrentQuantity() === $quantity) {
                     unset($this->items[$key]);
+                    return $itemObjecInBag->getGameObject();
                 }
-                return $extracted;
+                if ($stack->getCurrentQuantity() < $quantity) {
+                    throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::class)->getName(), $quantity));
+                }
+                $stack->decreaseBy($quantity);
+                $newGameObject = clone $item;
+                $extractedStack = $newGameObject->getComponent(StackComponent::class);
+                $extractedStack->setCurrentQuantity($quantity);
+                return $newGameObject;
             }
         }
 
-        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $itemInstance->getComponent(Render::class)->getName(), $quantity));
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::class)->getName(), $quantity));
     }
 
-    public function has(AbstractItemPrototype $item, int $quantity = 1): bool
+    public function has(GameObjectPrototypeInterface $item, int $quantity = 1): bool
     {
         return $this->getQuantity($item) >= $quantity;
     }
 
-    public function getQuantity(AbstractItemPrototype $item): int
+    public function getQuantity(GameObjectPrototypeInterface $item): int
     {
         $instances = $this->find($item);
         return array_reduce($instances, fn($carry, $instance)
@@ -96,19 +106,19 @@ abstract class AbstractItemBag
         );
     }
 
-    /** @return ItemInstanceInterface[] */
-    public function find(AbstractItemPrototype $item): array
+    /** @return ItemObject[] */
+    public function find(GameObjectPrototypeInterface $item): array
     {
-        $instances = [];
-        foreach ($this->items as $itemInstance) {
-            if ($itemInstance->isInstanceOf($item)) {
-                $instances[] = $itemInstance;
+        $itemObjects = [];
+        foreach ($this->items as $itemObject) {
+            if ($itemObject->getGameObject()->isInstanceOf($item)) {
+                $itemObjects[] = $itemObject;
             }
         }
-        return $instances;
+        return $itemObjects;
     }
 
-    /** @return ItemInstanceInterface[] */
+    /** @return ItemObject[] */
     public function getItems(): iterable
     {
         return $this->items;
@@ -123,8 +133,8 @@ abstract class AbstractItemBag
     {
         $items = iterator_to_array($this->items);
         return array_reduce($items,
-            fn($carry, AbstractItemInstance $instance)
-                => (float)bcadd($carry, bcmul($instance->getComponent(ItemWeightComponent::class)->getWeight(), $instance->getQuantity(), 2), 2),
+            fn($carry, ItemObject $itemObject)
+                => (float)bcadd($carry, bcmul($itemObject->getGameObject()->getComponent(ItemWeightComponent::class)->getWeight(), $itemObject->getGameObject()->getComponent(StackComponent::class)->getCurrentQuantity(), 2), 2),
             0.0
         );
     }

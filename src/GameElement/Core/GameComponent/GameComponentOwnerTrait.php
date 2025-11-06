@@ -2,6 +2,8 @@
 
 namespace App\GameElement\Core\GameComponent;
 
+use App\GameElement\Core\GameObject\GameObjectInterface;
+
 trait GameComponentOwnerTrait
 {
     //TODO: fix this trait to use the correct type for components
@@ -40,5 +42,18 @@ trait GameComponentOwnerTrait
         }
 
         return null;
+    }
+
+    public function clone(): GameObjectInterface
+    {
+        return new $this($this->getPrototype(), $this->cloneComponents());
+    }
+
+    /** @return GameComponentInterface[] */
+    private function cloneComponents(): array
+    {
+        return array_map(function ($component) {
+            return clone $component;
+        }, $this->components);
     }
 }

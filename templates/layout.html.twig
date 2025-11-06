@@ -1,6 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% if app.user %}
+        <turbo-stream
+                {{ custom_turbo_stream_listen('player_gui_' ~ app.user.id) }}
+        ></turbo-stream>
+    {% endif %}
     <div class="row h-100">
         <div class="col-auto position-relative">
             <div class="bg-dark h-100 px-1" id="sidebarLeft">

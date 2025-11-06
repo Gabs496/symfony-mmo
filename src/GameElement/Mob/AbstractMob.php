@@ -3,14 +3,13 @@
 namespace App\GameElement\Mob;
 
 use App\GameElement\Combat\Component\AbstractStat;
-use App\GameElement\Combat\Component\Combat;
+use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObjectPrototype;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Mob\Combat\MobCombatManager;
-use App\GameElement\Render\Component\Render;
 use App\GameElement\Reward\RewardInterface;
 
 abstract class AbstractMob extends AbstractGameObjectPrototype
@@ -20,30 +19,18 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
 
     public function __construct(
         string          $id,
-        string          $name,
-        string          $description,
         float           $maxHealth,
         /** @var AbstractStat[] $combatStats */
         array           $combatStats = [],
         /** @var RewardInterface[] */
         protected array $rewardOnDefeats = [],
-        ?string         $iconPath = null,
         array           $components = [],
     )
     {
-        $components = array_merge(
-            $components,
-            [
-                new Render(
-                    name: $name,
-                    description: $description,
-                    iconPath: $iconPath ?? '/mob/' . strtolower($id) . '.png',
-                    template: 'Mob:MapRender'
-                ),
-                new Health($maxHealth, $maxHealth),
-                //TODO: separate domains
-                new Combat($combatStats, MobCombatManager::getId()),
-            ],
+        $components = array_merge([
+                HealthComponent::class => new HealthComponent($maxHealth, $maxHealth),
+                CombatComponent::class => new CombatComponent($combatStats, MobCombatManager::getId()),
+            ], $components
         );
         parent::__construct($id, $components);
     }
@@ -51,7 +38,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
     /** @return AbstractStat[] */
     public function getCombatStats(): array
     {
-        return $this->getComponent(Combat::class)->getStats();
+        return $this->getComponent(CombatComponent::class)->getStats();
     }
 
     /** @return RewardInterface[] */

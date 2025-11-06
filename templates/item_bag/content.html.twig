@@ -1,0 +1,5 @@
+<turbo-frame id="item_bag_content_{{ bag.id }}">
+    {% for itemObject in bag.items %}
+        {{ item_object_render(itemObject) }}
+    {% endfor %}
+</turbo-frame>

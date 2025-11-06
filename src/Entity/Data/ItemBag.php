@@ -3,7 +3,7 @@
 namespace App\Entity\Data;
 
 use App\GameElement\Item\AbstractItemBag;
-use App\Repository\Data\ItemInstanceBagRepository;
+use App\Repository\Data\ItemBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 #[ORM\InheritanceType(value: 'SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\Entity(repositoryClass: ItemInstanceBagRepository::class)]
+#[ORM\Entity(repositoryClass: ItemBagRepository::class)]
 abstract class ItemBag extends AbstractItemBag
 {
     #[ORM\Id]
@@ -23,12 +23,14 @@ abstract class ItemBag extends AbstractItemBag
     #[ORM\OneToOne(targetEntity: PlayerCharacter::class, mappedBy: 'backpack')]
     private PlayerCharacter $player;
 
-    /** @var Collection<int, ItemInstance> */
-    #[ORM\OneToMany(targetEntity: ItemInstance::class, mappedBy: 'bag', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    protected iterable $items = [];
-
     #[ORM\Column(type: 'float')]
     protected float $size;
+
+    /**
+     * @var Collection<int, ItemObject>
+     */
+    #[ORM\OneToMany(targetEntity: ItemObject::class, mappedBy: 'bag', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected iterable $items = [];
 
     public function __construct(PlayerCharacter $player, float $size)
     {

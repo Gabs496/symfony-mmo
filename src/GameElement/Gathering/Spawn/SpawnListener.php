@@ -2,8 +2,9 @@
 
 namespace App\GameElement\Gathering\Spawn;
 
-use App\GameElement\Gathering\Component\Gathering;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Gathering\Component\GatheringComponent;
+use App\GameElement\Health\Component\HealthComponent;
+use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Map\Event\Spawn\PreMapObjectSpawn;
 use Random\RandomException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,7 +24,7 @@ class SpawnListener implements EventSubscriberInterface
     public function onPreMapObjectSpawn(PreMapObjectSpawn $event): void
     {
         $object = $event->getMapObject()->getGameObject();
-        if (!$object->getComponent(Gathering::class)) {
+        if (!$object->getComponent(GatheringComponent::class)) {
             return;
         }
 
@@ -32,9 +33,9 @@ class SpawnListener implements EventSubscriberInterface
 
         try {
             $resourceQuantity = random_int($spawnParams->getMinSpotAvailability(), $spawnParams->getMaxSpotAvailability());
-        } catch (RandomException $e) {
+        } catch (RandomException) {
             $resourceQuantity = 1;
         }
-        $object->setComponent(Health::class, new Health($resourceQuantity, $resourceQuantity));
+        $object->setComponent(StackComponent::class, new StackComponent($resourceQuantity));
     }
 }

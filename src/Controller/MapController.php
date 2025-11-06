@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Engine\Item\ItemActionEngine;
 use App\Engine\Player\PlayerCombatManager;
-use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapObject;
 use App\GameElement\Activity\Engine\ActivityEngine;
@@ -23,32 +21,46 @@ use Symfony\UX\Turbo\TurboBundle;
 #[Route('/map')]
 class MapController extends AbstractController
 {
-    public function __construct()
+    public function __construct(
+        private readonly ActivityEngine $activityEngine,
+    )
     {
     }
 
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(MapEngine $mapEngine, GameObjectEngine $gameObjectEngine): Response
+    public function home(GameObjectEngine $gameObjectEngine): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
 
         return $this->render('map/home.html.twig', [
             'player' => $user,
-            'mapObjects' => $mapEngine->getMapObjects($user->getMap()),
             'recipes' => $gameObjectEngine->getByClass(AbstractRecipe::class),
         ]);
     }
 
+    #[Route('/map/field', name: 'app_map_field')]
+    #[IsGranted('ROLE_USER')]
+    public function field(MapEngine $mapEngine): Response
+    {
+        /** @var PlayerCharacter $user */
+        $user = $this->getUser();
+
+        return $this->render('map/field.html.twig', [
+            'mapObjects' => $mapEngine->getMapObjects($user->getMap()),
+        ]);
+    }
+
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
-    public function startGathering(MapObject $resource, ActivityEngine $gameActivity, Request $request): Response
+    #[IsGranted('ROLE_USER')]
+    public function startGathering(MapObject $resource,Request $request): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
 
-        $gameActivity->run(new ResourceGatheringActivity($player, $resource->getGameObject()));
+        $this->activityEngine->run(new ResourceGatheringActivity($player, $resource->getGameObject()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -58,13 +70,14 @@ class MapController extends AbstractController
     }
 
     #[Route('/craft/{id}', name: 'app_map_craft')]
-    public function startCraftingRecipe(ActivityEngine $gameActivity, GameObjectEngine $gameObjectEngine, string $id, Request $request): Response
+    #[IsGranted('ROLE_USER')]
+    public function startCraftingRecipe(GameObjectEngine $gameObjectEngine, string $id, Request $request): Response
     {
         /** @var AbstractRecipe $recipe */
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $gameActivity->run(new RecipeCraftingActivity($user, $recipe));
+        $this->activityEngine->run(new RecipeCraftingActivity($user, $recipe));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -74,25 +87,12 @@ class MapController extends AbstractController
     }
 
     #[Route('/mob-fight/{id}', name: 'app_map_mob_fight')]
-    public function startMobFight(ActivityEngine $gameActivity, Request $request, MapObject $mob, PlayerCombatManager $combatEngine): Response
+    #[IsGranted('ROLE_USER')]
+    public function startMobFight(Request $request, MapObject $mob, PlayerCombatManager $combatEngine): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $gameActivity->run($combatEngine->generateAttackActivity($player, $mob->getGameObject()));
-
-        if ($request->headers->get('Turbo-Frame')) {
-            $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-            return new Response();
-        }
-        return $this->redirectToRoute('app_map');
-    }
-
-    #[Route('/item_action_perform/{id}/{action}', name: 'app_map_item_action_perform')]
-    public function itemActionPerform(ItemInstance $itemInstance, string $action, ItemActionEngine $itemActionEngine, Request $request): Response
-    {
-        /** @var PlayerCharacter $player */
-        $player = $this->getUser();
-        $itemActionEngine->performItemAction($player, new $action(), $itemInstance, [$player]);
+        $this->activityEngine->run($combatEngine->generateAttackActivity($player, $mob->getGameObject()));
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

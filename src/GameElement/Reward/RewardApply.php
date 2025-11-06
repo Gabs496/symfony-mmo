@@ -2,20 +2,19 @@
 
 namespace App\GameElement\Reward;
 
-use App\GameElement\Core\Token\TokenInterface;
-use App\GameElement\Core\Token\TokenizableInterface;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 
 class RewardApply
 {
-    protected ?TokenizableInterface $recipe;
-    protected readonly TokenInterface $recipeToken;
+    protected ?GameObjectInterface $recipe;
+    protected readonly string $recipeToken;
     public function __construct(
         private readonly RewardInterface $reward,
-        TokenizableInterface    $recipe,
+        GameObjectInterface    $recipe,
     )
     {
         $this->recipe = $recipe;
-        $this->recipeToken = $this->recipe->getToken();
+        $this->recipeToken = $this->recipe->getId();
     }
 
     public function getReward(): RewardInterface
@@ -23,17 +22,17 @@ class RewardApply
         return $this->reward;
     }
 
-    public function getRecipeToken(): TokenInterface
+    public function getRecipeToken(): string
     {
         return $this->recipeToken;
     }
 
-    public function getRecipe(): TokenizableInterface
+    public function getRecipe(): GameObjectInterface
     {
         return $this->recipe;
     }
 
-    public function setRecipe(TokenizableInterface $recipe): void
+    public function setRecipe(GameObjectInterface $recipe): void
     {
         $this->recipe = $recipe;
     }

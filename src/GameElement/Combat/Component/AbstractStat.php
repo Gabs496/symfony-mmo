@@ -14,4 +14,6 @@ abstract readonly class AbstractStat
     {
         return $this->value;
     }
+
+    public abstract static function getLabel(): string;
 }

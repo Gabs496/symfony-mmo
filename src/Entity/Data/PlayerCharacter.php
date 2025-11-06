@@ -3,10 +3,9 @@
 namespace App\Entity\Data;
 
 use App\Engine\Player\PlayerCombatManager;
-use App\Engine\Player\PlayerToken;
 use App\Entity\Security\User;
 use App\GameElement\Character\AbstractCharacter;
-use App\GameElement\Combat\Component\Combat;
+use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
@@ -14,8 +13,7 @@ use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Core\GameObject\GameObjectTrait;
-use App\GameElement\Core\Token\TokenizableInterface;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
@@ -30,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
 class PlayerCharacter extends AbstractCharacter
-    implements GameObjectInterface, UserInterface, TokenizableInterface, GameObjectPrototypeInterface
+    implements GameObjectInterface, UserInterface, GameObjectPrototypeInterface
 {
     use GameObjectTrait;
     #[ORM\Id]
@@ -65,7 +63,7 @@ class PlayerCharacter extends AbstractCharacter
     private ?Activity $currentActivity;
 
     #[ORM\Column(type: 'json_document', nullable: false)]
-    private Health $health;
+    private HealthComponent $health;
 
     public function __construct()
     {
@@ -73,7 +71,7 @@ class PlayerCharacter extends AbstractCharacter
         $this->masterySet = new MasterySet();
         $this->backpack = new BackpackItemBag($this);
         $this->equipment = new EquippedItemBag($this);
-        $this->health = new Health(0.25, 0.25);
+        $this->health = new HealthComponent(0.25, 0.25);
     }
 
     public function getId(): string
@@ -200,12 +198,12 @@ class PlayerCharacter extends AbstractCharacter
         return $this->currentActivity === $activity;
     }
 
-    public function getHealth(): Health
+    public function getHealth(): HealthComponent
     {
         return $this->health;
     }
 
-    public function setHealth(Health $health): void
+    public function setHealth(HealthComponent $health): void
     {
         $this->health = $health;
     }
@@ -215,32 +213,27 @@ class PlayerCharacter extends AbstractCharacter
         return $this->health->getCurrentHealth();
     }
 
-    public function getCombatComponent(): Combat
+    public function getCombatComponent(): CombatComponent
     {
         $statCollection  = new StatCollection();
         $statCollection->increase(PhysicalAttackStat::class, $this->getMasteryExperience(PhysicalAttack::getId()));
 
         foreach ($this->equipment->getItems() as $equipmentItem) {
-            if ($combat = $equipmentItem->getComponent(Combat::class)) {
-                /** @var Combat $combat */
+            if ($combat = $equipmentItem->getGameObject()->getComponent(CombatComponent::class)) {
+                /** @var CombatComponent $combat */
                 foreach ($combat->getStats() as $stat) {
                     $statCollection->increase($stat::class, $stat->getValue());
                 }
             }
         }
-        return new Combat($statCollection->getStats(), PlayerCombatManager::getId());
-    }
-
-    public function getToken(): PlayerToken
-    {
-        return new PlayerToken($this->id);
+        return new CombatComponent($statCollection->getStats(), PlayerCombatManager::getId());
     }
 
     public function getComponents(): array
     {
         return [
-            Combat::class => $this->getCombatComponent(),
-            Health::class => $this->getHealth(),
+            CombatComponent::class => $this->getCombatComponent(),
+            HealthComponent::class => $this->getHealth(),
         ];
     }
 

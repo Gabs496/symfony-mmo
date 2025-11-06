@@ -21,4 +21,9 @@ class ItemWeightComponent implements GameComponentInterface
     {
         $this->weight = $weight;
     }
+
+    public static function getId(): string
+    {
+        return 'item_weight_component';
+    }
 }

@@ -1,0 +1,43 @@
+<div class="bg-dark border-primary rounded my-1">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            {% block icon %}
+            <div style="width: 5em; height: 5em;">
+                <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100">
+            </div>
+            {% endblock %}
+        </div>
+        <div class="col">
+            {% block name %}
+            <div class="fw-bold">{{ render.name }}</div>
+            {% endblock %}
+            {% block moreInfo %}
+                <div>
+                    {% if this.stack %}
+                        <div class="d-flex">
+                            <div class="small badge bg-white text-black">{{ stack.currentQuantity }}</div>
+                            <div class="w-100">
+                                {% include 'parts/progressBar.html.twig' with {percentage: stack.currentQuantity/stack.maxQUantity} %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if this.health %}
+                        <div class="d-flex">
+                            <div class="small badge bg-white text-black">{{ math_stat_view(health.currentHealth) }}</div>
+                            <div class="w-100">
+                                {% include 'parts/progressBar.html.twig' with {percentage: health.currentHealth/health.maxHealth } %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endblock %}
+        </div>
+        <div class="col-lg-3 ms-auto">
+            {% block action %}
+                {% for interaction in this.interactions %}
+                    <a href="{{ interaction.action }}" class="btn btn-primary">{{ interaction.label|trans|upper }}</a>
+                {% endfor %}
+            {% endblock %}
+        </div>
+    </div>
+</div>

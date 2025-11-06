@@ -1,8 +1,8 @@
 {# Learn how to use Turbo Streams: https://github.com/symfony/ux-turbo#broadcast-doctrine-entities-update #}
-<turbo-stream action="update" target="item_bag_items_{{ bag.id }}">
+<turbo-stream action="update" target="item_bag_content_{{ bag.id }}">
     <template>
-        {% for itemInstance in bag.items%}
-            {% include 'item_bag/item_row.html.twig' %}
+        {% for itemObject in bag.items%}
+            {{ item_object_render(itemObject) }}
         {% endfor %}
     </template>
 </turbo-stream>

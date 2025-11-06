@@ -2,6 +2,7 @@
 
 namespace App\GameObject\Item;
 
+use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 
 abstract class AbstractItemEquipmentPrototype extends AbstractBaseItemPrototype
@@ -20,13 +21,11 @@ abstract class AbstractItemEquipmentPrototype extends AbstractBaseItemPrototype
             id: $id,
             name: $name,
             description: $description,
-            stackable: false,
             weight: $weight,
-            components: array_merge(
-                $components,
-                [
-                    new ItemEquipmentComponent($combatStatModifiers, $maxCondition),
-                ]
+            components: array_merge([
+                    ItemEquipmentComponent::class => new ItemEquipmentComponent($combatStatModifiers, $maxCondition),
+                    StackComponent::class => new StackComponent(1, 1),
+                ], $components
             )
         );
     }

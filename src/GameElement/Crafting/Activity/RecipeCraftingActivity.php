@@ -3,14 +3,14 @@
 namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
-use App\GameElement\Core\Token\TokenizableInterface;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Reward\RewardInterface;
 
 class RecipeCraftingActivity extends AbstractActivity
 {
     public function __construct(
-        TokenizableInterface $subject,
+        GameObjectInterface $subject,
         private readonly AbstractRecipe $recipe,
     )
     {

@@ -3,13 +3,13 @@
 namespace App\GameElement\Health\Event;
 
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\Component\HealthComponent;
 
 class HealthModifiedEvent
 {
     public function __construct(
         protected GameObjectInterface $object,
-        protected Health $health,
+        protected HealthComponent     $health,
     ) {
     }
 
@@ -18,7 +18,7 @@ class HealthModifiedEvent
         return $this->object;
     }
 
-    public function getHealth(): Health
+    public function getHealth(): HealthComponent
     {
         return $this->health;
     }

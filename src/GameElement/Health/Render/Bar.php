@@ -3,7 +3,7 @@
 namespace App\GameElement\Health\Render;
 
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Health\Component\Health;
+use App\GameElement\Health\Component\HealthComponent;
 use InvalidArgumentException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
@@ -12,14 +12,14 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 class Bar
 {
     #[ExposeInTemplate]
-    protected Health $health;
+    protected HealthComponent $health;
 
     #[ExposeInTemplate]
     protected GameObjectInterface $gameObject;
 
     public function mount(GameObjectInterface $gameObject): void
     {
-        $health = $gameObject->getComponent(Health::class);
+        $health = $gameObject->getComponent(HealthComponent::class);
         if (!$health) {
             throw new InvalidArgumentException('Health component not found for ' . $gameObject::class . '::' . $gameObject->getId());
         }
@@ -27,7 +27,7 @@ class Bar
         $this->health = $health;
     }
 
-    public function getHealth(): Health
+    public function getHealth(): HealthComponent
     {
         return $this->health;
     }

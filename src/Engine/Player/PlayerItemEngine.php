@@ -3,13 +3,13 @@
 namespace App\Engine\Player;
 
 use App\Engine\Player\Event\PlayerItemBagUpdateEvent;
-use App\Entity\Data\ItemInstance;
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Item\AbstractItemPrototype;
+use App\Entity\Game\GameObject;
+use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
-use App\GameElement\Item\ItemInstanceInterface;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
+use App\Repository\Data\ItemBagRepository;
 use App\Repository\Data\PlayerCharacterRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -22,55 +22,52 @@ use Twig\Error\RuntimeError;
 readonly class PlayerItemEngine
 {
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher,
+        private EventDispatcherInterface  $eventDispatcher,
         private PlayerCharacterRepository $playerCharacterRepository,
-        private HubInterface $hub,
-        private Environment $twig,
-        private NotificationEngine $notificationEngine,
-        private LoggerInterface $logger,
+        private HubInterface              $hub,
+        private Environment               $twig,
+        private NotificationEngine        $notificationEngine,
+        private LoggerInterface           $logger,
+        private ItemBagRepository         $itemBagRepository,
     )
     {
     }
     /** @throws MaxBagSizeReachedException */
-    public function giveItem(PlayerCharacter $player, ItemInstance $itemInstance): void
+    public function giveItem(PlayerCharacter $player, GameObject $item): void
     {
         $backPack = $player->getBackpack();
-        $itemInstance->setBag($backPack);
-        $backPack->addItem($itemInstance);
-
-        $this->playerCharacterRepository->save($player);
+        $backPack->addItem($item);
+        $this->itemBagRepository->save($backPack);
 
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $backPack));
     }
 
-    public function takeItem(PlayerCharacter $player, AbstractItemPrototype|ItemInstanceInterface $itemInstance, int $quantity): ItemInstanceInterface
+    public function takeItem(PlayerCharacter $player, GameObjectPrototypeInterface|GameObject $item, int $quantity): GameObject
     {
-        if ($itemInstance instanceof AbstractItemPrototype) {
-            $bag = $player->getBackpack();
-            $itemInstance = $bag->findAndExtract($itemInstance, $quantity);
+        $bag = $player->getBackpack();
+        if ($item instanceof GameObjectPrototypeInterface) {
+            $item = $bag->findAndExtract($item, $quantity);
+            /** @var GameObject $item */
         } else {
-            /** @var ItemInstance $itemInstance */
-            $bag = $itemInstance->getBag();
-            $itemInstance = $bag->extract($itemInstance, $quantity);
+            $item = $bag->extract($item, $quantity);
         }
         $this->playerCharacterRepository->save($player);
 
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $bag));
-        return $itemInstance;
+        return $item;
     }
 
-    public function equip(ItemInstance $itemInstance, PlayerCharacter $player): void
+    public function equip(GameObject $item, PlayerCharacter $player): void
     {
-        if (!$itemInstance->hasComponent(ItemEquipmentComponent::class)) {
+        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             return;
         }
-        $equipment = $this->takeItem($player, $itemInstance, 1);
+        $equipment = $this->takeItem($player, $item, 1);
 
         try {
             $player->getEquipment()->addItem($equipment);
-            $equipment->setBag($player->getEquipment());
-            $this->playerCharacterRepository->save($player);
-        } catch (MaxBagSizeReachedException $exception) {
+            $this->itemBagRepository->save($player->getEquipment());
+        } catch (MaxBagSizeReachedException) {
             $this->giveItem($player, $equipment);
             $this->notificationEngine->danger($player->getId(), 'Your equipment is full, you cannot equip the item.');
         }
@@ -79,16 +76,16 @@ readonly class PlayerItemEngine
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $player->getEquipment()));
     }
 
-    public function unequip(ItemInstance $itemInstance, PlayerCharacter $player): void
+    public function unequip(GameObject $item, PlayerCharacter $player): void
     {
-        if (!$itemInstance->hasComponent(ItemEquipmentComponent::class)) {
+        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             return;
         }
 
-        $equipment = $player->getEquipment()->extract($itemInstance, 1);
+        $equipment = $player->getEquipment()->extract($item, 1);
+        $this->itemBagRepository->save($player->getEquipment());
         $player->getBackpack()->addItem($equipment);
-        $equipment->setBag($player->getBackpack());
-        $this->playerCharacterRepository->save($player);
+        $this->itemBagRepository->save($player->getBackpack());
 
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $player->getBackpack()));
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(),$player->getEquipment()));

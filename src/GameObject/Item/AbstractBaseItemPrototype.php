@@ -4,6 +4,9 @@ namespace App\GameObject\Item;
 
 use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Item\Component\ItemWeightComponent;
+use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Render\ItemBagRenderComponent;
+use App\GameElement\Map\Render\MapRenderComponent;
 
 abstract class AbstractBaseItemPrototype extends AbstractItemPrototype
 {
@@ -11,7 +14,6 @@ abstract class AbstractBaseItemPrototype extends AbstractItemPrototype
         string $id,
         string $name,
         string $description,
-        bool $stackable,
         float $weight,
         array $components = [],
     )
@@ -20,10 +22,22 @@ abstract class AbstractBaseItemPrototype extends AbstractItemPrototype
             id: $id,
             name: $name,
             description: $description,
-            stackable: $stackable,
-            components: array_merge($components, [
-                new ItemWeightComponent($weight),
-            ])
+            components: array_merge([
+                ItemWeightComponent::class => new ItemWeightComponent($weight),
+                MapRenderComponent::class => new MapRenderComponent(
+                    template: 'Render:MapRenderTemplate',
+                    name: $name,
+                    description: $description,
+                    iconPath: '/items/' . strtolower($id) . '.png'
+                ),
+                ItemBagRenderComponent::class => new ItemBagRenderComponent(
+                    template: 'Render:ItemBagRenderTemplate',
+                    name: $name,
+                    description: $description,
+                    iconPath: '/items/' . strtolower($id) . '.png'
+                ),
+                StackComponent::class => new StackComponent(1),
+            ], $components)
         );
     }
 }

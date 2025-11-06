@@ -1,0 +1,7 @@
+<turbo-frame id="map_objects">
+    {% for mapObject in mapObjects %}
+        <turbo-frame id="map_object_{{ mapObject.gameObject.id }}" class="animate__animated animate__zoomIn animate__faster">
+            {{ map_object_render(mapObject) }}
+        </turbo-frame>
+    {% endfor %}
+</turbo-frame>
