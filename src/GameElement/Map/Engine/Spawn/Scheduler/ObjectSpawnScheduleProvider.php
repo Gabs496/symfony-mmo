@@ -42,7 +42,7 @@ class ObjectSpawnScheduleProvider implements ScheduleProviderInterface
     {
         $maps = $this->gameObjectEngine->getByClass(AbstractMap::class);
         foreach ($maps as $map) {
-            $spawn = $map->getComponent(SpawnComponent::class);
+            $spawn = $map->getComponent(SpawnComponent::getId());
             if (!$spawn) {
                 continue;
             }

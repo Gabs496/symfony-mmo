@@ -36,7 +36,8 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
 
     public function onComplete(AbstractActivity $activity): void
     {
-        $attackerToken = $activity->getAttackerToken();
+
+        $attackerToken = $activity->getSubjectToken();
         $defenderToken = $activity->getDefenderToken();
 
         $attacker = $this->tokenEngine->exchange($attackerToken);

@@ -20,15 +20,21 @@ class CommonApplePrototype extends AbstractItemFoodPrototype
             weight: 0.05,
             components: [
                 new HealingComponent(0.05),
-                new GatheringComponent(
-                    difficulty: 0.5,
-                    involvedMastery: Mining::getId(),
-                    gatheringTime: 1.5,
-                    rewards: [
-                        new MasteryReward(Mining::getId(), 0.01),
-                    ]
-                )
             ],
         );
+    }
+
+    public function asGatherableComponents(): array
+    {
+        return [
+            new GatheringComponent(
+                difficulty: 0.5,
+                involvedMastery: Mining::getId(),
+                gatheringTime: 1.5,
+                rewards: [
+                    new MasteryReward(Mining::getId(), 0.01),
+                ]
+            )
+        ];
     }
 }

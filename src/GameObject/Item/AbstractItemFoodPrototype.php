@@ -2,7 +2,9 @@
 
 namespace App\GameObject\Item;
 
-abstract class AbstractItemFoodPrototype extends AbstractBaseItemPrototype
+use App\GameElement\Gathering\GatherableInterface;
+
+abstract class AbstractItemFoodPrototype extends AbstractBaseItemPrototype implements GatherableInterface
 {
     public function __construct(
         string $id,

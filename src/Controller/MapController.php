@@ -3,13 +3,12 @@
 namespace App\Controller;
 
 use App\Engine\Player\PlayerCombatManager;
+use App\Engine\Player\PlayerCraftingEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapObject;
-use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Core\GameObject\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
-use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
-use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
+use App\GameElement\Gathering\Engine\GatheringEngine;
 use App\GameElement\Map\Engine\MapEngine;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,12 +20,6 @@ use Symfony\UX\Turbo\TurboBundle;
 #[Route('/map')]
 class MapController extends AbstractController
 {
-    public function __construct(
-        private readonly ActivityEngine $activityEngine,
-    )
-    {
-    }
-
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
     public function home(GameObjectEngine $gameObjectEngine): Response
@@ -54,13 +47,12 @@ class MapController extends AbstractController
 
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
     #[IsGranted('ROLE_USER')]
-    public function startGathering(MapObject $resource,Request $request): Response
+    public function startGathering(MapObject $resource, GatheringEngine $gatheringEngine, Request $request): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
-
-        $this->activityEngine->run(new ResourceGatheringActivity($player, $resource->getGameObject()));
+        $gatheringEngine->startGathering($player, $resource->getGameObject());
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -71,13 +63,13 @@ class MapController extends AbstractController
 
     #[Route('/craft/{id}', name: 'app_map_craft')]
     #[IsGranted('ROLE_USER')]
-    public function startCraftingRecipe(GameObjectEngine $gameObjectEngine, string $id, Request $request): Response
+    public function startCraftingRecipe(GameObjectEngine $gameObjectEngine, PlayerCraftingEngine $craftingEngine, string $id, Request $request): Response
     {
         /** @var AbstractRecipe $recipe */
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $this->activityEngine->run(new RecipeCraftingActivity($user, $recipe));
+        $craftingEngine->startCrafting($user, $recipe);
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -92,7 +84,7 @@ class MapController extends AbstractController
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $this->activityEngine->run($combatEngine->generateAttackActivity($player, $mob->getGameObject()));
+        $combatEngine->attack($player, $mob->getGameObject());
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

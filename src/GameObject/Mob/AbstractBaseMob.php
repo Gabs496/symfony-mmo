@@ -25,7 +25,7 @@ abstract class AbstractBaseMob extends AbstractMob
             $combatStats,
             $rewardOnDefeats,
             components: array_merge([
-                MapRenderComponent::class => new MapRenderComponent(
+                new MapRenderComponent(
                     template: 'Render:MapRenderTemplate',
                     name: $name,
                     description: $description,

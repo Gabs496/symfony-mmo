@@ -2,14 +2,16 @@
 
 namespace App\GameObject\Item;
 
-abstract class AbstractItemResourcePrototype extends AbstractBaseItemPrototype
+use App\GameElement\Gathering\GatherableInterface;
+
+abstract class AbstractItemResourcePrototype extends AbstractBaseItemPrototype implements GatherableInterface
 {
     public function __construct(
         string $id,
         string $name,
         string $description,
         float $weight,
-        array $components,
+        array $components = [],
     )
     {
         parent::__construct(

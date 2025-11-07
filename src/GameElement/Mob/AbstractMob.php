@@ -28,8 +28,8 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
     )
     {
         $components = array_merge([
-                HealthComponent::class => new HealthComponent($maxHealth, $maxHealth),
-                CombatComponent::class => new CombatComponent($combatStats, MobCombatManager::getId()),
+                new HealthComponent($maxHealth, $maxHealth),
+                new CombatComponent($combatStats, MobCombatManager::getId()),
             ], $components
         );
         parent::__construct($id, $components);
@@ -38,7 +38,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
     /** @return AbstractStat[] */
     public function getCombatStats(): array
     {
-        return $this->getComponent(CombatComponent::class)->getStats();
+        return $this->getComponent(CombatComponent::getId())->getStats();
     }
 
     /** @return RewardInterface[] */

@@ -22,7 +22,7 @@ readonly class HealthEngine
             return;
         }
 
-        $health = $object->getComponent(HealthComponent::class);
+        $health = $object->getComponent(HealthComponent::getId());
         $currentHealth = $health->getCurrentHealth();
         $newHealth = min(max(0.0, Math::add($currentHealth, $value)), $health->getMaxHealth());
         $health->setCurrentHealth($newHealth);

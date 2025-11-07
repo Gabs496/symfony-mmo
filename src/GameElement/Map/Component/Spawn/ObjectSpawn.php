@@ -5,16 +5,16 @@ namespace App\GameElement\Map\Component\Spawn;
 readonly class ObjectSpawn
 {
     public function __construct(
-        protected string $objectId,
+        protected string $prototypeId,
         protected int    $maxAvailability,
         protected float  $spawnRate
     )
     {
     }
 
-    public function getObjectId(): string
+    public function getPrototypeId(): string
     {
-        return $this->objectId;
+        return $this->prototypeId;
     }
 
     public function getMaxAvailability(): int
@@ -25,10 +25,5 @@ readonly class ObjectSpawn
     public function getSpawnRate(): float
     {
         return $this->spawnRate;
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
     }
 }

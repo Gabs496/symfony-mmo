@@ -3,45 +3,37 @@
 namespace App\Engine\Player;
 
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Core\GameObject\GameObjectEngine;
-use App\GameElement\Crafting\Event\BeforeCraftingTakeIngredientEvent;
+use App\GameElement\Crafting\AbstractRecipe;
+use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-readonly class PlayerCraftingEngine implements EventSubscriberInterface
+readonly class PlayerCraftingEngine
 {
     public function __construct(
         private PlayerItemEngine $itemEngine,
         private GameObjectEngine $gameObjectEngine,
+        private ActivityEngine   $activityEngine,
     ){}
 
-    public static function getSubscribedEvents(): array
+    public function startCrafting(PlayerCharacter $playerCharacter, AbstractRecipe $recipe): void
     {
-        return [
-            BeforeCraftingTakeIngredientEvent::class => [
-                ['takeIngredient', 0],
-            ],
-        ];
+        self::takeIngredient($playerCharacter, $recipe);
+        $this->activityEngine->run(new RecipeCraftingActivity($playerCharacter, $recipe));
     }
 
-    public function takeIngredient(BeforeCraftingTakeIngredientEvent $event): void
+    private function takeIngredient(PlayerCharacter $player, AbstractRecipe $recipe): void
     {
-        $player = $event->getSubject();
-        if (!$player instanceof PlayerCharacter) {
-            return;
-        }
-
-        $recipe = $event->getRecipe();
         try {
             foreach ($recipe->getIngredients() as $ingredient) {
                 /** @var AbstractItemPrototype $itemPrototype */
                 $itemPrototype = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId());
                 $this->itemEngine->takeItem($player, $itemPrototype, $ingredient->getQuantity());
             }
-            $event->setProcessed();
-        } catch (ItemQuantityNotAvailableException $e) {
+        } catch (ItemQuantityNotAvailableException) {
             throw new UserNotificationException($player->getId(),'Recipe ingredients not availables');
         }
     }

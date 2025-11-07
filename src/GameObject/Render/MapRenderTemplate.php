@@ -38,21 +38,21 @@ class MapRenderTemplate implements InteractableTemplateInterface
     {
         $this->mapObject = $mapObject;
         $this->gameObject = $mapObject->getGameObject();
-        $this->render = $mapObject->getGameObject()->getComponent(MapRenderComponent::class);
-        $this->stack = $this->gameObject->getComponent(StackComponent::class);
-        $this->health = $this->gameObject->getComponent(HealthComponent::class);
+        $this->render = $mapObject->getGameObject()->getComponent(MapRenderComponent::getId());
+        $this->stack = $this->gameObject->getComponent(StackComponent::getId());
+        $this->health = $this->gameObject->getComponent(HealthComponent::getId());
     }
 
     /** @return iterable<AbstractInteraction> */
     public function getInteractions(): iterable
     {
-        if ($this->gameObject->getComponent(GatheringComponent::class)) {
+        if ($this->gameObject->getComponent(GatheringComponent::getId())) {
             yield new GatherInteraction($this->urlGenerator->generate('app_map_resource_gather', [
                 'id' => $this->mapObject->getId()
             ]));
         }
 
-        if ($this->gameObject->getComponent(CombatComponent::class)) {
+        if ($this->gameObject->getComponent(CombatComponent::getId())) {
             yield new FightInteraction($this->urlGenerator->generate('app_map_mob_fight', [
                 'id' => $this->mapObject->getId()
             ]));

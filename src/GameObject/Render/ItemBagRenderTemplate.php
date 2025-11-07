@@ -6,7 +6,6 @@ use App\Entity\Data\BackpackItemBag;
 use App\Entity\Data\EquippedItemBag;
 use App\Entity\Data\ItemObject;
 use App\Entity\Game\GameObject;
-use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Interaction\InteractableTemplateInterface;
 use App\GameElement\Item\Component\StackComponent;
@@ -47,18 +46,18 @@ class ItemBagRenderTemplate implements InteractableTemplateInterface
     {
         $this->itemObject = $itemObject;
         $this->item = $itemObject->getGameObject();
-        $this->render = $this->item->getComponent(ItemBagRenderComponent::class);
-        $this->stack = $this->item->getComponent(StackComponent::class);
-        $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::class);
+        $this->render = $this->item->getComponent(ItemBagRenderComponent::getId());
+        $this->stack = $this->item->getComponent(StackComponent::getId());
+        $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::getId());
     }
 
     public function getInteractions(): iterable
     {
-        if ($this->item->hasComponent(HealingComponent::class)) {
+        if ($this->item->hasComponent(HealingComponent::getId())) {
             yield new EatInteraction($this->urlGenerator->generate('app_item_eat', ['id' => $this->itemObject->getId()]));
         }
 
-        if ($this->item->hasComponent(ItemEquipmentComponent::class)) {
+        if ($this->item->hasComponent(ItemEquipmentComponent::getId())) {
             if ($this->itemObject->getBag() instanceof BackpackItemBag) {
                 yield new EquipInteraction($this->urlGenerator->generate('app_item_equip', ['id' => $this->itemObject->getId()]));
             }

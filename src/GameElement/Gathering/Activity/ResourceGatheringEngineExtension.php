@@ -4,7 +4,6 @@ namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
-use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\Token\TokenEngine;
 use App\GameElement\Gathering\Engine\GatheringEngine;
 
@@ -35,7 +34,6 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
 
     public function onComplete(AbstractActivity $activity): void
     {
-        /** @var GameObjectInterface $gameObject */
         $gameObject = $this->tokenEngine->exchange($activity->getResourceToken());
         $this->gatheringEngine->gather($activity->getSubject(), $gameObject);
     }

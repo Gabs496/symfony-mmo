@@ -17,16 +17,20 @@ class CopperOrePrototype extends AbstractItemResourcePrototype
             name: 'Coppper Ore',
             description: 'A piece of copper ore.',
             weight: 0.1,
-            components: [
-                new GatheringComponent(
-                    difficulty: 0.5,
-                    involvedMastery: Mining::getId(),
-                    gatheringTime: 1.5,
-                    rewards: [
-                        new MasteryReward(Mining::getId(), 0.01),
-                    ]
-                )
-            ]
         );
+    }
+
+    public function asGatherableComponents(): array
+    {
+        return [
+            new GatheringComponent(
+                difficulty: 0.5,
+                involvedMastery: Mining::getId(),
+                gatheringTime: 1.5,
+                rewards: [
+                    new MasteryReward(Mining::getId(), 0.01),
+                ]
+            )
+        ];
     }
 }

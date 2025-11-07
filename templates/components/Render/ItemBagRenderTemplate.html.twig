@@ -14,7 +14,7 @@
         {% endif %}
     </div>
 {% endset %}
-<div id="item-instance-{{ itemObject.id }}" class="bg-dark border-primary rounded m-1 dropdown">
+<div id="item-instance-{{ item.id }}" class="bg-dark border-primary rounded m-1 dropdown">
     <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
         <div style="width: 4em; height: 4em;" class="position-relative" title="{{ tooltipInfo|e('html') }}" {{ stimulus_controller('tooltip') }}>
             <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100 w-100"/>

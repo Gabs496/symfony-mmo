@@ -31,10 +31,10 @@ abstract class AbstractItemBag
             throw new MaxBagSizeReachedException();
         }
 
-        $stack = $itemObject->getComponent(StackComponent::class);
+        $stack = $itemObject->getComponent(StackComponent::getId());
         foreach ($this->getItems() as $existingItemObject) {
             $existingItem = $existingItemObject->getGameObject();
-            $existingStack = $existingItem->getComponent(StackComponent::class);
+            $existingStack = $existingItem->getComponent(StackComponent::getId());
             if ($existingItem->isInstanceOf($itemObject) && !$existingStack->isFull()) {
                 $existingStack->increaseBy($stack->getCurrentQuantity());
                 return;
@@ -47,7 +47,7 @@ abstract class AbstractItemBag
     public function findAndExtract(GameObjectPrototypeInterface $prototype, int $quantity = 1): GameObjectInterface
     {
         if (!$this->has($prototype, $quantity)) {
-            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $prototype->getComponent(RenderComponent::class)->getName(), $quantity));
+            throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $prototype->getComponent(RenderComponent::getId())->getName(), $quantity));
         }
 
         $newInstance = null;
@@ -55,15 +55,15 @@ abstract class AbstractItemBag
         foreach ($this->items as $itemObject) {
             $item = $itemObject->getGameObject();
             if ($item->getPrototype()->getId() === $prototype->getId()) {
-                $extractedInstance = $this->extract($itemObject, $quantity);
+                $extractedInstance = $this->extract($item, $quantity);
                 if (!$newInstance) {
                     $newInstance = $extractedInstance;
                 }
-                $stack->increaseBy($extractedInstance->getComponent(StackComponent::class)->getCurrentQuantity());
+                $stack->increaseBy($extractedInstance->getComponent(StackComponent::getId())->getCurrentQuantity());
             }
         }
 
-        $newInstance->setComponent(StackComponent::class, $stack);
+        $newInstance->setComponent($stack);
         return $newInstance;
     }
 
@@ -74,23 +74,23 @@ abstract class AbstractItemBag
     {
         foreach ($this->items as $key => $itemObjecInBag) {
             if ($itemObjecInBag->getGameObject()->getId() === $item->getId()) {
-                $stack = $item->getComponent(StackComponent::class);
+                $stack = $item->getComponent(StackComponent::getId());
                 if ($stack->getCurrentQuantity() === $quantity) {
                     unset($this->items[$key]);
                     return $itemObjecInBag->getGameObject();
                 }
                 if ($stack->getCurrentQuantity() < $quantity) {
-                    throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::class)->getName(), $quantity));
+                    throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::getId())->getName(), $quantity));
                 }
                 $stack->decreaseBy($quantity);
                 $newGameObject = clone $item;
-                $extractedStack = $newGameObject->getComponent(StackComponent::class);
+                $extractedStack = $newGameObject->getComponent(StackComponent::getId());
                 $extractedStack->setCurrentQuantity($quantity);
                 return $newGameObject;
             }
         }
 
-        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::class)->getName(), $quantity));
+        throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::getId())->getName(), $quantity));
     }
 
     public function has(GameObjectPrototypeInterface $item, int $quantity = 1): bool
@@ -101,8 +101,8 @@ abstract class AbstractItemBag
     public function getQuantity(GameObjectPrototypeInterface $item): int
     {
         $instances = $this->find($item);
-        return array_reduce($instances, fn($carry, $instance)
-                => $carry + $instance->getQuantity(), 0
+        return array_reduce($instances, fn($carry, ItemObject $instance)
+                => $carry + $instance->getGameObject()->getComponent(StackComponent::getId())->getCurrentQuantity(), 0
         );
     }
 
@@ -134,7 +134,7 @@ abstract class AbstractItemBag
         $items = iterator_to_array($this->items);
         return array_reduce($items,
             fn($carry, ItemObject $itemObject)
-                => (float)bcadd($carry, bcmul($itemObject->getGameObject()->getComponent(ItemWeightComponent::class)->getWeight(), $itemObject->getGameObject()->getComponent(StackComponent::class)->getCurrentQuantity(), 2), 2),
+                => (float)bcadd($carry, bcmul($itemObject->getGameObject()->getComponent(ItemWeightComponent::getId())->getWeight(), $itemObject->getGameObject()->getComponent(StackComponent::getId())->getCurrentQuantity(), 2), 2),
             0.0
         );
     }

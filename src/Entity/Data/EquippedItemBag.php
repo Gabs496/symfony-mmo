@@ -19,7 +19,7 @@ class EquippedItemBag extends ItemBag
     public function getOccupedSpace(): float
     {
         return (float)$this->items->reduce(function(int $carry, ItemObject $itemObject) {
-            return $carry + $itemObject->getGameObject()->getComponent(StackComponent::class)->getCurrentQuantity();
+            return $carry + $itemObject->getGameObject()->getComponent(StackComponent::getId())->getCurrentQuantity();
         }, 0);
     }
 

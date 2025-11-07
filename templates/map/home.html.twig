@@ -14,9 +14,9 @@
                 <div class="card-header bg-info">{{ 'recipes'|trans|capitalize }}</div>
                 <div class="card-body">
                     <turbo-frame id="recipes">
-{#                        {% for recipe in recipes %}#}
-{#                            {{ component('Crafting:Recipe', {recipe: recipe, playerCharacter: player}) }}#}
-{#                        {% endfor %}#}
+                        {% for recipe in recipes %}
+                            {{ component('Render:RecipeRenderTemplate', {recipe: recipe}) }}
+                        {% endfor %}
                     </turbo-frame>
                 </div>
             </div>

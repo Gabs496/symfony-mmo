@@ -52,8 +52,8 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack
     {
-        if (!$combat = $attacker->getComponent(CombatComponent::class)) {
-            throw new RuntimeException(sprintf('Attacker does not have %s component', CombatComponent::class));
+        if (!$combat = $attacker->getComponent(CombatComponent::getId())) {
+            throw new RuntimeException(sprintf('Attacker does not have %s component', CombatComponent::getId()));
         }
         $statCollection = new StatCollection();
         $this->calculateBaseAttack($combat, $statCollection);
@@ -63,8 +63,8 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 
     public function generateDefense(Attack $attack, GameObjectInterface $defender): Defense
     {
-        if (!$combat = $defender->getComponent(CombatComponent::class)) {
-            throw new RuntimeException(sprintf('Defender does not have %s component', CombatComponent::class));
+        if (!$combat = $defender->getComponent(CombatComponent::getId())) {
+            throw new RuntimeException(sprintf('Defender does not have %s component', CombatComponent::getId()));
         }
 
         $statCollection = new StatCollection();
@@ -81,8 +81,8 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 
 
         $defender = $defense->getDefender();
-        if (!$health = $defender->getComponent(HealthComponent::class)) {
-            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), HealthComponent::class));
+        if (!$health = $defender->getComponent(HealthComponent::getId())) {
+            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), HealthComponent::getId()));
         }
         if (!$health->isAlive()) {
             $this->mapObjectRepository->remove($this->mapObjectRepository->findOneBy(['gameObject' => $defender]));
@@ -103,8 +103,8 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
             $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender));
         }
 
-        if (!$health = $defender->getComponent(HealthComponent::class)) {
-            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), HealthComponent::class));
+        if (!$health = $defender->getComponent(HealthComponent::getId())) {
+            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), HealthComponent::getId()));
         }
 
         if ($health->isAlive()) {

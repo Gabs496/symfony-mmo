@@ -16,17 +16,21 @@ class ChestnutLogPrototype extends AbstractItemResourcePrototype
             id: self::ID,
             name: 'Chestnut Log',
             description: 'A log from a chestnut tree.',
-            weight: 0.1,
-            components: [
-                new GatheringComponent(
-                    difficulty: 0.5,
-                    involvedMastery: Woodcutting::getId(),
-                    gatheringTime: 1.5,
-                    rewards: [
-                        new MasteryReward(Woodcutting::getId(), 0.01)
-                    ],
-                )
-            ]
+            weight: 0.1
         );
+    }
+
+    public function asGatherableComponents(): array
+    {
+        return [
+            new GatheringComponent(
+                difficulty: 0.5,
+                involvedMastery: Woodcutting::getId(),
+                gatheringTime: 1.5,
+                rewards: [
+                    new MasteryReward(Woodcutting::getId(), 0.01)
+                ],
+            )
+        ];
     }
 }

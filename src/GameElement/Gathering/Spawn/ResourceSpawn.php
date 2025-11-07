@@ -7,14 +7,14 @@ use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 readonly class ResourceSpawn extends ObjectSpawn
 {
     public function __construct(
-        string $objectId,
-        int    $maxAvailability,
-        float  $spawnRate,
-        protected int $minSpotAvailability,
+        string         $prototypeId,
+        int            $maxAvailability,
+        float          $spawnRate,
+        protected int  $minSpotAvailability,
         protected  int $maxSpotAvailability,
     )
     {
-        parent::__construct($objectId, $maxAvailability, $spawnRate);
+        parent::__construct($prototypeId, $maxAvailability, $spawnRate);
     }
 
     public function getMinSpotAvailability(): int

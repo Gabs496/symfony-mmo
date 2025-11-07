@@ -43,7 +43,7 @@ readonly class ObjectSpawnHandler
 
     private function spawnNewObject(AbstractMap $map, ObjectSpawn $objectSpawn): void
     {
-        $prototype = $this->gameObjectEngine->getPrototype($objectSpawn->getObjectId());
+        $prototype = $this->gameObjectEngine->getPrototype($objectSpawn->getPrototypeId());
         $instance = (new GameObject($prototype, $prototype->getComponents()));
         $mapObject = new MapObject($map, $instance);
         $this->eventDispatcher->dispatch(new PreMapObjectSpawn($mapObject, $objectSpawn));
@@ -64,7 +64,7 @@ readonly class ObjectSpawnHandler
     private function getSpaceTaken(AbstractMap $map, ObjectSpawn $objectSpawn): int
     {
         $spots = $this->mapObjectRepository->findBy(['mapId' => $map->getId()]);
-        $spots = array_filter($spots, fn(MapObject $mapObject) => $mapObject->getGameObject()->getType() === $objectSpawn->getObjectId());
+        $spots = array_filter($spots, fn(MapObject $mapObject) => $mapObject->getGameObject()->getType() === $objectSpawn->getPrototypeId());
         return (new ArrayCollection($spots))->reduce(function (int $carry) {
             return $carry + 1;
         }, 0);

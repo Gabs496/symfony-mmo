@@ -51,34 +51,24 @@ class GameObject extends AbstractGameObject
         return $this->prototype;
     }
 
-    public function getMapObject(): MapObject
-    {
-        return $this->mapObject;
-    }
-
-    public function setMapObject(MapObject $mapObject): void
-    {
-        $this->mapObject = $mapObject;
-    }
-
     public function cloneComponent(): void
     {
         $components = $this->getComponents();
         $this->components = [];
         foreach ($components as $component) {
-            $this->setComponent($component::class, clone $component);
+            $this->setComponent(clone $component);
         }
     }
 
-    public function getComponent(string $componentClass): ?GameComponentInterface
+    public function getComponent(string $componentId): ?GameComponentInterface
     {
-        $component = parent::getComponent($componentClass);
+        $component = parent::getComponent($componentId);
         if (!$component) {
             return null;
         }
 
         $component = clone $component;
-        $this->setComponent($componentClass, $component);
+        $this->setComponent($component);
         return $component;
     }
 }

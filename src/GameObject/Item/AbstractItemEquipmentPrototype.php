@@ -23,8 +23,8 @@ abstract class AbstractItemEquipmentPrototype extends AbstractBaseItemPrototype
             description: $description,
             weight: $weight,
             components: array_merge([
-                    ItemEquipmentComponent::class => new ItemEquipmentComponent($combatStatModifiers, $maxCondition),
-                    StackComponent::class => new StackComponent(1, 1),
+                    new ItemEquipmentComponent($combatStatModifiers, $maxCondition),
+                    new StackComponent(1, 1),
                 ], $components
             )
         );

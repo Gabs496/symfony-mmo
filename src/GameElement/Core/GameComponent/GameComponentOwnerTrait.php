@@ -13,9 +13,9 @@ trait GameComponentOwnerTrait
         return $this->components;
     }
 
-    public function setComponent(string $componentId, GameComponentInterface $component): void
+    public function setComponent(GameComponentInterface $component, ?string $componentId = null): void
     {
-        $this->components[$componentId] = $component;
+        $this->components[$componentId ?? $component::getId()] = $component;
     }
 
     public function removeComponent(string $componentId): void
@@ -30,13 +30,17 @@ trait GameComponentOwnerTrait
 
     /**
      * @template T of GameComponentInterface
-     * @param class-string<T> $componentClass
+     * @param class-string<T> $componentId
      * @return T|null $componentClass
      */
-    public function getComponent(string $componentClass): ?GameComponentInterface
+    public function getComponent(string $componentId): ?GameComponentInterface
     {
+        if ($component = $this->components[$componentId] ?? null) {
+            return $component;
+        }
+
         foreach ($this->components as $component) {
-            if ($component instanceof $componentClass) {
+            if ($component::getId() === $componentId) {
                 return $component;
             }
         }

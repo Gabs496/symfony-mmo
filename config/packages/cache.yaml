@@ -16,7 +16,14 @@ framework:
 
         # Namespaced pools use the above "app" backend by default
         pools:
-            #my.dedicated.cache: null
             game_object_cache:
                 adapter: cache.adapter.array
                 default_lifetime: 3600
+
+when@dev:
+  framework:
+    cache:
+      pools:
+        game_object_cache:
+          adapter: cache.adapter.array
+          default_lifetime: 1

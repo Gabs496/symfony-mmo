@@ -26,7 +26,7 @@ class MapExtension extends AbstractExtension
 
     public function mapObjectRender(MapObject $mapObject): string
     {
-        $render = $mapObject->getGameObject()->getComponent(MapRenderComponent::class);
+        $render = $mapObject->getGameObject()->getComponent(MapRenderComponent::getId());
         if (!$render) {
             return '';
         }

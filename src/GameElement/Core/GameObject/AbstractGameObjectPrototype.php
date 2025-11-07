@@ -8,12 +8,19 @@ abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterfa
 {
     use GameObjectPrototypeTrait;
 
+    /** @var GameComponentInterface[] */
+    private array $components;
+
     public function __construct(
         protected string $id,
-        /** @var GameComponentInterface[] */
-        private array $components = [],
+        /** @param GameComponentInterface[] $components */
+        array $components = [],
     )
     {
+        $this->components = [];
+        foreach ($components as $component) {
+            $this->components[$component->getId()] = $component;
+        }
     }
 
     public function getId(): string

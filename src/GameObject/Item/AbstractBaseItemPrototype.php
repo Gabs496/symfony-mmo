@@ -7,6 +7,7 @@ use App\GameElement\Item\Component\ItemWeightComponent;
 use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Item\Render\ItemBagRenderComponent;
 use App\GameElement\Map\Render\MapRenderComponent;
+use App\GameElement\Render\Component\RenderComponent;
 
 abstract class AbstractBaseItemPrototype extends AbstractItemPrototype
 {
@@ -23,20 +24,26 @@ abstract class AbstractBaseItemPrototype extends AbstractItemPrototype
             name: $name,
             description: $description,
             components: array_merge([
-                ItemWeightComponent::class => new ItemWeightComponent($weight),
-                MapRenderComponent::class => new MapRenderComponent(
+                new ItemWeightComponent($weight),
+                new RenderComponent(
+                    template: 'Render:ItemRenderTemplate',
+                    name: $name,
+                    description: $description,
+                    iconPath: '/items/' . strtolower($id) . '.png'
+                ),
+                new MapRenderComponent(
                     template: 'Render:MapRenderTemplate',
                     name: $name,
                     description: $description,
                     iconPath: '/items/' . strtolower($id) . '.png'
                 ),
-                ItemBagRenderComponent::class => new ItemBagRenderComponent(
+                new ItemBagRenderComponent(
                     template: 'Render:ItemBagRenderTemplate',
                     name: $name,
                     description: $description,
                     iconPath: '/items/' . strtolower($id) . '.png'
                 ),
-                StackComponent::class => new StackComponent(1),
+                new StackComponent(1),
             ], $components)
         );
     }

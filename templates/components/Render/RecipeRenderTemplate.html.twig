@@ -1,8 +1,6 @@
 <div class="bg-dark border-primary rounded m-1 row">
     <div style="width: 5em; height: 5em;" class="col-auto">
-        {% for reward in recipe.itemRewards %}
-            {{ component('Render:ItemBagRenderTemplate', {id: reward.itemPrototypeId}) }}
-        {% endfor %}
+        {{ component('Render:ItemRenderTemplate', {item: this.item}) }}
     </div>
     <div class="col">
         <div>{{ recipe.name }}</div>
@@ -10,9 +8,9 @@
     </div>
     <div class="col-12">
         <div class="d-flex align-items-center">
-            {% for ingredient in recipe.ingredients %}
+            {% for ingredient in this.ingredients %}
                 <div class="ms-auto">
-                    {{ component('Render:ItemBagRenderTemplate', {id: ingredient.itemPrototypeId, quantity: ingredient.quantity, maskedDanger: false}) }}
+                    {{ component('Render:ItemRenderTemplate', {item: ingredient}) }}
                 </div>
             {% endfor %}
             <div class="activity_panel ms-2">

@@ -7,7 +7,7 @@ interface GameComponentOwnerInterface
     /** @return GameComponentInterface[] */
     public function getComponents(): array;
 
-    public function setComponent(string $componentId, GameComponentInterface $component): void;
+    public function setComponent(GameComponentInterface $component, ?string $componentId = null): void;
 
     public function removeComponent(string $componentId): void;
 
@@ -15,8 +15,8 @@ interface GameComponentOwnerInterface
 
     /**
      * @template T of GameComponentInterface
-     * @param class-string<T> $componentClass
+     * @param class-string<T> $componentId
      * @return T|null $componentClass
      */
-    public function getComponent(string $componentClass): ?GameComponentInterface;
+    public function getComponent(string $componentId): ?GameComponentInterface;
 }
