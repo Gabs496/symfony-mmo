@@ -60,9 +60,9 @@ class GameObject extends AbstractGameObject
         }
     }
 
-    public function getComponent(string $componentId): ?GameComponentInterface
+    public function getComponent(string $componentClass): ?GameComponentInterface
     {
-        $component = parent::getComponent($componentId);
+        $component = parent::getComponent($componentClass);
         if (!$component) {
             return null;
         }

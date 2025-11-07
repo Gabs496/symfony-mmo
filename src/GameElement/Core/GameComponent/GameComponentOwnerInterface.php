@@ -15,8 +15,8 @@ interface GameComponentOwnerInterface
 
     /**
      * @template T of GameComponentInterface
-     * @param class-string<T> $componentId
+     * @param class-string<T> $componentClass
      * @return T|null $componentClass
      */
-    public function getComponent(string $componentId): ?GameComponentInterface;
+    public function getComponent(string $componentClass): ?GameComponentInterface;
 }

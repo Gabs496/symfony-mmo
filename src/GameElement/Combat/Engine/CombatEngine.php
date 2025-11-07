@@ -36,13 +36,13 @@ readonly class CombatEngine
 
     public function attack(GameObjectInterface $attacker, GameObjectInterface $defender, ?StatCollection $preCalculatedStatCollection = null): void
     {
-        $attackerCombat = $attacker->getComponent(CombatComponent::getId());
+        $attackerCombat = $attacker->getComponent(CombatComponent::class);
         if (!$attackerCombat) {
-            throw new RuntimeException(sprintf('Attacker %s does not have %s component', $attacker::class, CombatComponent::getId()));
+            throw new RuntimeException(sprintf('Attacker %s does not have %s component', $attacker::class, CombatComponent::class));
         }
-        $defenderCombat = $defender->getComponent(CombatComponent::getId());
+        $defenderCombat = $defender->getComponent(CombatComponent::class);
         if (!$defenderCombat) {
-            throw new RuntimeException(sprintf('Defender %s does not have %s component', $defender::class, CombatComponent::getId()));
+            throw new RuntimeException(sprintf('Defender %s does not have %s component', $defender::class, CombatComponent::class));
         }
 
         $attackManager = $this->getCombatManager($attackerCombat);

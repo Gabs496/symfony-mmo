@@ -44,7 +44,7 @@ readonly class GatheringEngine
 
     private function take(GameObjectInterface $gameObject, float $quantity): ?GameObjectInterface
     {
-        $stack = $gameObject->getComponent(StackComponent::getId());
+        $stack = $gameObject->getComponent(StackComponent::class);
 
         if (!$stack) {
             $this->gameObjectRepository->remove($gameObject);
@@ -68,7 +68,7 @@ readonly class GatheringEngine
 
     public function handleReward(GameObjectInterface $subject, GameObjectInterface $resource): void
     {
-        $gathering = $resource->getComponent(GatheringComponent::getId());
+        $gathering = $resource->getComponent(GatheringComponent::class);
         foreach ($gathering->getRewards() as $reward) {
             $this->rewardEngine->apply(new RewardApply($reward, $subject));
         }

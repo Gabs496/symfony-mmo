@@ -26,7 +26,7 @@ class ItemExtension extends AbstractExtension
 
     public function itemObjectRender(ItemObject $itemObject): string
     {
-        $render = $itemObject->getGameObject()->getComponent(ItemBagRenderComponent::getId());
+        $render = $itemObject->getGameObject()->getComponent(ItemBagRenderComponent::class);
         if (!$render) {
             return '';
         }

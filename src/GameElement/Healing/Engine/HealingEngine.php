@@ -19,12 +19,12 @@ class HealingEngine
 
     public function heal(GameObjectInterface $subject, HealingComponent $healing): HealthComponent
     {
-        if (!$subject->hasComponent(HealthComponent::getId())) {
+        if (!$subject->hasComponent(HealthComponent::class)) {
             throw new InvalidArgumentException(sprintf('Subject %s does not have a health component.', $subject));
         }
 
         $this->healthEngine->modifyCurrentHealth($subject, $healing->getAmount());
 
-        return $subject->getComponent(HealthComponent::getId());
+        return $subject->getComponent(HealthComponent::class);
     }
 }

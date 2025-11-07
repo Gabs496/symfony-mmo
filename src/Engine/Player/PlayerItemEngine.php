@@ -59,7 +59,7 @@ readonly class PlayerItemEngine
 
     public function equip(GameObject $item, PlayerCharacter $player): void
     {
-        if (!$item->hasComponent(ItemEquipmentComponent::getId())) {
+        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             return;
         }
         $equipment = $this->takeItem($player, $item, 1);
@@ -78,7 +78,7 @@ readonly class PlayerItemEngine
 
     public function unequip(GameObject $item, PlayerCharacter $player): void
     {
-        if (!$item->hasComponent(ItemEquipmentComponent::getId())) {
+        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             return;
         }
 

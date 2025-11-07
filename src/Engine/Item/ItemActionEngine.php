@@ -27,7 +27,7 @@ class ItemActionEngine
 
     public function equip(PlayerCharacter $player, GameObject $item): void
     {
-        if (!$item->hasComponent(ItemEquipmentComponent::getId())) {
+        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             throw new RuntimeException('Invalid item type for equip action');
         }
         $this->playerItemEngine->equip($item, $player);
@@ -35,7 +35,7 @@ class ItemActionEngine
 
     public function unequip(PlayerCharacter $player, GameObject $item): void
     {
-        if (!$item->hasComponent(ItemEquipmentComponent::getId())) {
+        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             throw new RuntimeException('Invalid item type for unequip action');
         }
         $this->playerItemEngine->unequip($item, $player);
@@ -44,7 +44,7 @@ class ItemActionEngine
     public function eat(PlayerCharacter $player, GameObject $item): void
     {
         $item = $this->playerItemEngine->takeItem($player, $item, 1);
-        if ($healing = $item->getComponent(HealingComponent::getId())) {
+        if ($healing = $item->getComponent(HealingComponent::class)) {
             $this->healingEngine->heal($player, $healing);
             if ($healing->getAmount() > 0.0) {
                 $this->notificationEngine->success(
@@ -63,6 +63,6 @@ class ItemActionEngine
 
     public function drop(PlayerCharacter $player, GameObject $item): void
     {
-        $this->playerItemEngine->takeItem($player, $item, $item->getComponent(StackComponent::getId())->getCurrentQuantity());
+        $this->playerItemEngine->takeItem($player, $item, $item->getComponent(StackComponent::class)->getCurrentQuantity());
     }
 }

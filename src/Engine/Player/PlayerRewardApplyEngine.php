@@ -51,7 +51,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
                 $item = new GameObject($itemPrototype, $itemPrototype->getComponents());
                 $item->setComponent(new StackComponent($reward->getQuantity()));
                 $this->playerEngine->giveItem($player, $item);
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(StackComponent::getId())->getCurrentQuantity(), $item->getComponent(RenderComponent::getId())->getName()));
+                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(StackComponent::class)->getCurrentQuantity(), $item->getComponent(RenderComponent::class)->getName()));
             } catch (MaxBagSizeReachedException) {
                 $this->notificationEngine->danger($player->getId(), 'Your bag is full, you cannot receive the item.');
                 return;

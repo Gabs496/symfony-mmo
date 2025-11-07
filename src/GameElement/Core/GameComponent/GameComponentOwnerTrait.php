@@ -30,17 +30,17 @@ trait GameComponentOwnerTrait
 
     /**
      * @template T of GameComponentInterface
-     * @param class-string<T> $componentId
+     * @param class-string<T> $componentClass
      * @return T|null $componentClass
      */
-    public function getComponent(string $componentId): ?GameComponentInterface
+    public function getComponent(string $componentClass): ?GameComponentInterface
     {
-        if ($component = $this->components[$componentId] ?? null) {
+        if ($component = $this->components[$componentClass::getId()] ?? null) {
             return $component;
         }
 
         foreach ($this->components as $component) {
-            if ($component::getId() === $componentId) {
+            if ($component::getId() === $componentClass::getId()) {
                 return $component;
             }
         }

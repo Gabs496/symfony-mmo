@@ -16,18 +16,16 @@ final class ItemRenderTemplate
 {
     public GameObjectInterface|GameObjectPrototypeInterface $item;
     public bool $maskedDanger = false;
-
     #[ExposeInTemplate]
     public RenderComponent $render;
     public StackComponent $stack;
-
     public ?ItemEquipmentComponent $itemEquipment = null;
 
     public function mount(GameObjectInterface|GameObjectPrototypeInterface $item): void
     {
         $this->item = $item;
-        $this->render = $this->item->getComponent(RenderComponent::getId());
-        $this->stack = $this->item->getComponent(StackComponent::getId());
-        $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::getId());
+        $this->render = $this->item->getComponent(RenderComponent::class);
+        $this->stack = $this->item->getComponent(StackComponent::class);
+        $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::class);
     }
 }

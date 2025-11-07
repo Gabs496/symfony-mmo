@@ -219,7 +219,7 @@ class PlayerCharacter extends AbstractCharacter
         $statCollection->increase(PhysicalAttackStat::class, $this->getMasteryExperience(PhysicalAttack::getId()));
 
         foreach ($this->equipment->getItems() as $equipmentItem) {
-            if ($combat = $equipmentItem->getGameObject()->getComponent(CombatComponent::getId())) {
+            if ($combat = $equipmentItem->getGameObject()->getComponent(CombatComponent::class)) {
                 /** @var CombatComponent $combat */
                 foreach ($combat->getStats() as $stat) {
                     $statCollection->increase($stat::class, $stat->getValue());
@@ -252,9 +252,14 @@ class PlayerCharacter extends AbstractCharacter
         return isset($this->getComponents()[$componentClass]);
     }
 
-    public function getComponent(string $componentId): ?GameComponentInterface
+    /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     * @return T|null
+     */
+    public function getComponent(string $componentClass): ?GameComponentInterface
     {
-        return $this->getComponents()[$componentId] ?? null;
+        return $this->getComponents()[$componentClass::getId()] ?? null;
     }
 
     public function getPrototype(): GameObjectPrototypeInterface

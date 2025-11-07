@@ -33,7 +33,7 @@ class SpawnListener implements EventSubscriberInterface
             return;
         }
 
-        if ($object->hasComponent(GatheringComponent::getId())) {
+        if ($object->hasComponent(GatheringComponent::class)) {
             return;
         }
 
@@ -68,7 +68,7 @@ class SpawnListener implements EventSubscriberInterface
         }
 
         if (!$gatheringComponent) {
-            throw new InvalidArgumentException(sprintf("Function %s::asGatherable() must return at last one component of class %s at key %s", $prototype::class, GatheringComponent::class, GatheringComponent::getId()));
+            throw new InvalidArgumentException(sprintf("Function %s::asGatherable() must return at last one component of class %s at key %s", $prototype::class, GatheringComponent::class, GatheringComponent::class));
         }
     }
 }

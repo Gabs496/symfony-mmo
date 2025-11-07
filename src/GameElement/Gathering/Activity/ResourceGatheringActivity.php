@@ -18,7 +18,7 @@ class ResourceGatheringActivity extends AbstractActivity
     {
         parent::__construct($subject);
         $this->resourceToken = $resource->getId();
-        $this->gathering = $resource->getComponent(GatheringComponent::getId());
+        $this->gathering = $resource->getComponent(GatheringComponent::class);
     }
 
     public function getGathering(): GatheringComponent

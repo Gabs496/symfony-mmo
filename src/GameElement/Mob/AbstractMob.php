@@ -38,7 +38,7 @@ abstract class AbstractMob extends AbstractGameObjectPrototype
     /** @return AbstractStat[] */
     public function getCombatStats(): array
     {
-        return $this->getComponent(CombatComponent::getId())->getStats();
+        return $this->getComponent(CombatComponent::class)->getStats();
     }
 
     /** @return RewardInterface[] */

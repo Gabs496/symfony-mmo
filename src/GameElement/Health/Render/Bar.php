@@ -19,7 +19,7 @@ class Bar
 
     public function mount(GameObjectInterface $gameObject): void
     {
-        $health = $gameObject->getComponent(HealthComponent::getId());
+        $health = $gameObject->getComponent(HealthComponent::class);
         if (!$health) {
             throw new InvalidArgumentException('Health component not found for ' . $gameObject::class . '::' . $gameObject->getId());
         }
