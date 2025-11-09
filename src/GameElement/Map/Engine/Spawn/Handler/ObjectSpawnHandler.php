@@ -4,7 +4,7 @@ namespace App\GameElement\Map\Engine\Spawn\Handler;
 
 use App\Entity\Game\GameObject;
 use App\Entity\Game\MapObject;
-use App\GameElement\Core\GameObject\GameObjectEngine;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;
@@ -63,8 +63,8 @@ readonly class ObjectSpawnHandler
 
     private function getSpaceTaken(AbstractMap $map, ObjectSpawn $objectSpawn): int
     {
-        $spots = $this->mapObjectRepository->findBy(['mapId' => $map->getId()]);
-        $spots = array_filter($spots, fn(MapObject $mapObject) => $mapObject->getGameObject()->getType() === $objectSpawn->getPrototypeId());
+        $spots = $this->mapObjectRepository->findBy(['map' => $map]);
+        $spots = array_filter($spots, fn(MapObject $mapObject) => $mapObject->getGameObject()->getPrototype()->getId() === $objectSpawn->getPrototypeId());
         return (new ArrayCollection($spots))->reduce(function (int $carry) {
             return $carry + 1;
         }, 0);

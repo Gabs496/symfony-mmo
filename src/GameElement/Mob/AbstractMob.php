@@ -7,7 +7,7 @@ use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
-use App\GameElement\Core\GameObject\AbstractGameObjectPrototype;
+use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Mob\Combat\MobCombatManager;
 use App\GameElement\Reward\RewardInterface;

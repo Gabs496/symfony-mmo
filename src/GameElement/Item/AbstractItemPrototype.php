@@ -3,7 +3,7 @@
 namespace App\GameElement\Item;
 
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 
 abstract class AbstractItemPrototype implements GameObjectPrototypeInterface
 {

@@ -3,7 +3,7 @@
 namespace App\GameElement\Crafting;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Reward\RewardInterface;
 

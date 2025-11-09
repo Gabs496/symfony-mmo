@@ -2,9 +2,8 @@
 
 namespace App\GameObject\Render;
 
-use App\GameElement\Core\GameObject\GameObjectEngine;
-use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Component\StackComponent;

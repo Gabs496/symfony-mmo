@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameElement\Core\GameObject;
+namespace App\GameElement\Core\GameObjectPrototype;
 
 use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
 

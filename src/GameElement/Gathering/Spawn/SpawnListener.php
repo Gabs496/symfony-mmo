@@ -3,7 +3,7 @@
 namespace App\GameElement\Gathering\Spawn;
 
 use App\GameElement\Core\GameComponent\GameComponentInterface;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Gathering\Component\GatheringComponent;
 use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Item\Component\StackComponent;

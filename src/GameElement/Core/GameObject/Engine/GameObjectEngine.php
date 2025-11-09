@@ -1,14 +1,18 @@
 <?php
 
-namespace App\GameElement\Core\GameObject;
+namespace App\GameElement\Core\GameObject\Engine;
 
 use App\GameElement\Core\GameObject\Attribute\GameObjectPrototypeReference;
-use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
+use App\GameElement\Core\GameObject\Doctrine\Type\GameObjectPlaceholder;
 use App\GameElement\Core\GameObject\Exception\GameObjectNotFound;
 use App\GameElement\Core\GameObject\Exception\RegisteredANonGameObjectException;
+use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Core\GameObjectPrototype\Doctrine\Type\GameObjectPrototypePlaceholder;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
+use Psr\Cache\InvalidArgumentException;
 use ReflectionObject;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -25,41 +29,50 @@ readonly class GameObjectEngine
         private iterable       $gameObjectCollection,
         #[AutowireIterator('game.object.prototype')]
         private iterable       $gameObjectPrototypeCollection,
-        private CacheInterface $gameObjectCache
+        private CacheInterface $gameObjectCache,
     )
     {
     }
 
     public function postLoad(PostLoadEventArgs $args): void
     {
-
         $entity = $args->getObject();
+
         $reflection = new ReflectionObject($entity);
+
         foreach ($reflection->getProperties() as $property) {
-            foreach ($property->getAttributes(GameObjectReference::class) as $gameObjectAttribute) {
-                /** @var GameObjectReference $gameObjectReference */
-                $gameObjectReference = $gameObjectAttribute->newInstance();
-                $objectIdProperty = $reflection->getProperty($gameObjectReference->getObjectIdProperty());
-                $objectId = $objectIdProperty->getValue($entity);
-
-                $gameObject = $this->get($objectId);
-                $property->setValue($entity,$gameObject);
+            $type = $property->getType();
+            if ($type->getName() === GameObjectInterface::class) {
+                $field = $property->getName();
+                $property = $reflection->getProperty($field);
+                if (!$property->isInitialized($entity)) {
+                    break;
+                }
+                $value = $property->getValue($entity);
+                if ($value instanceof GameObjectPlaceholder) {
+                    $gameObject = $this->get($value->getId());
+                    $property->setValue($entity,$gameObject);
+                }
             }
-            foreach ($property->getAttributes(GameObjectPrototypeReference::class) as $gameObjectPrototypeAttribute) {
-                /** @var GameObjectPrototypeReference $gameObjectPrototypeReference */
-                $gameObjectPrototypeReference = $gameObjectPrototypeAttribute->newInstance();
-                $objectPrototypeIdProperty = $reflection->getProperty($gameObjectPrototypeReference->getObjectPrototypeIdProperty());
-                $objectId = $objectPrototypeIdProperty->getValue($entity);
 
-                $prototype = $this->getPrototype($objectId);
-                $property->setValue($entity,$prototype);
+            if ($type->getName() === GameObjectPrototypeInterface::class) {
+                $field = $property->getName();
+                $property = $reflection->getProperty($field);
+                if (!$property->isInitialized($entity)) {
+                    break;
+                }
+                $value = $property->getValue($entity);
+                if ($value instanceof GameObjectPrototypePlaceholder) {
+                    $prototype = $this->getPrototype($value->getId());
+                    $property->setValue($entity,$prototype);
+                }
             }
         }
     }
 
     public function get(string $id): GameObjectInterface
     {
-        return $this->gameObjectCache->get($id,function (ItemInterface $item) use ($id) {
+        return $this->gameObjectCache->get('game_object.' . $id,function (ItemInterface $item) use ($id) {
             foreach ($this->gameObjectCollection as $gameObject) {
                 if (!$gameObject instanceof GameObjectInterface) {
                     throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, GameObjectInterface::class));
@@ -75,7 +88,7 @@ readonly class GameObjectEngine
 
     public function getPrototype(string $id): GameObjectPrototypeInterface
     {
-        return $this->gameObjectCache->get('prototype.' . $id,function (ItemInterface $item) use ($id) {
+        return $this->gameObjectCache->get('game_object_prototype.' . $id,function (ItemInterface $item) use ($id) {
             foreach ($this->gameObjectPrototypeCollection as $gameObjectPrototype) {
                 if (!$gameObjectPrototype instanceof GameObjectPrototypeInterface) {
                     throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObjectPrototype::class, GameObjectPrototypeInterface::class));
@@ -92,6 +105,7 @@ readonly class GameObjectEngine
     /**
      * @param class-string<T> $class
      * @return T[]
+     * @throws InvalidArgumentException
      */
     public function getByClass(string $class): array
     {

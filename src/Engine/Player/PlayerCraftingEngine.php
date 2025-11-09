@@ -4,7 +4,7 @@ namespace App\Engine\Player;
 
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Activity\Engine\ActivityEngine;
-use App\GameElement\Core\GameObject\GameObjectEngine;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Item\AbstractItemPrototype;

@@ -6,7 +6,7 @@ use App\Engine\Player\PlayerCombatManager;
 use App\Engine\Player\PlayerCraftingEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapObject;
-use App\GameElement\Core\GameObject\GameObjectEngine;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Gathering\Engine\GatheringEngine;
 use App\GameElement\Map\Engine\MapEngine;

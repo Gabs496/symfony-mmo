@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map\Engine\Spawn\Scheduler;
 
-use App\GameElement\Core\GameObject\GameObjectEngine;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Map\Component\Spawn\SpawnComponent;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;

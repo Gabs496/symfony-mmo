@@ -3,7 +3,7 @@
 namespace App\GameElement\Map;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 
 abstract class AbstractMap extends AbstractGameObject implements GameObjectPrototypeInterface
 {

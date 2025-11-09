@@ -28,7 +28,7 @@ services:
             tags: ['combat.manager']
         App\GameElement\Core\GameObject\GameObjectInterface:
             tags: [ 'game.object' ]
-        App\GameElement\Core\GameObject\GameObjectPrototypeInterface:
+        App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface:
             tags: [ 'game.object.prototype' ]
         App\GameElement\Core\GameComponent\GameComponentInterface:
             tags: ['game.component']

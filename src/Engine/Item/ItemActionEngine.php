@@ -14,12 +14,12 @@ use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
 use RuntimeException;
 
-class ItemActionEngine
+readonly class ItemActionEngine
 {
     public function __construct(
-        private PlayerItemEngine $playerItemEngine,
-        private HealingEngine $healingEngine,
-        private NotificationEngine $notificationEngine,
+        private PlayerItemEngine          $playerItemEngine,
+        private HealingEngine             $healingEngine,
+        private NotificationEngine        $notificationEngine,
         private PlayerCharacterRepository $playerCharacterRepository,
     )
     {

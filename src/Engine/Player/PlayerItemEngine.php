@@ -5,7 +5,7 @@ namespace App\Engine\Player;
 use App\Engine\Player\Event\PlayerItemBagUpdateEvent;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\GameObject;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;

@@ -5,7 +5,7 @@ namespace App\Engine\Player;
 use App\Engine\Reward\MasteryReward;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\GameObject;
-use App\GameElement\Core\GameObject\GameObjectEngine;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;

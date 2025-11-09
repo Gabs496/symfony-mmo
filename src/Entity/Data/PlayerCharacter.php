@@ -9,10 +9,9 @@ use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
-use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
 use App\GameElement\Core\GameObject\GameObjectTrait;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
@@ -50,13 +49,11 @@ class PlayerCharacter extends AbstractCharacter
     #[ORM\ManyToOne(inversedBy: 'playerCharacters')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
-
-    #[ORM\Column(length: 50, nullable: true)]
-    private ?string $position = null;
     private array $roles = [];
 
-    #[GameObjectReference(objectIdProperty: 'position')]
-    private AbstractMap $map;
+    /** @var AbstractMap  */
+    #[ORM\Column(name: 'position', type: 'game_object', nullable: true)]
+    private GameObjectInterface $map;
 
     #[ORM\ManyToOne(targetEntity: Activity::class, cascade: ['all'])]
     #[ORM\JoinColumn(nullable: true)]
@@ -111,18 +108,6 @@ class PlayerCharacter extends AbstractCharacter
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getPosition(): ?string
-    {
-        return $this->position;
-    }
-
-    public function setPosition(?string $position): static
-    {
-        $this->position = $position;
 
         return $this;
     }
@@ -247,9 +232,10 @@ class PlayerCharacter extends AbstractCharacter
         return;
     }
 
+    /** @param class-string<GameComponentInterface> $componentClass */
     public function hasComponent(string $componentClass): bool
     {
-        return isset($this->getComponents()[$componentClass]);
+        return isset($this->getComponents()[$componentClass::getId()]);
     }
 
     /**

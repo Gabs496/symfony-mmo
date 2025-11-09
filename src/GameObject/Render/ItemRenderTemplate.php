@@ -3,9 +3,8 @@
 namespace App\GameObject\Render;
 
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Item\Component\StackComponent;
-use App\GameElement\Item\Render\ItemBagRenderComponent;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Render\Component\RenderComponent;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;

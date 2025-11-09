@@ -28,7 +28,7 @@ class PlayerFixtures extends Fixture
         $playerCharacter
             ->setUser($user)
             ->setName('Dev Player')
-            ->setPosition(BirthTown::ID)
+            ->setMap(new BirthTown())
         ;
         $user->addPlayerCharacter($playerCharacter);
 

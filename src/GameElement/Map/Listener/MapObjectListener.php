@@ -26,7 +26,7 @@ readonly class MapObjectListener
     public function postPersist(MapObject $mapObject): void
     {
         $gameObject = $mapObject->getGameObject();
-        $this->mercureHub->publish(new Update('map_objects_' . $mapObject->getMapId(), $this->twig->load('streams/map_objects_list.stream.html.twig')->renderBlock('create', ['id' => $gameObject->getId(), 'entity' => $mapObject]), true));
+        $this->mercureHub->publish(new Update('map_objects_' . $mapObject->getMap()->getId(), $this->twig->load('streams/map_objects_list.stream.html.twig')->renderBlock('create', ['id' => $gameObject->getId(), 'entity' => $mapObject]), true));
     }
 
     public function postUpdate(GameObject $gameObject): void
@@ -37,13 +37,13 @@ readonly class MapObjectListener
             return;
         }
 
-        $this->mercureHub->publish(new Update('map_objects_' . $mapObject->getMapId(), $this->twig->load('streams/map_objects_list.stream.html.twig')->renderBlock('update', ['id' => $gameObject->getId(), 'entity' => $mapObject]), true));
+        $this->mercureHub->publish(new Update('map_objects_' . $mapObject->getMap()->getId(), $this->twig->load('streams/map_objects_list.stream.html.twig')->renderBlock('update', ['id' => $gameObject->getId(), 'entity' => $mapObject]), true));
     }
 
     public function postRemove(MapObject $mapObject): void
     {
         $gameObject = $mapObject->getGameObject();
 
-        $this->mercureHub->publish(new Update('map_objects_' . $mapObject->getMapId(), $this->twig->load('streams/map_objects_list.stream.html.twig')->renderBlock('remove', ['id' => $gameObject->getId(), 'entity' => $mapObject]), true));
+        $this->mercureHub->publish(new Update('map_objects_' . $mapObject->getMap()->getId(), $this->twig->load('streams/map_objects_list.stream.html.twig')->renderBlock('remove', ['id' => $gameObject->getId(), 'entity' => $mapObject]), true));
     }
 }

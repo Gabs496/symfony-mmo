@@ -33,7 +33,7 @@ class MapObjectRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('map_object')
             ->select('map_object','game_object')
             ->innerJoin('map_object.gameObject', 'game_object')
-            ->where('map_object.mapId = :map')
+            ->where('map_object.map = :map')
             ->setParameter('map', $mapId)
             ->getQuery()
             ->execute()

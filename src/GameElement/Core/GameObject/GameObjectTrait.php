@@ -4,6 +4,7 @@ namespace App\GameElement\Core\GameObject;
 
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 
 trait GameObjectTrait
 {

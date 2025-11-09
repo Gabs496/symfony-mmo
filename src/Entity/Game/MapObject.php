@@ -2,7 +2,7 @@
 
 namespace App\Entity\Game;
 
-use App\GameElement\Core\GameObject\Attribute\GameObjectReference;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapObjectRepository;
 use DateTimeImmutable;
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: MapObjectRepository::class)]
-#[ORM\Index(fields: ['mapId'])]
+#[ORM\Index(fields: ['map'])]
 class MapObject
 {
     #[ORM\Id]
@@ -18,11 +18,9 @@ class MapObject
     #[ORM\Column(type: 'guid')]
     private string $id;
 
-    #[ORM\Column(length: 50)]
-    private ?string $mapId;
-
-    #[GameObjectReference(objectIdProperty: 'mapId')]
-    private AbstractBaseMap $map;
+    /** @var AbstractBaseMap  */
+    #[ORM\Column(name: 'map_id', type: 'game_object')]
+    private GameObjectInterface $map;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $spawnedAt;
@@ -35,21 +33,8 @@ class MapObject
     {
         $this->id = Uuid::v7();
         $this->map = $map;
-        $this->mapId = $map->getId();
         $this->gameObject = $gameObject;
         $this->spawnedAt = new DateTimeImmutable();
-    }
-
-    public function getMapId(): ?string
-    {
-        return $this->mapId;
-    }
-
-    public function setMapId(string $mapId): static
-    {
-        $this->mapId = $mapId;
-
-        return $this;
     }
 
     public function getSpawnedAt(): DateTimeImmutable

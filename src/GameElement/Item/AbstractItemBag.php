@@ -4,7 +4,7 @@ namespace App\GameElement\Item;
 
 use App\Entity\Data\ItemObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectPrototypeInterface;
+use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Item\Component\ItemWeightComponent;
 use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;

@@ -6,11 +6,11 @@ use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\Repository\Data\PlayerCharacterRepository;
 use App\Repository\Game\GameObjectRepository;
 
-class TokenEngine
+readonly class TokenEngine
 {
     public function __construct(
-        private readonly GameObjectRepository      $gameObjectRepository,
-        private readonly PlayerCharacterRepository $playerCharacterRepository,
+        private GameObjectRepository      $gameObjectRepository,
+        private PlayerCharacterRepository $playerCharacterRepository,
     ) {
     }
 
