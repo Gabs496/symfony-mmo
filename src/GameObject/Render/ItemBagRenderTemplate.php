@@ -22,19 +22,9 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 #[AsTwigComponent(name: "Render:ItemBagRenderTemplate", template: 'components/Render/ItemBagRenderTemplate.html.twig')]
 class ItemBagRenderTemplate implements InteractableTemplateInterface
 {
-    #[ExposeInTemplate]
     public ItemObject $itemObject;
-
     public GameObject $item;
-
-    public bool $maskedDanger = false;
-
-    #[ExposeInTemplate]
     public ItemBagRenderComponent $render;
-
-    public StackComponent $stack;
-
-    public ?ItemEquipmentComponent $itemEquipment = null;
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -47,8 +37,6 @@ class ItemBagRenderTemplate implements InteractableTemplateInterface
         $this->itemObject = $itemObject;
         $this->item = $itemObject->getGameObject();
         $this->render = $this->item->getComponent(ItemBagRenderComponent::class);
-        $this->stack = $this->item->getComponent(StackComponent::class);
-        $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::class);
     }
 
     public function getInteractions(): iterable

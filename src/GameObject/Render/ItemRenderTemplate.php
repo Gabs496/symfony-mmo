@@ -4,6 +4,7 @@ namespace App\GameObject\Render;
 
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
+use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Render\Component\RenderComponent;
@@ -19,12 +20,14 @@ final class ItemRenderTemplate
     public RenderComponent $render;
     public StackComponent $stack;
     public ?ItemEquipmentComponent $itemEquipment = null;
+    public ?HealingComponent $healing = null;
 
-    public function mount(GameObjectInterface|GameObjectPrototypeInterface $item): void
+    public function mount(GameObjectInterface|GameObjectPrototypeInterface $item, ?RenderComponent $render = null): void
     {
         $this->item = $item;
-        $this->render = $this->item->getComponent(RenderComponent::class);
+        $this->render = $render ?? $this->item->getComponent(RenderComponent::class);
         $this->stack = $this->item->getComponent(StackComponent::class);
         $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::class);
+        $this->healing = $this->item->getComponent(HealingComponent::class);
     }
 }

@@ -38,8 +38,8 @@ class AppExtension extends AbstractExtension
         );
     }
 
-    public function renderMathStatView(string $value): string
+    public function renderMathStatView(string $value, bool $withSign = false): string
     {
-        return Math::getStatViewValue($value);
+        return (!$withSign ?: (Math::round($value) > 0 ? '+' : '-')) . Math::getStatViewValue($value);
     }
 }

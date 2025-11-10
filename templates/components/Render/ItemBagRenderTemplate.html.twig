@@ -1,30 +1,6 @@
-{% set tooltipInfo %}
-    <div class="text-light">
-        <div>{{ render.name }}</div>
-        {% if render.description %}
-            <div class="border-top pt-1">{{ render.description }}</div>
-        {% endif %}
-        {% if this.itemEquipment %}
-            {% for stat in itemEquipment.stats %}
-                <div class="d-flex border-top pt-1">
-                    <div>{{ stat.label }}</div>
-                    <div class="ms-auto">{{ math_stat_view(stat.value) }}</div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-{% endset %}
-<div id="item-instance-{{ item.id }}" class="bg-dark border-primary rounded m-1 dropdown">
+<div id="item-instance-{{ this.item.id }}" class="bg-dark border-primary rounded m-1 dropdown">
     <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
-        <div style="width: 4em; height: 4em;" class="position-relative" title="{{ tooltipInfo|e('html') }}" {{ stimulus_controller('tooltip') }}>
-            <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100 w-100"/>
-            {% if this.stack.currentQuantity > 1.0 %}
-                <span class="badge bg-secondary position-absolute bottom-0 end-0">{{ this.stack.currentQuantity }}</span>
-            {% endif %}
-            {% if this.maskedDanger %}
-                <div class="w-100 h-100 position-absolute top-0 rounded" style="background-color: rgba(255, 0, 0, .5)"></div>
-            {% endif %}
-        </div>
+        {{ component('Render:ItemRenderTemplate', {item: this.item, render: this.render}) }}
     </a>
     <div class="dropdown-menu border">
         {% for interaction in this.interactions %}
