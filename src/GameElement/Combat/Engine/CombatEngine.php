@@ -9,11 +9,8 @@ use App\GameElement\Combat\Event\AttackEvent;
 use App\GameElement\Combat\Event\DefendEvent;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use Psr\Cache\InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 readonly class CombatEngine
@@ -21,7 +18,6 @@ readonly class CombatEngine
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         private ActivityEngine $activityEngine,
-        private CacheInterface $gameObjectCache,
         #[AutowireIterator('combat.manager')]
         /** @var iterable<CombatManagerInterface> */
         private iterable $combatManagers,
@@ -63,14 +59,12 @@ readonly class CombatEngine
 
     private function getCombatManager(CombatComponent $combat): CombatManagerInterface
     {
-        return $this->gameObjectCache->get('combat.manager.' . $combat->getManagerId(), function(ItemInterface $item) use ($combat) {
-            foreach ($this->combatManagers as $combatManager) {
-                if ($combatManager::getId() === $combat->getManagerId()) {
-                    return $combatManager;
-                }
+        foreach ($this->combatManagers as $combatManager) {
+            if ($combatManager::getId() === $combat->getManagerId()) {
+                return $combatManager;
             }
-            throw new RuntimeException('Invalid combat manager class: ' . $combat->getManagerId());
-        });
+        }
+        throw new RuntimeException('Invalid combat manager class: ' . $combat->getManagerId());
     }
 
     private function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack

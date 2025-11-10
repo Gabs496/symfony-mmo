@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Render;
+namespace App\Twig\Components\Render;
 
 use App\Entity\Game\GameObject;
 use App\Entity\Game\MapObject;

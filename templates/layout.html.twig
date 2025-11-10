@@ -1,16 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% if app.user %}
-        <turbo-stream
-                {{ custom_turbo_stream_listen('player_gui_' ~ app.user.id) }}
-        ></turbo-stream>
-    {% endif %}
+    <turbo-stream
+            {{ custom_turbo_stream_listen('player_gui_' ~ app.user.id) }}
+    ></turbo-stream>
     <div class="row h-100">
         <div class="col-auto position-relative">
             <div class="bg-dark h-100 px-1" id="sidebarLeft">
                 <ul class="nav nav-leftline flex-column h-100 align-items-center">
-                    <li class="nav-item w-100">{{ 'place'|trans|upper }}</li>
+                    <li class="nav-item w-100">{{ app.user.map.name|trans|upper }}</li>
                     <li class="nav-item mt-auto w-100">
                         <a class="h3 nav-link" href="{{ path('app_logout') }}">LOGOUT</a>
                     </li>
@@ -18,25 +16,96 @@
             </div>
         </div>
         <div class="col">
-            <div class="nav bg-dark position-sticky" style="top: 0; z-index: 2">
-                <div class="nav--item">
-                    {{ 'player'|trans|upper }}: {{ app.user.name }}
-                </div>
-                <div class="nav--item w-25">
-                    <turbo-frame id="player_health_{{ app.user.id }}">
-                        {{ component('Health:Bar', {gameObject: app.user}) }}
-                    </turbo-frame>
+            <div class="navbar navbar-expand-lg bg-dark position-sticky top-0" style="z-index: 2">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#user-navbar" aria-controls="user-navbar" aria-expanded="false" aria-label="Toggle navbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="user-navbar">
+                    <div class="navbar-nav w-100">
+                        <div class="nav-item">
+                            {{ app.user.name }}
+                        </div>
+                        <div class="nav-item col-12 col-lg-3">
+                            <turbo-frame id="player_health_{{ app.user.id }}">
+                                {{ component('Health:Bar', {gameObject: app.user}) }}
+                            </turbo-frame>
+                        </div>
+                        <div class="nav-item col-12 col-lg-3">
+                            <turbo-frame id="player_current_activity">
+                            </turbo-frame>
+                        </div>
+                        <div class="nav-item ms-auto col-12 col-lg-auto text-center">
+                            <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#inventory">Bag</button>
+                        </div>
+                        <div class="nav-item col-12 col-lg-auto text-center">
+                            <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#stats">Stats</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="p-2">
-                <turbo-frame id="page">
-                    {% block main %}{% endblock %}
-                </turbo-frame>
+            <div class="row">
+                <div class="col">
+                    <turbo-frame id="page">
+                        {% block main %}{% endblock %}
+                    </turbo-frame>
+                </div>
+                <div class="col-auto">
+                    <div class="position-sticky sticky-top">
+                        <div id="inventory" class="collapse m-1">
+                            {% set bag = player.backpack %}
+                            <div class="card">
+                                <div class="card-header bg-info">
+                                    <div class="position-absolute top-0 end-0">
+                                        <button class="btn btn-sm btn-secondary" data-bs-toggle="collapse" data-bs-target="#inventory">
+                                            <span class="fas fa-times"></span>
+                                            <span>{{ "Close"|trans }}</span>
+                                        </button>
+                                    </div>
+                                    {{ 'backpack'|trans|capitalize }}
+                                    <div>
+                                        <turbo-frame class="progress" id="item_bag_fullness_{{ bag.id }}">
+                                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ bag.fullness*100 }}%;"></div>
+                                        </turbo-frame>
+                                    </div>
+                                </div>
+                                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
+                                </turbo-frame>
+                            </div>
+                            {% set bag = player.equipment %}
+                            <div class="card">
+                                <div class="card-header bg-info">
+                                    {{ 'equipped items'|trans|capitalize }}
+                                    <div>
+                                        <turbo-frame class="progress" id="item_bag_fullness_{{ bag.id }}">
+                                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ bag.fullness*100 }}%;"></div>
+                                        </turbo-frame>
+                                    </div>
+                                </div>
+                                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
+                                </turbo-frame>
+                            </div>
+                        </div>
+                        <div id="stats" class="collapse m-1">
+                            <div class="card">
+                                <div class="card-header bg-info">
+                                    <div class="position-absolute top-0 end-0">
+                                        <button class="btn btn-sm btn-secondary" data-bs-toggle="collapse" data-bs-target="#stats">
+                                            <span class="fas fa-times"></span>
+                                            <span>{{ "Close"|trans }}</span>
+                                        </button>
+                                    </div>
+                                    <div class="card-title">{{ "Stats"|trans }}</div>
+                                </div>
+                                <div class="card-body">
+                                    <turbo-frame id="player-character-stats" loading="lazy" src="{{ path('playerCharacter_stats') }}"></turbo-frame>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <turbo-frame id="notifications" class="position-fixed bottom-50 end-50">
-    </turbo-frame>
-    <turbo-frame id="player_current_activity" class="position-fixed bottom-0 w-100">
     </turbo-frame>
 {% endblock %}

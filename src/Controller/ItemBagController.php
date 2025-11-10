@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 
-#[Route('/map')]
+#[Route('/item-bag')]
 class ItemBagController extends AbstractController
 {
     public function __construct(
@@ -21,7 +21,7 @@ class ItemBagController extends AbstractController
     {
     }
 
-    #[Route('/item-bag/content/{id}', name: 'app_itemBag_content')]
+    #[Route('/content/{id}', name: 'app_itemBag_content')]
     public function content(ItemBag $itemBag): Response
     {
         return $this->render('item_bag/content.html.twig', [

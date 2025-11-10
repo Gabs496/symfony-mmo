@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Render;
+namespace App\Twig\Components\Render;
 
 use App\Entity\Data\BackpackItemBag;
 use App\Entity\Data\EquippedItemBag;
@@ -8,7 +8,6 @@ use App\Entity\Data\ItemObject;
 use App\Entity\Game\GameObject;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Interaction\InteractableTemplateInterface;
-use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Item\Interaction\DropInteraction;
 use App\GameElement\Item\Interaction\EatInteraction;
 use App\GameElement\Item\Render\ItemBagRenderComponent;
@@ -17,7 +16,6 @@ use App\GameElement\ItemEquiment\Interaction\EquipInteraction;
 use App\GameElement\ItemEquiment\Interaction\UnequipInteraction;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 #[AsTwigComponent(name: "Render:ItemBagRenderTemplate", template: 'components/Render/ItemBagRenderTemplate.html.twig')]
 class ItemBagRenderTemplate implements InteractableTemplateInterface

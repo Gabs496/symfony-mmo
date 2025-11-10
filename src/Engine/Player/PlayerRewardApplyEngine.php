@@ -15,6 +15,9 @@ use App\GameElement\Render\Component\RenderComponent;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
 use App\Repository\Data\PlayerCharacterRepository;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
+use Twig\Environment;
 
 readonly class PlayerRewardApplyEngine implements RewardApplierInterface
 {
@@ -23,7 +26,9 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         private PlayerItemEngine          $playerEngine,
         private NotificationEngine        $notificationEngine,
         private MasteryTypeRepository     $masteryEngine,
-        protected GameObjectEngine        $gameObjectEngine,
+        private GameObjectEngine          $gameObjectEngine,
+        private HubInterface              $hub,
+        private Environment               $twig,
     )
     {
     }
@@ -43,6 +48,11 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             $player->increaseMasteryExperience($reward->getMasteryId(), $reward->getExperience());
             $this->repository->save($player);
             $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-dumbbell"></span> +%s experience on %s', $reward->getQuantity(), $this->masteryEngine->get($reward->getMasteryId())::getName()));
+            $this->hub->publish(new Update(
+                'player_gui_' . $player->getId(),
+                $this->twig->render('player_character/stats.stream.html.twig', ['playerCharacter' => $player]),
+                true
+            ));
         }
 
         if ($reward instanceof ItemReward) {

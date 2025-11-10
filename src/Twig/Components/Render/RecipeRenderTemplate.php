@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GameObject\Render;
+namespace App\Twig\Components\Render;
 
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;

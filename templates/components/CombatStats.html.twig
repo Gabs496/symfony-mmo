@@ -1,0 +1,8 @@
+<div{{ attributes }}>
+    {% for stat in this.combat.stats %}
+        <div class="row">
+            <div class="col-auto">{{ stat.label|trans }}</div>
+            <div class="col-auto ms-auto">{{ math_stat_view(stat.value, true) }}</div>
+        </div>
+    {% endfor %}
+</div>

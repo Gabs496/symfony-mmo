@@ -21,33 +21,5 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            {% set bag = player.backpack %}
-            <div class="card">
-                <div class="card-header bg-info">
-                    {{ 'backpack'|trans|capitalize }}
-                    <div>
-                        <turbo-frame class="progress" id="item_bag_fullness_{{ bag.id }}" turbo->
-                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ bag.fullness*100 }}%;"></div>
-                        </turbo-frame>
-                    </div>
-                </div>
-                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
-                </turbo-frame>
-            </div>
-            {% set bag = player.equipment %}
-            <div class="card">
-                <div class="card-header bg-info">
-                    {{ 'equipped items'|trans|capitalize }}
-                    <div>
-                        <turbo-frame class="progress" id="item_bag_fullness_{{ bag.id }}">
-                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ bag.fullness*100 }}%;"></div>
-                        </turbo-frame>
-                    </div>
-                </div>
-                <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}">
-                </turbo-frame>
-            </div>
-        </div>
     </div>
 {% endblock %}
