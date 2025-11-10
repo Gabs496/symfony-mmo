@@ -8,7 +8,6 @@ use App\Entity\Game\GameObject;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
-use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
 use App\GameElement\Combat\Engine\CombatSystemInterface;
 use App\GameElement\Combat\Phase\Attack;
@@ -23,27 +22,16 @@ use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-readonly class PlayerCombatManager implements CombatManagerInterface, EventSubscriberInterface
+readonly class PlayerCombatManager implements CombatManagerInterface
 {
     public function __construct(
         private PlayerCharacterRepository $playerCharacterRepository,
         private NotificationEngine        $notificationEngine,
         private HealthEngine              $healthEngine,
         private CombatSystemInterface     $combatSystem,
-        private CombatEngine                $combatEngine,
     )
     {
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            AttackResult::class => [
-                ['handleAttackResult', 0]
-            ],
-        ];
     }
 
     public static function getId(): string
@@ -51,15 +39,10 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         return 'player_combat_manager';
     }
 
-    public function attack(PlayerCharacter $player, GameObjectInterface $opponent): void
-    {
-        $this->combatEngine->startAttack($player, $opponent, $this->getAttackStatCollection($player));
-    }
-
     /** @param PlayerCharacter $attacker */
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack
     {
-        $statCollection = $this->getAttackStatCollection($attacker);
+        $statCollection = $this->getAttackStats($attacker);
         return new Attack($attacker, $statCollection);
     }
 
@@ -86,7 +69,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         return new AttackResult($attack, $defense, $damage, !$player->getComponent(HealthComponent::class)->isAlive());
     }
 
-    public function handleAttackResult(AttackResult $attackResult): void
+    public function afterAttack(AttackResult $attackResult): void
     {
         /** @var PlayerCharacter $player */
         $player = $attackResult->getAttack()->getAttacker();
@@ -101,7 +84,12 @@ readonly class PlayerCombatManager implements CombatManagerInterface, EventSubsc
         }
     }
 
-    private function getAttackStatCollection(PlayerCharacter $player): StatCollection
+    public function afterDefense(AttackResult $defenseResult)
+    {
+        // TODO: Implement afterDefense() method.
+    }
+
+    private function getAttackStats(PlayerCharacter $player): StatCollection
     {
         $statCollection = new StatCollection();
         $this->calculateBaseAttack($player, $statCollection);

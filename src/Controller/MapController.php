@@ -6,6 +6,7 @@ use App\Engine\Player\PlayerCombatManager;
 use App\Engine\Player\PlayerCraftingEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\MapObject;
+use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Gathering\Engine\GatheringEngine;
@@ -80,11 +81,11 @@ class MapController extends AbstractController
 
     #[Route('/mob-fight/{id}', name: 'app_map_mob_fight')]
     #[IsGranted('ROLE_USER')]
-    public function startMobFight(Request $request, MapObject $mob, PlayerCombatManager $combatEngine): Response
+    public function startMobFight(Request $request, MapObject $mob, CombatEngine $combatEngine): Response
     {
         /** @var PlayerCharacter $player */
         $player = $this->getUser();
-        $combatEngine->attack($player, $mob->getGameObject());
+        $combatEngine->startAttack($player, $mob->getGameObject());
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

@@ -4,6 +4,7 @@ namespace App\GameElement\Combat\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
+use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\Token\TokenEngine;
@@ -34,6 +35,7 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
         return;
     }
 
+    /** @param AttackActivity $activity */
     public function onComplete(AbstractActivity $activity): void
     {
 
@@ -43,7 +45,7 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
         $attacker = $this->tokenEngine->exchange($attackerToken);
         $defender = $this->tokenEngine->exchange($defenderToken);
 
-        $this->combatEngine->attack($attacker, $defender, $activity->getPreCalculatedStatCollection());
+        $this->combatEngine->attack($attacker, $defender);
     }
 
     public function onFinish(AbstractActivity $activity): void

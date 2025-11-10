@@ -10,7 +10,6 @@ use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
-use App\GameElement\Combat\Phase\DefenseFinished;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Health\Component\HealthComponent;
@@ -20,11 +19,9 @@ use App\Repository\Game\GameObjectRepository;
 use App\Repository\Game\MapObjectRepository;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-readonly class MobCombatManager implements CombatManagerInterface, EventSubscriberInterface
+readonly class MobCombatManager implements CombatManagerInterface
 {
-
     public function __construct(
         private GameObjectRepository     $gameObjectRepository,
         private MapObjectRepository      $mapObjectRepository,
@@ -34,15 +31,6 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         private CombatEngine             $combatEngine,
     )
     {
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            DefenseFinished::class => [
-                ['onDefenseFinished', 0],
-            ]
-        ];
     }
 
     public static function getId(): string
@@ -74,7 +62,6 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
 
     public function defend(Attack $attack, Defense $defense): AttackResult
     {
-
         $damage = $this->combatSystem->calculateDamage($attack, $defense);
         $this->receiveDamage($defense, $damage);
         $attackResult = new AttackResult($attack, $defense, $damage);
@@ -93,13 +80,17 @@ readonly class MobCombatManager implements CombatManagerInterface, EventSubscrib
         return $attackResult;
     }
 
-
-    public function onDefenseFinished(DefenseFinished $defenseFinished): void
+    public function afterAttack(AttackResult $attackResult)
     {
-        $defender = $defenseFinished->getDefense()->getDefender();
-        $attacker = $defenseFinished->getAttack()->getAttacker();
 
-        if ($defenseFinished->getAttackResult()->isDefeated()) {
+    }
+
+    public function afterDefense(AttackResult $defenseResult): void
+    {
+        $defender = $defenseResult->getDefense()->getDefender();
+        $attacker = $defenseResult->getAttack()->getAttacker();
+
+        if ($defenseResult->isDefeated()) {
             $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender));
         }
 

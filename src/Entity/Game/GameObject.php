@@ -43,6 +43,7 @@ class GameObject extends AbstractGameObject
         }
     }
 
+    /** @inheritDoc */
     public function getComponent(string $componentClass): ?GameComponentInterface
     {
         $component = parent::getComponent($componentClass);

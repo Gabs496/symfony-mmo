@@ -13,4 +13,7 @@ interface CombatManagerInterface
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack;
     public function generateDefense(Attack $attack, GameObjectInterface $defender): Defense;
     public function defend(Attack $attack, Defense $defense): AttackResult;
+
+    public function afterAttack(AttackResult $attackResult);
+    public function afterDefense(AttackResult $defenseResult);
 }
