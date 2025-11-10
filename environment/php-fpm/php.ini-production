@@ -1959,3 +1959,7 @@ opcache.validate_timestamps=0
 
 ; List of headers files to preload, wildcard patterns allowed.
 ;ffi.preload=
+
+[apcu]
+apc.enabled=1
+apc.enable_cli=1

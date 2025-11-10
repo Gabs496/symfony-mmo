@@ -51,13 +51,9 @@ services:
       - ./:/var/www/html
       - ./environment/php-fpm/php.ini-production:/usr/local/etc/php/php.ini
   worker:
-    build:
-      dockerfile: environment/php-fpm/Dockerfile
-    restart: unless-stopped
-    volumes:
-      - ./:/var/www/html
+    extends:
+      service: php-fpm
     depends_on:
-      - php-fpm
       - database
   worker_database:
     extends:
