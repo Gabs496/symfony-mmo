@@ -6,7 +6,7 @@ use App\Engine\Reward\MasteryReward;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
 use App\GameElement\Drop\Component\Drop;
-use App\GameElement\Gathering\Reward\ItemReward;
+use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\GameObject\Mob\AbstractBaseAnimalMob;
@@ -30,7 +30,7 @@ class Sbinsol extends AbstractBaseAnimalMob
             ],
             rewardOnDefeats: [
                 new MasteryReward(PhysicalAttack::getId(), 0.01),
-                new ItemReward(WoodenSwordPrototype::ID, 1, [new Drop(0.1)]),
+                new ItemRuntimeCreatedReward(WoodenSwordPrototype::ID, 1, [new Drop(0.1)]),
             ]
         );
     }

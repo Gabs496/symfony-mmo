@@ -1,10 +1,10 @@
 <?php
 
-namespace App\GameElement\Gathering\Reward;
+namespace App\GameElement\Item\Reward;
 
 use App\GameElement\Reward\RewardInterface;
 
-readonly class ItemReward implements RewardInterface
+readonly class ItemRuntimeCreatedReward implements RewardInterface
 {
     public function __construct(
         private string $itemPrototypeId,

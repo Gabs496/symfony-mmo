@@ -6,9 +6,10 @@ use App\Engine\Reward\MasteryReward;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Game\GameObject;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
+use App\GameElement\Item\Reward\ItemReward;
+use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameElement\Mastery\Engine\MasteryTypeRepository;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Render\Component\RenderComponent;
@@ -55,13 +56,18 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             ));
         }
 
-        if ($reward instanceof ItemReward) {
-            try {
+        if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
+            if ($reward instanceof ItemRuntimeCreatedReward) {
                 $itemPrototype = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
                 $item = new GameObject($itemPrototype, $itemPrototype->getComponents());
                 $item->setComponent(new StackComponent($reward->getQuantity()));
+            } else {
+                $item = $reward->getItem();
+            }
+
+            try {
                 $this->playerEngine->giveItem($player, $item);
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(StackComponent::class)->getCurrentQuantity(), $item->getComponent(RenderComponent::class)->getName()));
+                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(StackComponent::class)?->getCurrentQuantity(), $item->getComponent(RenderComponent::class)?->getName()));
             } catch (MaxBagSizeReachedException) {
                 $this->notificationEngine->danger($player->getId(), 'Your bag is full, you cannot receive the item.');
                 return;

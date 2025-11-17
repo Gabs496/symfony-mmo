@@ -4,7 +4,7 @@ namespace App\GameElement\Crafting;
 
 use App\GameElement\Core\GameObject\AbstractGameObject;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
-use App\GameElement\Gathering\Reward\ItemReward;
+use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameElement\Reward\RewardInterface;
 
 abstract class AbstractRecipe extends AbstractGameObject implements GameObjectPrototypeInterface
@@ -58,10 +58,10 @@ abstract class AbstractRecipe extends AbstractGameObject implements GameObjectPr
         return $this->rewards;
     }
 
-    /** @return ItemReward[] */
+    /** @return ItemRuntimeCreatedReward[] */
     public function getItemRewards(): array
     {
-        return array_filter($this->rewards, fn($reward) => $reward instanceof ItemReward);
+        return array_filter($this->rewards, fn($reward) => $reward instanceof ItemRuntimeCreatedReward);
     }
 
     public function getPrototype(): GameObjectPrototypeInterface

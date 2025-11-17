@@ -5,8 +5,8 @@ namespace App\Twig\Components\Render;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Crafting\AbstractRecipe;
-use App\GameElement\Gathering\Reward\ItemReward;
 use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use RuntimeException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -24,7 +24,7 @@ class RecipeRenderTemplate
     public function getItem(): GameObjectPrototypeInterface
     {
         foreach ($this->recipe->getRewards() as $reward) {
-            if ($reward instanceof ItemReward) {
+            if ($reward instanceof ItemRuntimeCreatedReward) {
                 $item = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
                 return new $item();
             }

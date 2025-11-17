@@ -5,7 +5,7 @@ namespace App\GameObject\Crafting\Recipe;
 use App\Engine\Reward\MasteryReward;
 use App\GameElement\Crafting\AbstractRecipe;
 use App\GameElement\Crafting\RecipeIngredient;
-use App\GameElement\Gathering\Reward\ItemReward;
+use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
 use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
 use App\GameObject\Mastery\Crafting\SwordCrafting;
@@ -28,7 +28,7 @@ class SwordWoodenRecipe extends AbstractRecipe
             ],
             rewards: [
                 new MasteryReward(masteryId: SwordCrafting::getId(), experience: 0.01),
-                new ItemReward(itemPrototypeId: WoodenSwordPrototype::ID, quantity: 1),
+                new ItemRuntimeCreatedReward(itemPrototypeId: WoodenSwordPrototype::ID, quantity: 1),
             ]
         );
     }
