@@ -2,14 +2,14 @@
 
 {% block main %}
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg">
             <div class="card">
                 <div class="card-header bg-info">{{ 'field'|trans|capitalize }}</div>
                 <turbo-frame id="map_objects" class="card-body" {{ custom_turbo_stream_listen('map_objects_' ~ player.map.id) }} src="{{ path('app_map_field') }}" loading="lazy">
                 </turbo-frame>
             </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-auto">
             <div class="card">
                 <div class="card-header bg-info">{{ 'recipes'|trans|capitalize }}</div>
                 <div class="card-body">
