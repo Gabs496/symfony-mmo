@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Data;
+namespace App\Entity\Activity;
 
 use App\Repository\Data\ActivityRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -81,9 +81,8 @@ class Activity
 
     public function getSecondsToFinish(): ?float
     {
-        $scheduledEnd = bcadd($this->scheduledAt, $this->getDurationMicrosecond(), 4);
-        $microseconds = bcsub($scheduledEnd, microtime(true), 4);
-        return (float)bcdiv($microseconds, 1000000, 4);
+        $scheduledEnd = bcadd($this->scheduledAt, $this->duration, 10);
+        return bcsub($scheduledEnd, microtime(true), 4);
     }
 
     public function shouldBeFinished(): bool
@@ -92,11 +91,6 @@ class Activity
             return true;
         }
 
-        return round($this->getSecondsToFinish(), 4) < 0.00000;
-    }
-
-    private function getDurationMicrosecond(): int
-    {
-        return (int)bcmul($this->duration, 1000000, 0);
+        return round($this->getSecondsToFinish(), 4) < 0.0000;
     }
 }

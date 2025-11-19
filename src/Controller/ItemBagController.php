@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Engine\Item\ItemActionEngine;
-use App\Entity\Data\ItemBag;
-use App\Entity\Data\ItemObject;
 use App\Entity\Data\PlayerCharacter;
+use App\Entity\Item\ItemBag;
+use App\Entity\Item\ItemObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

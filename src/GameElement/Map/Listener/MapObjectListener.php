@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Map\Listener;
 
-use App\Entity\Game\GameObject;
-use App\Entity\Game\MapObject;
+use App\Entity\Core\GameObject;
+use App\Entity\Map\MapObject;
 use App\Repository\Game\MapObjectRepository;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;

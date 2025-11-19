@@ -2,7 +2,7 @@
 
 namespace App\Repository\Game;
 
-use App\Entity\Game\MapObject;
+use App\Entity\Map\MapObject;
 use App\GameElement\Map\AbstractMap;
 use App\Repository\RemoveEntityTrait;
 use App\Repository\SaveEntityTrait;

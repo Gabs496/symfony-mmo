@@ -4,8 +4,8 @@ namespace App\Engine\Item;
 
 use App\Engine\Math;
 use App\Engine\Player\PlayerItemEngine;
+use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
-use App\Entity\Game\GameObject;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Healing\Engine\HealingEngine;
 use App\GameElement\Item\Component\StackComponent;

@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player\Event;
 
-use App\Entity\Data\ItemBag;
+use App\Entity\Item\ItemBag;
 
 readonly class PlayerItemBagUpdateEvent
 {

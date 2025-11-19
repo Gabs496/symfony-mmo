@@ -2,6 +2,8 @@
 
 namespace App\Entity\Data;
 
+use App\Entity\Item\ItemBag;
+use App\Entity\Item\ItemObject;
 use App\GameElement\Item\Component\StackComponent;
 use Doctrine\ORM\Mapping\Entity;
 

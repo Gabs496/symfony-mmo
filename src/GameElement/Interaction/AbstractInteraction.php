@@ -6,7 +6,7 @@ abstract class AbstractInteraction
 {
     public function __construct(
         protected string $label,
-        protected string $action,
+        protected Action $action,
     ) {
 
     }
@@ -16,7 +16,7 @@ abstract class AbstractInteraction
         return $this->label;
     }
 
-    public function getAction(): string
+    public function getAction(): Action
     {
         return $this->action;
     }

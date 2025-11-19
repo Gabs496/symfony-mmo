@@ -2,7 +2,7 @@
 
 namespace App\Repository\Data;
 
-use App\Entity\Data\ItemObject;
+use App\Entity\Item\ItemObject;
 use App\Repository\RemoveEntityTrait;
 use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

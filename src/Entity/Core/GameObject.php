@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Game;
+namespace App\Entity\Core;
 
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObject;

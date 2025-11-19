@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Item\Twig;
 
-use App\Entity\Data\ItemObject;
+use App\Entity\Item\ItemObject;
 use App\GameElement\Item\Render\ItemBagRenderComponent;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;

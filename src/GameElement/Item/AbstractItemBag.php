@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Item;
 
-use App\Entity\Data\ItemObject;
+use App\Entity\Item\ItemObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Item\Component\ItemWeightComponent;

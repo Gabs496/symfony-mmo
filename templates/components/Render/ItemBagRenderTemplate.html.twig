@@ -2,9 +2,5 @@
     <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
         {{ component('Render:ItemRenderTemplate', {item: this.item, render: this.render}) }}
     </a>
-    <div class="dropdown-menu border">
-        {% for interaction in this.interactions %}
-            <a class="dropdown-item" href="{{ interaction.action }}">{{ interaction.label|trans }}</a>
-        {% endfor %}
-    </div>
+    {{ component('Interaction', {interactions: this.interactions}) }}
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Entity\Data;
 
+use App\Entity\Item\ItemBag;
 use Doctrine\ORM\Mapping\Entity;
 
 #[Entity]

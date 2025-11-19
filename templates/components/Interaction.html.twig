@@ -1,0 +1,13 @@
+{% if this.asDropdown %}
+    <div{{ attributes.defaults({class: "dropdown-menu border"}) }}>
+        {% for interaction in this.interactions %}
+            <a class="dropdown-item" href="{{ path(interaction.action.id, interaction.action.parameters) }}">{{ interaction.label|trans }}</a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div {{ attributes }}>
+        {% for interaction in this.interactions %}
+            <a href="{{ path(interaction.action.id, interaction.action.parameters) }}" class="btn btn-primary">{{ interaction.label|trans|upper }}</a>
+        {% endfor %}
+    </div>
+{% endif %}

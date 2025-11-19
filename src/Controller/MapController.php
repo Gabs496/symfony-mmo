@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\Engine\Player\PlayerCombatManager;
 use App\Engine\Player\PlayerCraftingEngine;
 use App\Entity\Data\PlayerCharacter;
-use App\Entity\Game\MapObject;
+use App\Entity\Map\MapObject;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Crafting\AbstractRecipe;

@@ -3,8 +3,6 @@
 namespace App\Twig;
 
 use App\Engine\Math;
-use App\Entity\Game\MapObject;
-use App\GameElement\Render\Component\RenderComponent;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\UX\StimulusBundle\Helper\StimulusHelper;
 use Symfony\UX\StimulusBundle\Twig\StimulusTwigExtension;

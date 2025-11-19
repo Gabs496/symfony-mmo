@@ -2,7 +2,7 @@
 
 namespace App\Repository\Data;
 
-use App\Entity\Data\Activity;
+use App\Entity\Activity\Activity;
 use App\Repository\RemoveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

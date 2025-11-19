@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity\Data;
+namespace App\Entity\Item;
 
+use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Item\AbstractItemBag;
 use App\Repository\Data\ItemBagRepository;
 use Doctrine\Common\Collections\ArrayCollection;

@@ -3,8 +3,8 @@
 namespace App\Engine\Player;
 
 use App\Engine\Math;
+use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
-use App\Entity\Game\GameObject;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;

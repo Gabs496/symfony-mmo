@@ -33,11 +33,7 @@
             {% endblock %}
         </div>
         <div class="col-lg-3 ms-auto">
-            {% block action %}
-                {% for interaction in this.interactions %}
-                    <a href="{{ interaction.action }}" class="btn btn-primary">{{ interaction.label|trans|upper }}</a>
-                {% endfor %}
-            {% endblock %}
+            {{ component('Interaction', {interactions: this.interactions, asDropdown: false}) }}
         </div>
     </div>
 </div>

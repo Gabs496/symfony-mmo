@@ -2,18 +2,18 @@
 
 namespace App\Twig\Components\Render;
 
-use App\Entity\Game\GameObject;
-use App\Entity\Game\MapObject;
+use App\Entity\Core\GameObject;
+use App\Entity\Map\MapObject;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Interaction\FightInteraction;
 use App\GameElement\Gathering\Component\GatheringComponent;
 use App\GameElement\Gathering\Interaction\GatherInteraction;
 use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Interaction\AbstractInteraction;
+use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;
 use App\GameElement\Item\Component\StackComponent;
 use App\GameElement\Map\Render\MapRenderComponent;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -30,10 +30,6 @@ class MapRenderTemplate implements InteractableTemplateInterface
     public ?HealthComponent $health;
 
     public ?StackComponent $stack = null;
-
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {}
-
     public function mount(MapObject $mapObject): void
     {
         $this->mapObject = $mapObject;
@@ -47,13 +43,13 @@ class MapRenderTemplate implements InteractableTemplateInterface
     public function getInteractions(): iterable
     {
         if ($this->gameObject->getComponent(GatheringComponent::class)) {
-            yield new GatherInteraction($this->urlGenerator->generate('app_map_resource_gather', [
+            yield new GatherInteraction(new Action('app_map_resource_gather', [
                 'id' => $this->mapObject->getId()
             ]));
         }
 
         if ($this->gameObject->getComponent(CombatComponent::class)) {
-            yield new FightInteraction($this->urlGenerator->generate('app_map_mob_fight', [
+            yield new FightInteraction(new Action('app_map_mob_fight', [
                 'id' => $this->mapObject->getId()
             ]));
         }

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Activity\Engine;
 
-use App\Entity\Data\Activity;
+use App\Entity\Activity\Activity;
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;

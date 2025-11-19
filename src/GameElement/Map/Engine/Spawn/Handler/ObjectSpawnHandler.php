@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Map\Engine\Spawn\Handler;
 
-use App\Entity\Game\GameObject;
-use App\Entity\Game\MapObject;
+use App\Entity\Core\GameObject;
+use App\Entity\Map\MapObject;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity\Game;
+namespace App\Entity\Map;
 
+use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameObject\Map\AbstractBaseMap;
 use App\Repository\Game\MapObjectRepository;

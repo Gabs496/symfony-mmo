@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map\Twig;
 
-use App\Entity\Game\MapObject;
+use App\Entity\Map\MapObject;
 use App\GameElement\Map\Render\MapRenderComponent;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;

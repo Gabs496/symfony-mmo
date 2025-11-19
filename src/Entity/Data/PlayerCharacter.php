@@ -3,6 +3,7 @@
 namespace App\Entity\Data;
 
 use App\Engine\Player\PlayerCombatManager;
+use App\Entity\Activity\Activity;
 use App\Entity\Security\User;
 use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Combat\Component\CombatComponent;

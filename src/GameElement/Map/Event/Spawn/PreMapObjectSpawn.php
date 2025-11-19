@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map\Event\Spawn;
 
-use App\Entity\Game\MapObject;
+use App\Entity\Map\MapObject;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 
 class PreMapObjectSpawn

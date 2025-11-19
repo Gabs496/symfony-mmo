@@ -2,7 +2,7 @@
 
 namespace App\Repository\Game;
 
-use App\Entity\Game\GameObject;
+use App\Entity\Core\GameObject;
 use App\Repository\RemoveEntityTrait;
 use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

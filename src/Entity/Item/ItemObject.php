@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity\Data;
+namespace App\Entity\Item;
 
-use App\Entity\Game\GameObject;
+use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Item\AbstractItemBag;
 use App\Repository\Data\ItemObjectRepository;

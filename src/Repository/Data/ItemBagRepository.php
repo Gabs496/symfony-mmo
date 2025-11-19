@@ -2,7 +2,7 @@
 
 namespace App\Repository\Data;
 
-use App\Entity\Data\ItemBag;
+use App\Entity\Item\ItemBag;
 use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
