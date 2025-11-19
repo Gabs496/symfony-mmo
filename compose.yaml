@@ -49,6 +49,7 @@ services:
       dockerfile: environment/php-fpm/Dockerfile
     volumes:
       - ./:/var/www/html
+      - ./environment/.env.dev.local:/var/www/html/.env.dev.local
       - ./environment/php-fpm/php.ini-production:/usr/local/etc/php/php.ini
   worker:
     extends:
