@@ -1,8 +1,16 @@
 {% block success %}
 <turbo-stream action="append" target="notifications">
     <template>
-        <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
+        <div id="notification-{{ id }}" class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
             <span class="badge bg-success">{{ message|raw }}</span>
+            <script>
+                setTimeout(function(){
+                    const notification = document.getElementById('notification-{{ id }}');
+                    if(notification){
+                        notification.remove();
+                    }
+                }, 7000);
+            </script>
         </div>
     </template>
 </turbo-stream>
@@ -10,8 +18,16 @@
 {% block danger %}
     <turbo-stream action="append" target="notifications">
         <template>
-            <div class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
+            <div id="notification-{{ id }}" class="my-1 animate__animated animate__fadeOut animate__slideOutUp animate__slow">
                 <span class="badge bg-danger">{{ message|raw }}</span>
+                <script>
+                    setTimeout(function(){
+                        const notification = document.getElementById('notification-{{ id }}');
+                        if(notification){
+                            notification.remove();
+                        }
+                    }, 7000);
+                </script>
             </div>
         </template>
     </turbo-stream>

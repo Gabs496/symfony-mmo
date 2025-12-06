@@ -3,6 +3,7 @@
 namespace App\GameObject\Item\Resource\Ore;
 
 use App\Engine\Reward\MasteryReward;
+use App\Entity\Core\GameObject;
 use App\GameElement\Gathering\Component\GatheringComponent;
 use App\GameObject\Item\AbstractItemResourcePrototype;
 use App\GameObject\Mastery\Gathering\Mining;
@@ -10,13 +11,18 @@ use App\GameObject\Mastery\Gathering\Mining;
 class CopperOrePrototype extends AbstractItemResourcePrototype
 {
     public const string ID = 'RESOURCE_ORE_COPPER';
-    public function __construct()
+    public function make(
+        array $components = [],
+        string $name = 'Coppper Ore',
+        string $description = 'A piece of copper ore.',
+        float $weight = 0.2,
+    ): GameObject
     {
-        parent::__construct(
-            id: self::ID,
-            name: 'Coppper Ore',
-            description: 'A piece of copper ore.',
-            weight: 0.1,
+        return parent::make(
+            components: $components,
+            name: $name,
+            description: $description,
+            weight: $weight,
         );
     }
 
@@ -32,5 +38,10 @@ class CopperOrePrototype extends AbstractItemResourcePrototype
                 ]
             )
         ];
+    }
+
+    public static function getId(): string
+    {
+        return self::ID;
     }
 }

@@ -7,7 +7,8 @@ use App\Entity\Data\PlayerCharacter;
 use App\Entity\Map\MapObject;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Crafting\AbstractRecipe;
+use App\GameElement\Crafting\AbstractItemRecipe;
+use App\GameElement\Crafting\Engine\CraftingEngine;
 use App\GameElement\Gathering\Engine\GatheringEngine;
 use App\GameElement\Map\Engine\MapEngine;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,14 +23,14 @@ class MapController extends AbstractController
 {
     #[Route('/', name: 'app_map')]
     #[IsGranted('ROLE_USER')]
-    public function home(GameObjectEngine $gameObjectEngine): Response
+    public function home(CraftingEngine $craftingEngine): Response
     {
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
 
         return $this->render('map/home.html.twig', [
             'player' => $user,
-            'recipes' => $gameObjectEngine->getByClass(AbstractRecipe::class),
+            'recipes' => $craftingEngine->getRecipes(),
         ]);
     }
 
@@ -65,7 +66,7 @@ class MapController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function startCraftingRecipe(GameObjectEngine $gameObjectEngine, PlayerCraftingEngine $craftingEngine, string $id, Request $request): Response
     {
-        /** @var AbstractRecipe $recipe */
+        /** @var AbstractItemRecipe $recipe */
         $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();

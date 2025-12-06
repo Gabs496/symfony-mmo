@@ -70,7 +70,7 @@ readonly class GatheringEngine
     {
         $gathering = $resource->getComponent(GatheringComponent::class);
         foreach ($gathering->getRewards() as $reward) {
-            $this->rewardEngine->apply(new RewardApply($reward, $subject));
+            $this->rewardEngine->apply($reward, $subject);
         }
     }
 }

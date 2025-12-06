@@ -3,7 +3,7 @@
 namespace App\GameElement\Map\Twig;
 
 use App\Entity\Map\MapObject;
-use App\GameElement\Map\Render\MapRenderComponent;
+use App\GameElement\Map\Render\MapRenderTemplateComponent;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -26,7 +26,7 @@ class MapExtension extends AbstractExtension
 
     public function mapObjectRender(MapObject $mapObject): string
     {
-        $render = $mapObject->getGameObject()->getComponent(MapRenderComponent::class);
+        $render = $mapObject->getGameObject()->getComponent(MapRenderTemplateComponent::class);
         if (!$render) {
             return '';
         }

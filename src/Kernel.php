@@ -18,6 +18,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         self::addJsonDocumentMappings($container);
+        self::subscribeComponents($container);
     }
 
     private function addJsonDocumentMappings(ContainerBuilder $container): void
@@ -35,15 +36,26 @@ class Kernel extends BaseKernel implements CompilerPassInterface
 
         // Subscribe mastery types
         $services = $container->findTaggedServiceIds('mastery.type');
-        $masterTypes = [];
+        $masteryTypes = [];
         foreach (array_keys($services) as $typeClass) {
             /** @var class-string<MasteryType> $typeClass */
-            $masterTypes[$typeClass::getId()] = $typeClass;
+            $masteryTypes[$typeClass::getId()] = $typeClass;
         }
-        $masterTypes['mastery'] = Mastery::class;
-        $masterTypes['mastery_set'] = MasterySet::class;
+        $masteryTypes['mastery'] = Mastery::class;
+        $masteryTypes['mastery_set'] = MasterySet::class;
 
 
-        $typeMapper->setArgument(0, array_merge($types, $components, $masterTypes));
+        $typeMapper->setArgument(0, array_merge($types, $components, $masteryTypes));
+    }
+
+    public function subscribeComponents(ContainerBuilder $container): void
+    {
+        $services = $container->findTaggedServiceIds('game.component');
+        $components = [];
+        foreach (array_keys($services) as $componentClass) {
+            /** @var class-string<GameComponentInterface> $componentClass */
+            $components[$componentClass::getId()] = $componentClass;
+        }
+        $container->setParameter('game.components', $components);
     }
 }

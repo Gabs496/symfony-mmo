@@ -2,9 +2,9 @@
 
 namespace App\GameElement\Core\GameObject;
 
+use App\GameElement\Core\GameComponent\Exception\InvalidGameComponentException;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
-use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 
 trait GameObjectTrait
 {
@@ -15,19 +15,16 @@ trait GameObjectTrait
         protected array $components = [],
     )
     {
+        foreach ($this->components as $component) {
+            if (!$component instanceof GameComponentInterface) {
+                throw new InvalidGameComponentException(print_r($component, true) . " is not an instance of " . GameComponentInterface::class);
+            }
+        }
     }
 
     public function getId(): string
     {
         return $this->id;
-    }
-
-    public function isInstanceOf(GameObjectInterface|GameObjectPrototypeInterface $object): bool
-    {
-        if ($object instanceof GameObjectPrototypeInterface) {
-            return $this->getPrototype()->getId() === $object->getId();
-        }
-        return $this->getPrototype()->getId() === $object->getPrototype()->getId();
     }
 
     public  function __toString(): string

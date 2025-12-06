@@ -44,7 +44,7 @@ readonly class ObjectSpawnHandler
     private function spawnNewObject(AbstractMap $map, ObjectSpawn $objectSpawn): void
     {
         $prototype = $this->gameObjectEngine->getPrototype($objectSpawn->getPrototypeId());
-        $instance = (new GameObject($prototype, $prototype->getComponents()));
+        $instance = $prototype->make();
         $mapObject = new MapObject($map, $instance);
         $this->eventDispatcher->dispatch(new PreMapObjectSpawn($mapObject, $objectSpawn));
         $this->mapObjectRepository->save($mapObject);

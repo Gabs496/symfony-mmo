@@ -3,7 +3,7 @@
 namespace App\GameElement\Item\Twig;
 
 use App\Entity\Item\ItemObject;
-use App\GameElement\Item\Render\ItemBagRenderComponent;
+use App\GameElement\Item\Render\ItemBagRenderTemplateComponent;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -26,7 +26,7 @@ class ItemExtension extends AbstractExtension
 
     public function itemObjectRender(ItemObject $itemObject): string
     {
-        $render = $itemObject->getGameObject()->getComponent(ItemBagRenderComponent::class);
+        $render = $itemObject->getGameObject()->getComponent(ItemBagRenderTemplateComponent::class);
         if (!$render) {
             return '';
         }

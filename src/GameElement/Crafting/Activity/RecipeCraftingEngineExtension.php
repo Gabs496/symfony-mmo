@@ -36,7 +36,7 @@ readonly class RecipeCraftingEngineExtension implements ActivityEngineExtensionI
 
     public function onComplete(AbstractActivity $activity): void
     {
-        $this->engine->reward($activity);
+        $this->engine->craft($activity->getSubject(), $activity->getRecipe());
     }
 
     public function onFinish(AbstractActivity $activity): void

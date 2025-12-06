@@ -2,9 +2,12 @@
 
 namespace App\GameElement\Core\GameObjectPrototype;
 
-use App\GameElement\Core\GameComponent\GameComponentOwnerInterface;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 
-interface GameObjectPrototypeInterface extends GameComponentOwnerInterface
+interface GameObjectPrototypeInterface
 {
-    public function getId(): string;
+    public static function getId(): string;
+
+    /** @param GameObjectInterface[] $components */
+    public function make(array $components = []);
 }

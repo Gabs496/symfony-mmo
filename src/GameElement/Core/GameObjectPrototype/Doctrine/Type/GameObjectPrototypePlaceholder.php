@@ -2,23 +2,30 @@
 
 namespace App\GameElement\Core\GameObjectPrototype\Doctrine\Type;
 
-use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectTrait;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'never')]
-class GameObjectPrototypePlaceholder implements GameObjectInterface, GameObjectPrototypeInterface
+readonly class GameObjectPrototypePlaceholder implements GameObjectPrototypeInterface
 {
-    use GameObjectTrait {__construct as parentConstruct;}
-
-    public function __construct(string $id)
+    public function __construct(
+        private string $prototypeId,
+    )
     {
-        $this->parentConstruct($id, []);
     }
 
-    public function getPrototype(): GameObjectPrototypeInterface
+    public function make(array $components = [])
     {
-        return $this;
+        throw new \LogicException('This is a placeholder class and should not be used directly.');
+    }
+
+    public static function getId(): string
+    {
+        throw new \LogicException('This is a placeholder class and should not be used directly.');
+    }
+
+    public function getPrototypeId(): string
+    {
+        return $this->prototypeId;
     }
 }

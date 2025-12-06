@@ -13,7 +13,7 @@ use App\GameElement\Interaction\AbstractInteraction;
 use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;
 use App\GameElement\Item\Component\StackComponent;
-use App\GameElement\Map\Render\MapRenderComponent;
+use App\GameElement\Render\Component\RenderComponent;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -26,7 +26,7 @@ class MapRenderTemplate implements InteractableTemplateInterface
     #[ExposeInTemplate]
     public GameObject $gameObject;
 
-    public MapRenderComponent $render;
+    public RenderComponent $render;
     public ?HealthComponent $health;
 
     public ?StackComponent $stack = null;
@@ -34,7 +34,7 @@ class MapRenderTemplate implements InteractableTemplateInterface
     {
         $this->mapObject = $mapObject;
         $this->gameObject = $mapObject->getGameObject();
-        $this->render = $mapObject->getGameObject()->getComponent(MapRenderComponent::class);
+        $this->render = $mapObject->getGameObject()->getComponent(RenderComponent::class);
         $this->stack = $this->gameObject->getComponent(StackComponent::class);
         $this->health = $this->gameObject->getComponent(HealthComponent::class);
     }

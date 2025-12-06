@@ -2,9 +2,9 @@
 
 namespace App\GameElement\Map\Render;
 
-use App\GameElement\Render\Component\RenderComponent;
+use App\GameElement\Render\Component\RenderTemplateComponent;
 
-class MapRenderComponent extends RenderComponent
+class MapRenderTemplateComponent extends RenderTemplateComponent
 {
     public static function getId(): string
     {

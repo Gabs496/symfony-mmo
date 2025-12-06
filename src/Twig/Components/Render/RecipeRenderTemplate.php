@@ -3,17 +3,15 @@
 namespace App\Twig\Components\Render;
 
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
-use App\GameElement\Crafting\AbstractRecipe;
+use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Item\Component\StackComponent;
-use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
-use RuntimeException;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: 'Render:RecipeRenderTemplate', template: 'components/Render/RecipeRenderTemplate.html.twig')]
 class RecipeRenderTemplate
 {
-    public AbstractRecipe $recipe;
+    public AbstractItemRecipe $recipe;
 
     public function __construct(
         protected GameObjectEngine $gameObjectEngine,
@@ -21,22 +19,15 @@ class RecipeRenderTemplate
     {
     }
 
-    public function getItem(): GameObjectPrototypeInterface
+    public function getItem(): GameObjectInterface
     {
-        foreach ($this->recipe->getRewards() as $reward) {
-            if ($reward instanceof ItemRuntimeCreatedReward) {
-                $item = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
-                return new $item();
-            }
-        }
-
-        throw new RuntimeException(sprintf("Recipe %s does not have item reward", $this->recipe::class));
+        return $this->recipe->getItem();
     }
 
     public function getIngredients(): iterable
     {
         foreach ($this->recipe->getIngredients() as $ingredient) {
-            $item = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId());
+            $item = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId())->make();
             $item->setComponent(new StackComponent($ingredient->getQuantity()));
             yield $item;
         }

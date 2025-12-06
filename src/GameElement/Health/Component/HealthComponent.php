@@ -35,6 +35,9 @@ class HealthComponent implements GameComponentInterface
 
     public function getPercentage(): float
     {
+        if (round($this->maxHealth, 4) === 0.0000) {
+            return 0.0;
+        }
         return round(bcdiv($this->currentHealth, $this->maxHealth, 4), 2);
     }
 

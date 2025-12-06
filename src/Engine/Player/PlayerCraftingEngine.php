@@ -3,10 +3,9 @@
 namespace App\Engine\Player;
 
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Crafting\AbstractRecipe;
-use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
+use App\GameElement\Crafting\AbstractItemRecipe;
+use App\GameElement\Crafting\Engine\CraftingEngine;
 use App\GameElement\Item\AbstractItemPrototype;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Notification\Exception\UserNotificationException;
@@ -16,16 +15,16 @@ readonly class PlayerCraftingEngine
     public function __construct(
         private PlayerItemEngine $itemEngine,
         private GameObjectEngine $gameObjectEngine,
-        private ActivityEngine   $activityEngine,
+        private CraftingEngine   $craftingEngine,
     ){}
 
-    public function startCrafting(PlayerCharacter $playerCharacter, AbstractRecipe $recipe): void
+    public function startCrafting(PlayerCharacter $playerCharacter, AbstractItemRecipe $recipe): void
     {
         self::takeIngredient($playerCharacter, $recipe);
-        $this->activityEngine->run(new RecipeCraftingActivity($playerCharacter, $recipe));
+        $this->craftingEngine->startCrafting($playerCharacter, $recipe);
     }
 
-    private function takeIngredient(PlayerCharacter $player, AbstractRecipe $recipe): void
+    private function takeIngredient(PlayerCharacter $player, AbstractItemRecipe $recipe): void
     {
         try {
             foreach ($recipe->getIngredients() as $ingredient) {

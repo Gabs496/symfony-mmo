@@ -39,7 +39,7 @@ readonly class PlayerGatheringEngine implements EventSubscriberInterface
 
         /** @var GameObject $item */
         $item = $event->getItem();
-        $this->rewardEngine->apply(new RewardApply(new ItemReward($item), $subject));
+        $this->rewardEngine->apply(new ItemReward($item), $subject);
     }
 
     public function continueUntillEmpty(ResourceGatheringEndedEvent $event): void

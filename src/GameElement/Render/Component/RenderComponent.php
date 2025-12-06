@@ -7,7 +7,6 @@ use App\GameElement\Core\GameComponent\GameComponentInterface;
 class RenderComponent implements GameComponentInterface
 {
     public function __construct(
-        protected string $template,
         protected string $name,
         protected ?string $description = null,
         protected ?string $iconPath = null,
@@ -42,16 +41,6 @@ class RenderComponent implements GameComponentInterface
     public function setIconPath(?string $iconPath): void
     {
         $this->iconPath = $iconPath;
-    }
-
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
-    public function setTemplate(?string $template): void
-    {
-        $this->template = $template;
     }
 
     public static function getId(): string

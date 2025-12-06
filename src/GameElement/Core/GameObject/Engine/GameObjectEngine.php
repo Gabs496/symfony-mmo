@@ -63,7 +63,7 @@ readonly class GameObjectEngine
                 }
                 $value = $property->getValue($entity);
                 if ($value instanceof GameObjectPrototypePlaceholder) {
-                    $prototype = $this->getPrototype($value->getId());
+                    $prototype = $this->getPrototype($value->getPrototypeId());
                     $property->setValue($entity,$prototype);
                 }
             }

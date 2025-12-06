@@ -2,40 +2,26 @@
 
 namespace App\GameElement\Item;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
-use App\GameElement\Core\GameComponent\GameComponentOwnerTrait;
+use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Render\Component\RenderComponent;
 
 abstract class AbstractItemPrototype implements GameObjectPrototypeInterface
 {
-    use GameComponentOwnerTrait;
-
-    /** @var GameComponentInterface[] */
-    protected array $components = [];
-
-    public function __construct(
-        protected string $id,
-        string $name,
-        string $description = '',
-        ?string $iconPath = null,
+    public function make(
         array $components = [],
-    )
+        string $name = 'Item',
+        string $description = '',
+    ): GameObject
     {
-        $this->components = array_merge(
-            [
-                RenderComponent::getId() => new RenderComponent(
-                    template: 'Render:ItemRenderTemplate',
-                    name: $name,
-                    description: $description,
-                    iconPath: '/items/' . strtolower($id) . '.png'
-                ),
-            ]
-            , $components);
+        $gameObject = new GameObject($this, $components);
+        $gameObject->setComponent(new RenderComponent(
+            name: $name,
+            description: $description,
+            iconPath: '/items/' . strtolower($this::getId()) . '.png'
+        ));
+        return $gameObject;
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
+    public abstract static function getId(): string;
 }

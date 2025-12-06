@@ -2,8 +2,10 @@
 
 namespace App\Entity\Core;
 
+use App\GameElement\Core\GameComponent\Exception\InvalidGameComponentException;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\AbstractGameObject;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\Repository\Game\GameObjectRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,6 +25,9 @@ class GameObject extends AbstractGameObject
     #[ORM\Column(name: 'type', type: 'game_object_prototype')]
     protected GameObjectPrototypeInterface $prototype;
 
+    /**
+     * @throws InvalidGameComponentException
+     */
     public function __construct(GameObjectPrototypeInterface $prototype, array $components)
     {
         parent::__construct(Uuid::v7(),$components);
@@ -54,5 +59,13 @@ class GameObject extends AbstractGameObject
         $component = clone $component;
         $this->setComponent($component);
         return $component;
+    }
+
+    public function isInstanceOf(GameObjectInterface|GameObjectPrototypeInterface $object): bool
+    {
+        if ($object instanceof GameObjectPrototypeInterface) {
+            return $this->getPrototype()->getId() === $object->getId();
+        }
+        return $this->getPrototype()->getId() === $object->getPrototype()->getId();
     }
 }

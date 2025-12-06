@@ -2,29 +2,27 @@
 
 namespace App\GameElement\Crafting;
 
-use App\GameElement\Core\GameObject\AbstractGameObject;
-use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
-use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Reward\RewardInterface;
 
-abstract class AbstractRecipe extends AbstractGameObject implements GameObjectPrototypeInterface
+abstract class AbstractItemRecipe
 {
     public function __construct(
-        string $id,
-        protected string $name,
-        protected string $description,
+        protected string              $id,
+        protected string              $name,
+        protected string              $description,
+        protected GameObjectInterface $item,
         /** @var RecipeIngredient[] */
-        protected array $ingredients,
+        protected array               $ingredients,
         /** In seconds */
-        protected float $craftingTime,
+        protected float               $craftingTime,
         /** @var RecipeRequirmentInterface[] */
-        protected array $requirements,
+        protected array               $requirements,
         /** @var RewardInterface[] */
-        protected array $rewards,
+        protected array               $rewards,
 
     )
     {
-        parent::__construct($id);
     }
 
     public function getName(): string
@@ -58,14 +56,10 @@ abstract class AbstractRecipe extends AbstractGameObject implements GameObjectPr
         return $this->rewards;
     }
 
-    /** @return ItemRuntimeCreatedReward[] */
-    public function getItemRewards(): array
+    public function getItem(): GameObjectInterface
     {
-        return array_filter($this->rewards, fn($reward) => $reward instanceof ItemRuntimeCreatedReward);
+        return $this->item;
     }
 
-    public function getPrototype(): GameObjectPrototypeInterface
-    {
-        return $this;
-    }
+    public abstract static function getId(): string;
 }

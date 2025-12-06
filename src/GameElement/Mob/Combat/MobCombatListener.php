@@ -4,7 +4,7 @@ namespace App\GameElement\Mob\Combat;
 
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Drop\Engine\DropEngine;
-use App\GameElement\Mob\AbstractMob;
+use App\GameElement\Mob\AbstractMobPrototype;
 use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\GameElement\Reward\RewardApply;
@@ -31,7 +31,7 @@ class MobCombatListener implements EventSubscriberInterface
 
     public function reward(MobDefeatEvent $event): void
     {
-        /** @var AbstractMob $mob */
+        /** @var AbstractMobPrototype $mob */
         $mob = $event->getDefeatedMob()->getPrototype();
         foreach ($mob->getRewardOnDefeats() as $reward) {
             foreach ($reward->getAttributes() as $attribute){
@@ -41,7 +41,7 @@ class MobCombatListener implements EventSubscriberInterface
                     }
                 }
             }
-            $this->rewardEngine->apply(new RewardApply($reward, $event->getFrom()));
+            $this->rewardEngine->apply($reward, $event->getFrom());
         }
     }
 }

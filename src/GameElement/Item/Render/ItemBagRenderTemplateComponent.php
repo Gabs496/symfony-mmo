@@ -2,9 +2,9 @@
 
 namespace App\GameElement\Item\Render;
 
-use App\GameElement\Render\Component\RenderComponent;
+use App\GameElement\Render\Component\RenderTemplateComponent;
 
-class ItemBagRenderComponent extends RenderComponent
+class ItemBagRenderTemplateComponent extends RenderTemplateComponent
 {
     public static function getId(): string
     {

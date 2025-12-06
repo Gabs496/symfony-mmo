@@ -3,6 +3,7 @@
 namespace App\GameObject\Item\Resource\Log;
 
 use App\Engine\Reward\MasteryReward;
+use App\Entity\Core\GameObject;
 use App\GameElement\Gathering\Component\GatheringComponent;
 use App\GameObject\Item\AbstractItemResourcePrototype;
 use App\GameObject\Mastery\Gathering\Woodcutting;
@@ -10,13 +11,18 @@ use App\GameObject\Mastery\Gathering\Woodcutting;
 class ChestnutLogPrototype extends AbstractItemResourcePrototype
 {
     public const string ID = 'RESOURCE_LOG_CHESTNUT';
-    public function __construct()
+    public function make(
+        array $components = [],
+        string $name = 'Chestnut Log',
+        string $description = 'A log from a chestnut tree.',
+        float $weight = 0.1,
+    ): GameObject
     {
-        parent::__construct(
-            id: self::ID,
-            name: 'Chestnut Log',
-            description: 'A log from a chestnut tree.',
-            weight: 0.1
+        return parent::make(
+            components: $components,
+            name: $name,
+            description: $description,
+            weight: $weight,
         );
     }
 
@@ -32,5 +38,10 @@ class ChestnutLogPrototype extends AbstractItemResourcePrototype
                 ],
             )
         ];
+    }
+
+    public static function getId(): string
+    {
+        return self::ID;
     }
 }

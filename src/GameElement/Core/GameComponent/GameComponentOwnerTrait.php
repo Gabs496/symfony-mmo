@@ -13,9 +13,10 @@ trait GameComponentOwnerTrait
         return $this->components;
     }
 
-    public function setComponent(GameComponentInterface $component, ?string $componentId = null): void
+    public function setComponent(GameComponentInterface $component, ?string $componentId = null): self
     {
         $this->components[$componentId ?? $component::getId()] = $component;
+        return $this;
     }
 
     public function removeComponent(string $componentId): void

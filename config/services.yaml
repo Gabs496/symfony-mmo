@@ -38,5 +38,7 @@ services:
             tags: [ 'reward.applier' ]
         App\GameElement\Activity\Engine\ActivityEngineExtensionInterface:
             tags: [ 'activity.engine_extension' ]
+        App\GameElement\Crafting\AbstractItemRecipe:
+            tags: [ 'crafting.item_recipe' ]
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

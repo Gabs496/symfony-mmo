@@ -59,7 +59,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
             if ($reward instanceof ItemRuntimeCreatedReward) {
                 $itemPrototype = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
-                $item = new GameObject($itemPrototype, $itemPrototype->getComponents());
+                $item = $itemPrototype->make();
                 $item->setComponent(new StackComponent($reward->getQuantity()));
             } else {
                 $item = $reward->getItem();

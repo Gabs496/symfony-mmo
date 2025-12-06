@@ -2,9 +2,11 @@
 
 namespace App\GameElement\Reward\Engine;
 
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\Token\TokenEngine;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
+use App\GameElement\Reward\RewardInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -23,8 +25,10 @@ class RewardEngine
     {
     }
 
-    public function apply(RewardApply $rewardApply): void
+    public function apply(RewardInterface $reward, GameObjectInterface $subject): void
     {
+
+        $rewardApply = new RewardApply($reward, $subject);
         $rewardApply->clear();
         $this->messageBus->dispatch($rewardApply);
     }

@@ -11,10 +11,10 @@ use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;
 use App\GameElement\Item\Interaction\DropInteraction;
 use App\GameElement\Item\Interaction\EatInteraction;
-use App\GameElement\Item\Render\ItemBagRenderComponent;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\ItemEquiment\Interaction\EquipInteraction;
 use App\GameElement\ItemEquiment\Interaction\UnequipInteraction;
+use App\GameElement\Render\Component\RenderComponent;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: "Render:ItemBagRenderTemplate", template: 'components/Render/ItemBagRenderTemplate.html.twig')]
@@ -22,13 +22,13 @@ class ItemBagRenderTemplate implements InteractableTemplateInterface
 {
     public ItemObject $itemObject;
     public GameObject $item;
-    public ItemBagRenderComponent $render;
+    public RenderComponent $render;
 
     public function mount(ItemObject $itemObject): void
     {
         $this->itemObject = $itemObject;
         $this->item = $itemObject->getGameObject();
-        $this->render = $this->item->getComponent(ItemBagRenderComponent::class);
+        $this->render = $this->item->getComponent(RenderComponent::class);
     }
 
     public function getInteractions(): iterable
