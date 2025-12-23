@@ -3,7 +3,9 @@
 namespace App\GameElement\Healing\Component;
 
 use App\GameElement\Core\GameComponent\GameComponentInterface;
+use Attribute;
 
+#[Attribute(Attribute::TARGET_CLASS)]
 class HealingComponent implements GameComponentInterface
 {
     public function __construct(

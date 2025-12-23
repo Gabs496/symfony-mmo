@@ -1,6 +1,6 @@
 <turbo-stream action="update" target="player-character-stats">
     <template>
         <div class="border-bottom pb-1">{{ "Combat"|trans }}</div>
-        {{ component('CombatStats', {gameObject: playerCharacter}) }}
+        {{ component('CombatStats', {gameObject: playerCharacter.gameObject}) }}
     </template>
 </turbo-stream>

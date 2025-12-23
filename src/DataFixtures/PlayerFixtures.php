@@ -4,7 +4,9 @@ namespace App\DataFixtures;
 
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Security\User;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameObject\Map\BirthTown;
+use App\GameObject\PlayerCharacter\BasePlayer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -12,7 +14,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class PlayerFixtures extends Fixture
 {
     public function __construct(
-        protected UserPasswordHasherInterface $passwordHasher)
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly GameObjectEngine            $gameObjectEngine,
+    )
     {
     }
 
@@ -24,7 +28,9 @@ class PlayerFixtures extends Fixture
             ->setPassword($this->passwordHasher->hashPassword($user, 'devpassword'))
         ;
 
-        $playerCharacter = new PlayerCharacter();
+        $playerGameObject = $this->gameObjectEngine->getPrototype(BasePlayer::getId())->make();
+
+        $playerCharacter = new PlayerCharacter($playerGameObject);
         $playerCharacter
             ->setUser($user)
             ->setName('Dev Player')

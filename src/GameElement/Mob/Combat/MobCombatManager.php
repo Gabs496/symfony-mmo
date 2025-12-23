@@ -2,6 +2,8 @@
 
 namespace App\GameElement\Mob\Combat;
 
+use App\GameElement\Character\Component\CharacterComponent;
+use App\GameElement\Character\Engine\HealthEngine;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
@@ -12,8 +14,6 @@ use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Health\Component\HealthComponent;
-use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\Repository\Game\GameObjectRepository;
 use App\Repository\Game\MapObjectRepository;
@@ -22,6 +22,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class MobCombatManager implements CombatManagerInterface
 {
+    public const string ID = 'mob_combat_manager';
+
     public function __construct(
         private GameObjectRepository     $gameObjectRepository,
         private MapObjectRepository      $mapObjectRepository,
@@ -35,7 +37,7 @@ readonly class MobCombatManager implements CombatManagerInterface
 
     public static function getId(): string
     {
-        return 'mob_combat_manager';
+        return self::ID;
     }
 
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack
@@ -68,10 +70,10 @@ readonly class MobCombatManager implements CombatManagerInterface
 
 
         $defender = $defense->getDefender();
-        if (!$health = $defender->getComponent(HealthComponent::class)) {
-            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), HealthComponent::class));
+        if (!$characterComponent = $defender->getComponent(CharacterComponent::class)) {
+            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), CharacterComponent::class));
         }
-        if (!$health->isAlive()) {
+        if (!$characterComponent->isAlive()) {
             $this->mapObjectRepository->remove($this->mapObjectRepository->findOneBy(['gameObject' => $defender]));
             $this->gameObjectRepository->remove($defender);
             $attackResult->setIsDefeated(true);
@@ -94,11 +96,11 @@ readonly class MobCombatManager implements CombatManagerInterface
             $this->eventDispatcher->dispatch(new MobDefeatEvent($attacker, $defender));
         }
 
-        if (!$health = $defender->getComponent(HealthComponent::class)) {
-            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), HealthComponent::class));
+        if (!$characterComponent = $defender->getComponent(CharacterComponent::class)) {
+            throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), CharacterComponent::class));
         }
 
-        if ($health->isAlive()) {
+        if ($characterComponent->isAlive()) {
             $this->combatEngine->attack($defender, $attacker);
         }
     }

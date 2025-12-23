@@ -3,10 +3,11 @@
 namespace App\Engine\Player;
 
 use App\Engine\Reward\MasteryReward;
-use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Combat\Component\CombatComponent;
+use App\GameElement\Combat\Reward\CombatStatReward;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
@@ -30,19 +31,21 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         private GameObjectEngine          $gameObjectEngine,
         private HubInterface              $hub,
         private Environment               $twig,
+        private PlayerCharacterRepository   $playerCharacterRepository,
     )
     {
     }
 
     public function supports(RewardApply $rewardApply): bool
     {
-        return $rewardApply->getRecipe() instanceof PlayerCharacter;
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $rewardApply->getRecipe()]);
+        return $player instanceof PlayerCharacter;
     }
 
     public function apply(RewardApply $rewardApply): void
     {
         /** @var PlayerCharacter $player */
-        $player = $rewardApply->getRecipe();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $rewardApply->getRecipe()]);
 
         $reward = $rewardApply->getReward();
         if ($reward instanceof MasteryReward) {
@@ -56,18 +59,33 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             ));
         }
 
+        if ($reward instanceof CombatStatReward) {
+            $stat = $player->getGameObject()->getComponent(CombatComponent::class)
+                ->getStatByClass($reward->getStatClass())
+            ;
+            $stat->increase($reward->getAmount());
+            $this->repository->save($player);
+            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-arrow-up"></span> +%d %s', $reward->getAmount(), ucfirst($stat::getLabel())));
+            $this->hub->publish(new Update(
+                'player_gui_' . $player->getId(),
+                $this->twig->render('player_character/stats.stream.html.twig', ['playerCharacter' => $player]),
+                true
+            ));
+        }
+
         if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
             if ($reward instanceof ItemRuntimeCreatedReward) {
                 $itemPrototype = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
                 $item = $itemPrototype->make();
-                $item->setComponent(new StackComponent($reward->getQuantity()));
+                $itemComponent = $item->getComponent(ItemComponent::class);
+                $itemComponent->setQuantity($reward->getQuantity());
             } else {
                 $item = $reward->getItem();
             }
 
             try {
                 $this->playerEngine->giveItem($player, $item);
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(StackComponent::class)?->getCurrentQuantity(), $item->getComponent(RenderComponent::class)?->getName()));
+                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)?->getOrginalAvailability(), $item->getComponent(RenderComponent::class)?->getName()));
             } catch (MaxBagSizeReachedException) {
                 $this->notificationEngine->danger($player->getId(), 'Your bag is full, you cannot receive the item.');
                 return;

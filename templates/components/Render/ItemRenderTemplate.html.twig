@@ -24,8 +24,8 @@
     <div class="bg-dark border-primary rounded m-1 dropdown">
         <div style="width: 4em; height: 4em;" class="position-relative" title="{{ tooltipInfo|e('html') }}" {{ stimulus_controller('tooltip') }}>
             <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100 w-100"/>
-            {% if this.stack.currentQuantity > 1.0 %}
-                <span class="badge bg-secondary position-absolute bottom-0 end-0">{{ this.stack.currentQuantity }}</span>
+            {% if this.itemComponent.quantity > 1.0 %}
+                <span class="badge bg-secondary position-absolute bottom-0 end-0">{{ this.itemComponent.quantity }}</span>
             {% endif %}
             {% if this.maskedDanger %}
                 <div class="w-100 h-100 position-absolute top-0 rounded" style="background-color: rgba(255, 0, 0, .5)"></div>

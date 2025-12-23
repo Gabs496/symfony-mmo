@@ -2,20 +2,21 @@
 
 namespace App\GameElement\Mob\Combat;
 
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Drop\Engine\DropEngine;
-use App\GameElement\Mob\AbstractMobPrototype;
 use App\GameElement\Mob\Event\MobDefeatEvent;
+use App\GameElement\Mob\MobPrototypeInterface;
 use App\GameElement\Reward\Engine\RewardEngine;
-use App\GameElement\Reward\RewardApply;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MobCombatListener implements EventSubscriberInterface
 {
 
     public function __construct(
-        protected RewardEngine $rewardEngine,
-        protected DropEngine $dropEngine,
+        private readonly RewardEngine     $rewardEngine,
+        private readonly DropEngine       $dropEngine,
+        private readonly GameObjectEngine $gameObjectEngine,
     )
     {
     }
@@ -31,8 +32,8 @@ class MobCombatListener implements EventSubscriberInterface
 
     public function reward(MobDefeatEvent $event): void
     {
-        /** @var AbstractMobPrototype $mob */
-        $mob = $event->getDefeatedMob()->getPrototype();
+        /** @var MobPrototypeInterface $mob */
+        $mob = $this->gameObjectEngine->getPrototype($event->getDefeatedMob()->getPrototype());
         foreach ($mob->getRewardOnDefeats() as $reward) {
             foreach ($reward->getAttributes() as $attribute){
                 if ($attribute instanceof Drop) {

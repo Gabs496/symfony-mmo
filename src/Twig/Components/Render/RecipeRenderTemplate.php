@@ -5,7 +5,7 @@ namespace App\Twig\Components\Render;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
-use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Component\ItemComponent;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: 'Render:RecipeRenderTemplate', template: 'components/Render/RecipeRenderTemplate.html.twig')]
@@ -28,7 +28,7 @@ class RecipeRenderTemplate
     {
         foreach ($this->recipe->getIngredients() as $ingredient) {
             $item = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId())->make();
-            $item->setComponent(new StackComponent($ingredient->getQuantity()));
+            $item->getComponent(ItemComponent::class)->setQuantity($ingredient->getQuantity());
             yield $item;
         }
     }

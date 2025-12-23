@@ -22,19 +22,22 @@ class GameObject extends AbstractGameObject
     #[ORM\Column(type: 'json_document')]
     protected array $components;
 
-    #[ORM\Column(name: 'type', type: 'game_object_prototype')]
-    protected GameObjectPrototypeInterface $prototype;
+    #[ORM\Column(name: 'type', type: 'string')]
+    protected string $prototype;
 
     /**
      * @throws InvalidGameComponentException
      */
-    public function __construct(GameObjectPrototypeInterface $prototype, array $components)
+    public function __construct(GameObjectPrototypeInterface|string $prototype, array $components)
     {
         parent::__construct(Uuid::v7(),$components);
+        if ($prototype instanceof GameObjectPrototypeInterface) {
+            $prototype = $prototype->getId();
+        }
         $this->prototype = $prototype;
     }
 
-    public function getPrototype(): GameObjectPrototypeInterface
+    public function getPrototype(): string
     {
         return $this->prototype;
     }
@@ -64,8 +67,8 @@ class GameObject extends AbstractGameObject
     public function isInstanceOf(GameObjectInterface|GameObjectPrototypeInterface $object): bool
     {
         if ($object instanceof GameObjectPrototypeInterface) {
-            return $this->getPrototype()->getId() === $object->getId();
+            return $this->getPrototype() === $object->getId();
         }
-        return $this->getPrototype()->getId() === $object->getPrototype()->getId();
+        return $this->getPrototype() === $object->getPrototype();
     }
 }

@@ -3,7 +3,7 @@
 {% block update %}
     <turbo-stream action="update" target="player_health_{{ player.id }}" method="morph">
         <template>
-            {{ component('Health:Bar', {gameObject: player}) }}
+            {{ component('HealthBar', {gameObject: player.gameObject}) }}
         </template>
     </turbo-stream>
 {% endblock %}

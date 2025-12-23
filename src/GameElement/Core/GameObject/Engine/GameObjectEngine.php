@@ -2,12 +2,10 @@
 
 namespace App\GameElement\Core\GameObject\Engine;
 
-use App\GameElement\Core\GameObject\Attribute\GameObjectPrototypeReference;
 use App\GameElement\Core\GameObject\Doctrine\Type\GameObjectPlaceholder;
 use App\GameElement\Core\GameObject\Exception\GameObjectNotFound;
 use App\GameElement\Core\GameObject\Exception\RegisteredANonGameObjectException;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObjectPrototype\Doctrine\Type\GameObjectPrototypePlaceholder;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
@@ -54,19 +52,6 @@ readonly class GameObjectEngine
                     $property->setValue($entity,$gameObject);
                 }
             }
-
-            if ($type->getName() === GameObjectPrototypeInterface::class) {
-                $field = $property->getName();
-                $property = $reflection->getProperty($field);
-                if (!$property->isInitialized($entity)) {
-                    break;
-                }
-                $value = $property->getValue($entity);
-                if ($value instanceof GameObjectPrototypePlaceholder) {
-                    $prototype = $this->getPrototype($value->getPrototypeId());
-                    $property->setValue($entity,$prototype);
-                }
-            }
         }
     }
 
@@ -88,18 +73,16 @@ readonly class GameObjectEngine
 
     public function getPrototype(string $id): GameObjectPrototypeInterface
     {
-        return $this->gameObjectCache->get('game_object_prototype.' . $id,function (ItemInterface $item) use ($id) {
-            foreach ($this->gameObjectPrototypeCollection as $gameObjectPrototype) {
-                if (!$gameObjectPrototype instanceof GameObjectPrototypeInterface) {
-                    throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObjectPrototype::class, GameObjectPrototypeInterface::class));
-                }
-
-                if ($gameObjectPrototype->getid() === $id) {
-                    return $gameObjectPrototype;
-                }
+        foreach ($this->gameObjectPrototypeCollection as $gameObjectPrototype) {
+            if (!$gameObjectPrototype instanceof GameObjectPrototypeInterface) {
+                throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObjectPrototype::class, GameObjectPrototypeInterface::class));
             }
-            throw new GameObjectNotFound('Game object prototype for class "'.$id.'" not found');
-        });
+
+            if ($gameObjectPrototype->getid() === $id) {
+                return $gameObjectPrototype;
+            }
+        }
+        throw new GameObjectNotFound('Game object prototype for class "'.$id.'" not found');
     }
 
     /**

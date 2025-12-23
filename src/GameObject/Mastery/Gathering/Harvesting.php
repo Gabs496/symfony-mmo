@@ -6,9 +6,11 @@ use App\GameElement\Mastery\MasteryType;
 
 readonly class Harvesting extends MasteryType
 {
+    public const string ID = 'HARVESTING';
+
     public static function getId(): string
     {
-        return 'HARVESTING';
+        return self::ID;
     }
 
     public static function getName(): string

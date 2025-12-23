@@ -23,7 +23,6 @@ class PlayerCharacterRepository extends ServiceEntityRepository
     public function save(PlayerCharacter $entity): void
     {
         $entity->cloneMasterySet();
-        $entity->setHealth(clone $entity->getHealth());
         $this->defaultSave($entity);
     }
 

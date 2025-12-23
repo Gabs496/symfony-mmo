@@ -13,19 +13,19 @@
             {% endblock %}
             {% block moreInfo %}
                 <div>
-                    {% if this.stack %}
+                    {% if this.attachedResourceComponent %}
                         <div class="d-flex">
-                            <div class="small badge bg-white text-black">{{ stack.currentQuantity }}</div>
+                            <div class="small badge bg-white text-black">{{ this.attachedResourceComponent.availability }}</div>
                             <div class="w-100">
-                                {% include 'parts/progressBar.html.twig' with {percentage: stack.currentQuantity/stack.maxQUantity} %}
+                                {% include 'parts/progressBar.html.twig' with {percentage: this.attachedResourceComponent.availability/this.attachedResourceComponent.maxAvaliability} %}
                             </div>
                         </div>
                     {% endif %}
-                    {% if this.health %}
+                    {% if this.characterComponent %}
                         <div class="d-flex">
-                            <div class="small badge bg-white text-black">{{ math_stat_view(health.currentHealth) }}</div>
+                            <div class="small badge bg-white text-black">{{ math_stat_view(this.characterComponent.health) }}</div>
                             <div class="w-100">
-                                {% include 'parts/progressBar.html.twig' with {percentage: health.currentHealth/health.maxHealth } %}
+                                {% include 'parts/progressBar.html.twig' with {percentage: this.characterComponent.health/this.characterComponent.maxHealth } %}
                             </div>
                         </div>
                     {% endif %}

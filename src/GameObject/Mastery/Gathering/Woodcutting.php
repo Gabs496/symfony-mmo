@@ -6,9 +6,11 @@ use App\GameElement\Mastery\MasteryType;
 
 readonly class Woodcutting extends MasteryType
 {
+    public const string ID = 'WOODCUTTING';
+
     public static function getId(): string
     {
-        return 'WOODCUTTING';
+        return self::ID;
     }
 
     public static function getName(): string

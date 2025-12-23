@@ -10,7 +10,6 @@ doctrine:
         use_savepoints: true
         types:
           game_object: App\GameElement\Core\GameObject\Doctrine\Type\GameObjectType
-          game_object_prototype: App\GameElement\Core\GameObjectPrototype\Doctrine\Type\GameObjectPrototypeType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

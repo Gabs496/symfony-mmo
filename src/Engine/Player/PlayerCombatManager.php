@@ -5,9 +5,11 @@ namespace App\Engine\Player;
 use App\Engine\Math;
 use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Character\Component\CharacterComponent;
+use App\GameElement\Character\Engine\HealthEngine;
+use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
-use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Engine\CombatManagerInterface;
 use App\GameElement\Combat\Engine\CombatSystemInterface;
 use App\GameElement\Combat\Phase\Attack;
@@ -15,43 +17,46 @@ use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Health\Component\HealthComponent;
-use App\GameElement\Health\Engine\HealthEngine;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Render\Component\RenderComponent;
-use App\GameObject\Mastery\Combat\PhysicalAttack;
 use App\Repository\Data\PlayerCharacterRepository;
+use App\Repository\Game\GameObjectRepository;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 readonly class PlayerCombatManager implements CombatManagerInterface
 {
+    public const string ID = 'player_combat_manager';
+
     public function __construct(
         private PlayerCharacterRepository $playerCharacterRepository,
         private NotificationEngine        $notificationEngine,
         private HealthEngine              $healthEngine,
         private CombatSystemInterface     $combatSystem,
+        private GameObjectRepository $gameObjectRepository,
     )
     {
     }
 
     public static function getId(): string
     {
-        return 'player_combat_manager';
+        return self::ID;
     }
 
-    /** @param PlayerCharacter $attacker */
     public function generateAttack(GameObjectInterface $attacker, GameObjectInterface $defender): Attack
     {
         $statCollection = $this->getAttackStats($attacker);
         return new Attack($attacker, $statCollection);
     }
 
-    /** @param PlayerCharacter $defender */
     public function generateDefense(Attack $attack, GameObjectInterface $defender): Defense
     {
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $defender]);
         $statCollection = new StatCollection();
         $this->calculateBaseDefense($statCollection);
-        $this->calculateEquipmentDefense($defender, $statCollection);
+        $this->calculateEquipmentDefense($player, $statCollection);
         return new Defense($defender, $statCollection);
     }
 
@@ -59,20 +64,26 @@ readonly class PlayerCombatManager implements CombatManagerInterface
     {
         $damage = $this->combatSystem->calculateDamage($attack, $defense);
 
-        /** @var PlayerCharacter $player */
-        $player = $defense->getDefender();
-        $this->healthEngine->decreaseCurrentHealth($player, $damage->getValue());
-        $this->playerCharacterRepository->save($player);
+        /** @var GameObject $defender */
+        $defender = $defense->getDefender();
+        $this->healthEngine->decreaseCurrentHealth($defender, $damage->getValue());
+        $this->gameObjectRepository->save($defender);
 
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $defense->getDefender()]);
         $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($damage->getValue()) . ' damage');
 
-        return new AttackResult($attack, $defense, $damage, !$player->getComponent(HealthComponent::class)->isAlive());
+        return new AttackResult($attack, $defense, $damage, !$defender->getComponent(CharacterComponent::class)->isAlive());
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function afterAttack(AttackResult $attackResult): void
     {
         /** @var PlayerCharacter $player */
-        $player = $attackResult->getAttack()->getAttacker();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $attackResult->getAttack()->getAttacker()]);
         $this->notificationEngine->success($player->getId(), '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($attackResult->getDamage()->getValue()) . ' damage');
 
         $defender = $attackResult->getDefense()->getDefender();
@@ -89,8 +100,9 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         // TODO: Implement afterDefense() method.
     }
 
-    private function getAttackStats(PlayerCharacter $player): StatCollection
+    private function getAttackStats(GameObjectInterface $gameObject): StatCollection
     {
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $gameObject]);
         $statCollection = new StatCollection();
         $this->calculateBaseAttack($player, $statCollection);
         $this->calculateEquipmentAttack($player, $statCollection);
@@ -100,7 +112,10 @@ readonly class PlayerCombatManager implements CombatManagerInterface
 
     private function calculateBaseAttack(PlayerCharacter $attacker, StatCollection $statCollection): void
     {
-        $statCollection->increase(PhysicalAttackStat::class, $attacker->getMasteryExperience(new PhysicalAttack()));
+        $combatComponent = $attacker->getGameObject()->getComponent(CombatComponent::class);
+        foreach ($combatComponent->getOffensiveStats() as $stat) {
+            $statCollection->increase($stat::class, $stat->getValue());
+        }
     }
 
     private function calculateEquipmentAttack(PlayerCharacter $attacker, StatCollection $statCollection): void

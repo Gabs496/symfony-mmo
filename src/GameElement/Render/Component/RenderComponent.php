@@ -3,7 +3,9 @@
 namespace App\GameElement\Render\Component;
 
 use App\GameElement\Core\GameComponent\GameComponentInterface;
+use Attribute;
 
+#[Attribute(Attribute::TARGET_CLASS)]
 class RenderComponent implements GameComponentInterface
 {
     public function __construct(

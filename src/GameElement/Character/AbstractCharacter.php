@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Character;
 
+/** @deprecated */
 abstract class AbstractCharacter
 {
     protected ?string $name = null;

@@ -24,7 +24,7 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
 
     public function getDuration(AbstractActivity $activity): float
     {
-        return $activity->getGathering()->getGatheringTime();
+        return $activity->getGathering()->getGatheringDifficulty();
     }
 
     public function beforeStart(AbstractActivity $activity): void

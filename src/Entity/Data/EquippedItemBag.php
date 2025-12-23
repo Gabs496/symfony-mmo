@@ -4,7 +4,7 @@ namespace App\Entity\Data;
 
 use App\Entity\Item\ItemBag;
 use App\Entity\Item\ItemObject;
-use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Component\ItemComponent;
 use Doctrine\ORM\Mapping\Entity;
 
 #[Entity]
@@ -21,7 +21,7 @@ class EquippedItemBag extends ItemBag
     public function getOccupedSpace(): float
     {
         return (float)$this->items->reduce(function(int $carry, ItemObject $itemObject) {
-            return $carry + $itemObject->getGameObject()->getComponent(StackComponent::class)->getCurrentQuantity();
+            return $carry + $itemObject->getGameObject()->getComponent(ItemComponent::class)->getQuantity();
         }, 0);
     }
 

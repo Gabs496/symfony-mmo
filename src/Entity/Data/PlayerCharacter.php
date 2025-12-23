@@ -4,15 +4,13 @@ namespace App\Entity\Data;
 
 use App\Engine\Player\PlayerCombatManager;
 use App\Entity\Activity\Activity;
+use App\Entity\Core\GameObject;
 use App\Entity\Security\User;
-use App\GameElement\Character\AbstractCharacter;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObject\GameObjectTrait;
-use App\GameElement\Health\Component\HealthComponent;
 use App\GameElement\Map\AbstractMap;
 use App\GameElement\Mastery\MasterySet;
 use App\GameObject\Mastery\Combat\PhysicalAttack;
@@ -26,10 +24,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: PlayerCharacterRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'This name is already taken.')]
 #[ORM\UniqueConstraint(columns: ['name'])]
-class PlayerCharacter extends AbstractCharacter
-    implements GameObjectInterface, UserInterface
+class PlayerCharacter implements UserInterface
 {
-    use GameObjectTrait;
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
     protected string $id;
@@ -59,16 +55,17 @@ class PlayerCharacter extends AbstractCharacter
     #[ORM\JoinColumn(nullable: true)]
     private ?Activity $currentActivity;
 
-    #[ORM\Column(type: 'json_document', nullable: false)]
-    private HealthComponent $health;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private GameObject $gameObject;
 
-    public function __construct()
+    public function __construct(GameObject $gameObject)
     {
         $this->id = Uuid::v7()->toString();
         $this->masterySet = new MasterySet();
         $this->backpack = new BackpackItemBag($this);
         $this->equipment = new EquippedItemBag($this);
-        $this->health = new HealthComponent(0.25, 0.25);
+        $this->gameObject = $gameObject;
     }
 
     public function getId(): string
@@ -183,19 +180,9 @@ class PlayerCharacter extends AbstractCharacter
         return $this->currentActivity === $activity;
     }
 
-    public function getHealth(): HealthComponent
+    public function getGameObject(): GameObject
     {
-        return $this->health;
-    }
-
-    public function setHealth(HealthComponent $health): void
-    {
-        $this->health = $health;
-    }
-
-    public function getCurrentHealth(): float
-    {
-        return $this->health->getCurrentHealth();
+        return $this->gameObject;
     }
 
     public function getCombatComponent(): CombatComponent
@@ -218,18 +205,7 @@ class PlayerCharacter extends AbstractCharacter
     {
         return [
             CombatComponent::getId() => $this->getCombatComponent(),
-            HealthComponent::getId() => $this->getHealth(),
         ];
-    }
-
-    public function setComponent(GameComponentInterface $component, ?string $componentId = null): void
-    {
-        return;
-    }
-
-    public function removeComponent(string $componentId): void
-    {
-        return;
     }
 
     /** @param class-string<GameComponentInterface> $componentClass */
@@ -246,5 +222,14 @@ class PlayerCharacter extends AbstractCharacter
     public function getComponent(string $componentClass): ?GameComponentInterface
     {
         return $this->getComponents()[$componentClass::getId()] ?? null;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'roles' => $this->roles,
+            'name' => $this->name,
+        ];
     }
 }

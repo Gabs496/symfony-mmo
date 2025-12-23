@@ -8,7 +8,7 @@ use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Healing\Engine\HealingEngine;
-use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
@@ -45,7 +45,7 @@ readonly class ItemActionEngine
     {
         $item = $this->playerItemEngine->takeItem($player, $item, 1);
         if ($healing = $item->getComponent(HealingComponent::class)) {
-            $this->healingEngine->heal($player, $healing);
+            $this->healingEngine->heal($player->getGameObject(), $healing);
             if ($healing->getAmount() > 0.0) {
                 $this->notificationEngine->success(
                     $player->getId(),
@@ -63,6 +63,6 @@ readonly class ItemActionEngine
 
     public function drop(PlayerCharacter $player, GameObject $item): void
     {
-        $this->playerItemEngine->takeItem($player, $item, $item->getComponent(StackComponent::class)->getCurrentQuantity());
+        $this->playerItemEngine->takeItem($player, $item, $item->getComponent(ItemComponent::class)->getQuantity());
     }
 }

@@ -2,12 +2,15 @@
 
 namespace App\GameElement\Core\GameObjectPrototype;
 
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\Entity\Core\GameObject;
+use App\GameElement\Core\GameComponent\GameComponentInterface;
 
 interface GameObjectPrototypeInterface
 {
     public static function getId(): string;
 
-    /** @param GameObjectInterface[] $components */
-    public function make(array $components = []);
+    /** @return GameComponentInterface[] */
+    public function getComponents(): array;
+
+    public function make(): GameObject;
 }

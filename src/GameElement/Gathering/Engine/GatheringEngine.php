@@ -5,12 +5,11 @@ namespace App\GameElement\Gathering\Engine;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
-use App\GameElement\Gathering\Component\GatheringComponent;
+use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
-use App\GameElement\Item\Component\StackComponent;
+use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Reward\Engine\RewardEngine;
-use App\GameElement\Reward\RewardApply;
 use App\Repository\Game\GameObjectRepository;
 use App\Repository\Game\MapObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -44,18 +43,19 @@ readonly class GatheringEngine
 
     private function take(GameObjectInterface $gameObject, float $quantity): ?GameObjectInterface
     {
-        $stack = $gameObject->getComponent(StackComponent::class);
+        $item = $gameObject->getComponent(ItemComponent::class);
 
-        if (!$stack) {
+        if (!$item->getQuantity()) {
             $this->gameObjectRepository->remove($gameObject);
             return null;
         }
 
         $newObject = $gameObject->clone();
-        $newObject->setComponent(new StackComponent(min($quantity,$stack->getCurrentQuantity()), 99));
+        $itemComponent = $newObject->getComponent(ItemComponent::class);
+        $itemComponent->setQuantity(min($quantity,$item->getQuantity()));
 
-        $stack->decreaseBy($quantity);
-        $isDepealed = $stack->getCurrentQuantity() <= 0;
+        $item->decreaseBy($quantity);
+        $isDepealed = $item->getQuantity() <= 0;
         if ($isDepealed) {
             $this->mapObjectRepository->remove($this->mapObjectRepository->findOneBy(['gameObject' => $gameObject]));
             $this->gameObjectRepository->remove($gameObject);
@@ -68,7 +68,7 @@ readonly class GatheringEngine
 
     public function handleReward(GameObjectInterface $subject, GameObjectInterface $resource): void
     {
-        $gathering = $resource->getComponent(GatheringComponent::class);
+        $gathering = $resource->getComponent(ResourceComponent::class);
         foreach ($gathering->getRewards() as $reward) {
             $this->rewardEngine->apply($reward, $subject);
         }

@@ -3,7 +3,9 @@
 namespace App\GameElement\Map\Component\Spawn;
 
 use App\GameElement\Core\GameComponent\GameComponentInterface;
+use Attribute;
 
+#[Attribute(Attribute::TARGET_CLASS)]
 class SpawnComponent implements GameComponentInterface
 {
     public function __construct(

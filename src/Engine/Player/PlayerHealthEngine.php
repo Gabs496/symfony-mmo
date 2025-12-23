@@ -3,8 +3,8 @@
 namespace App\Engine\Player;
 
 use App\Entity\Data\PlayerCharacter;
-use App\GameElement\Health\Event\HealthModifiedEvent;
-use App\GameElement\Health\Event\HealthReachedZeroEvent;
+use App\GameElement\Character\Event\HealthModifiedEvent;
+use App\GameElement\Character\Event\HealthReachedZeroEvent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,7 +37,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
 
     public function updateHealthBar(HealthModifiedEvent $event): void
     {
-        $player = $event->getObject();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getObject()]);
         if (!$player instanceof PlayerCharacter) {
             return;
         }

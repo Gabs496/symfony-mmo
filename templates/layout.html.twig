@@ -27,7 +27,7 @@
                         </div>
                         <div class="nav-item col-12 col-lg-3">
                             <turbo-frame id="player_health_{{ app.user.id }}">
-                                {{ component('Health:Bar', {gameObject: app.user}) }}
+                                {{ component('HealthBar', {gameObject: app.user.gameObject}) }}
                             </turbo-frame>
                         </div>
                         <div class="nav-item col-12 col-lg-3">

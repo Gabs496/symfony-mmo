@@ -1,12 +1,12 @@
 <?php
 
-namespace App\GameElement\Health\Engine;
+namespace App\GameElement\Character\Engine;
 
 use App\Engine\Math;
+use App\GameElement\Character\Component\CharacterComponent;
+use App\GameElement\Character\Event\HealthModifiedEvent;
+use App\GameElement\Character\Event\HealthReachedZeroEvent;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Health\Component\HealthComponent;
-use App\GameElement\Health\Event\HealthModifiedEvent;
-use App\GameElement\Health\Event\HealthReachedZeroEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class HealthEngine
@@ -22,12 +22,12 @@ readonly class HealthEngine
             return;
         }
 
-        $health = $object->getComponent(HealthComponent::class);
-        $currentHealth = $health->getCurrentHealth();
-        $newHealth = min(max(0.0, Math::add($currentHealth, $value)), $health->getMaxHealth());
-        $health->setCurrentHealth($newHealth);
+        $character = $object->getComponent(CharacterComponent::class);
+        $currentHealth = $character->getHealth();
+        $newHealth = min(max(0.0, Math::add($currentHealth, $value)), $character->getMaxHealth());
+        $character->setHealth($newHealth);
 
-        $this->eventDispatcher->dispatch(new HealthModifiedEvent($object, $health));
+        $this->eventDispatcher->dispatch(new HealthModifiedEvent($object, $character));
 
         if (round($newHealth, 5) === 0.0) {
             $this->eventDispatcher->dispatch(new HealthReachedZeroEvent($object));

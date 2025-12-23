@@ -8,13 +8,14 @@ use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\Engine\RewardEngine;
-use App\GameElement\Reward\RewardApply;
+use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class PlayerGatheringEngine implements EventSubscriberInterface
 {
     public function __construct(
         private RewardEngine $rewardEngine,
+        private PlayerCharacterRepository $playerCharacterRepository,
     )
     {
     }
@@ -33,7 +34,8 @@ readonly class PlayerGatheringEngine implements EventSubscriberInterface
     public function pickResource(ResourceGatheredEvent $event): void
     {
         $subject = $event->getSubject();
-        if (!$subject instanceof PlayerCharacter) {
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $subject]);
+        if (!$player instanceof PlayerCharacter) {
             return;
         }
 
