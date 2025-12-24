@@ -44,7 +44,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function checkIfPlayerLocked(BeforeActivityStartEvent $event): void
     {
-        $player = $event->getActivity()->getSubject();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
         if (!$player instanceof PlayerCharacter) {
             return;
         }
@@ -55,7 +55,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function lockPlayer(ActivityStartEvent $event): void
     {
-        $player = $event->getActivity()->getSubject();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
         if (!$player instanceof PlayerCharacter) {
             return;
         }
@@ -73,7 +73,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function onActivityEnd(ActivityEndEvent $event): void
     {
-        $player = $event->getActivity()->getSubject();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
         if (!$player instanceof PlayerCharacter) {
             return;
         }
@@ -102,7 +102,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
     public function unlockIfShouldBeUnlocked(BeforeActivityStartEvent $event): void
     {
-        $player = $event->getActivity()->getSubject();
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
         if (!$player instanceof PlayerCharacter) {
             return;
         }

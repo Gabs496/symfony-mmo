@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Core\GameObject\Engine;
 
+use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameObject\Doctrine\Type\GameObjectPlaceholder;
 use App\GameElement\Core\GameObject\Exception\GameObjectNotFound;
 use App\GameElement\Core\GameObject\Exception\RegisteredANonGameObjectException;
@@ -71,8 +72,12 @@ readonly class GameObjectEngine
         });
     }
 
-    public function getPrototype(string $id): GameObjectPrototypeInterface
+    public function getPrototype(string|GameObject $id): GameObjectPrototypeInterface
     {
+        if ($id instanceof GameObjectInterface) {
+            $id = $id->getPrototype();
+        }
+
         foreach ($this->gameObjectPrototypeCollection as $gameObjectPrototype) {
             if (!$gameObjectPrototype instanceof GameObjectPrototypeInterface) {
                 throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObjectPrototype::class, GameObjectPrototypeInterface::class));

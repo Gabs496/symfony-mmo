@@ -58,7 +58,7 @@ abstract class AbstractItemBag
                 if (!$newInstance) {
                     $newInstance = $extractedInstance;
                 }
-                $quantity+= $extractedInstance->getComponent(ItemComponent::class)->getOrginalAvailability()();
+                $quantity+= $extractedInstance->getComponent(ItemComponent::class)->getQuantity();
             }
         }
 

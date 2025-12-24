@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Core\GameObjectPrototype;
 
-use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 
 interface GameObjectPrototypeInterface
 {
@@ -12,5 +12,12 @@ interface GameObjectPrototypeInterface
     /** @return GameComponentInterface[] */
     public function getComponents(): array;
 
-    public function make(): GameObject;
+    /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     * @return T|null
+     */
+    public function getComponent(string $componentClass): ?GameComponentInterface;
+
+    public function make(): GameObjectInterface;
 }

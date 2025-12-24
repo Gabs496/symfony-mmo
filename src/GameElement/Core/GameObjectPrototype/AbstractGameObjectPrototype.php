@@ -24,6 +24,26 @@ abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterfa
     }
 
     /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     * @return T|null
+     */
+    public function getComponent(string $componentClass): ?GameComponentInterface
+    {
+        if ($component = $this->components[$componentClass::getId()] ?? null) {
+            return $component;
+        }
+
+        foreach ($this->components as $component) {
+            if ($component::getId() === $componentClass::getId()) {
+                return $component;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @throws InvalidGameComponentException
      */
     public function make(): GameObject
@@ -43,6 +63,5 @@ abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterfa
             }
             return $components;
         });
-
     }
 }

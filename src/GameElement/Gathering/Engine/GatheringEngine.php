@@ -3,11 +3,13 @@
 namespace App\GameElement\Gathering\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
+use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
-use App\GameElement\Gathering\Component\ResourceComponent;
+use App\GameElement\Gathering\Component\AttachedResourceComponent;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
+use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\Repository\Game\GameObjectRepository;
@@ -22,7 +24,7 @@ readonly class GatheringEngine
         private MapObjectRepository      $mapObjectRepository,
         private RewardEngine             $rewardEngine,
         private EventDispatcherInterface $eventDispatcher,
-        private ActivityEngine           $activityEngine,
+        private ActivityEngine           $activityEngine, private GameObjectEngine $gameObjectEngine,
     )
     {
 
@@ -41,21 +43,22 @@ readonly class GatheringEngine
         $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($subject, $newObject));
     }
 
-    private function take(GameObjectInterface $gameObject, float $quantity): ?GameObjectInterface
+    protected function take(GameObjectInterface $gameObject, float $quantity): ?GameObjectInterface
     {
-        $item = $gameObject->getComponent(ItemComponent::class);
+        $resource = $gameObject->getComponent(AttachedResourceComponent::class);
 
-        if (!$item->getQuantity()) {
+        if (!$resource->getAvailability()) {
             $this->gameObjectRepository->remove($gameObject);
             return null;
         }
 
         $newObject = $gameObject->clone();
+        $newObject->removeComponent(AttachedResourceComponent::class);
         $itemComponent = $newObject->getComponent(ItemComponent::class);
-        $itemComponent->setQuantity(min($quantity,$item->getQuantity()));
+        $itemComponent->setQuantity(min($quantity,$resource->getAvailability()));
 
-        $item->decreaseBy($quantity);
-        $isDepealed = $item->getQuantity() <= 0;
+        $resource->decreaseAvailability($quantity);
+        $isDepealed = $resource->getAvailability() <= 0;
         if ($isDepealed) {
             $this->mapObjectRepository->remove($this->mapObjectRepository->findOneBy(['gameObject' => $gameObject]));
             $this->gameObjectRepository->remove($gameObject);
@@ -66,10 +69,15 @@ readonly class GatheringEngine
         return $newObject;
     }
 
-    public function handleReward(GameObjectInterface $subject, GameObjectInterface $resource): void
+    protected function handleReward(GameObjectInterface $subject, GameObjectInterface $resource): void
     {
-        $gathering = $resource->getComponent(ResourceComponent::class);
-        foreach ($gathering->getRewards() as $reward) {
+        $objectHandler = $this->gameObjectEngine->getPrototype($resource);
+
+        if (!$objectHandler instanceof GatherableInterface) {
+            return;
+        }
+
+        foreach ($objectHandler->getGatherRewards() as $reward) {
             $this->rewardEngine->apply($reward, $subject);
         }
     }

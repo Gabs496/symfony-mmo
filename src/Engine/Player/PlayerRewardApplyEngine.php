@@ -2,7 +2,9 @@
 
 namespace App\Engine\Player;
 
+use App\Engine\Math;
 use App\Engine\Reward\MasteryReward;
+use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Reward\CombatStatReward;
@@ -65,7 +67,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             ;
             $stat->increase($reward->getAmount());
             $this->repository->save($player);
-            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-arrow-up"></span> +%d %s', $reward->getAmount(), ucfirst($stat::getLabel())));
+            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-arrow-up"></span> +%d %s', Math::getStatViewValue($reward->getAmount()), ucfirst($stat::getLabel())));
             $this->hub->publish(new Update(
                 'player_gui_' . $player->getId(),
                 $this->twig->render('player_character/stats.stream.html.twig', ['playerCharacter' => $player]),
@@ -76,6 +78,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
             if ($reward instanceof ItemRuntimeCreatedReward) {
                 $itemPrototype = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
+                /** @var GameObject $item */
                 $item = $itemPrototype->make();
                 $itemComponent = $item->getComponent(ItemComponent::class);
                 $itemComponent->setQuantity($reward->getQuantity());
@@ -85,7 +88,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
 
             try {
                 $this->playerEngine->giveItem($player, $item);
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)?->getOrginalAvailability(), $item->getComponent(RenderComponent::class)?->getName()));
+                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)->getQuantity(), $item->getComponent(RenderComponent::class)?->getName()));
             } catch (MaxBagSizeReachedException) {
                 $this->notificationEngine->danger($player->getId(), 'Your bag is full, you cannot receive the item.');
                 return;
