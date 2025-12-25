@@ -14,9 +14,9 @@ use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 ], PlayerCombatManager::ID)]
 class BasePlayer extends AbstractGameObjectPrototype
 {
-
+    public const string ID = "base_player";
     public function getId(): string
     {
-        return 'base_player';
+        return self::ID;
     }
 }

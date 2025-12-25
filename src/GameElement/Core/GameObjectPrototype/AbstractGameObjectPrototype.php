@@ -33,8 +33,9 @@ abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterfa
             $components = [];
             $reflection = new ReflectionClass($this);
             foreach ($reflection->getAttributes() as $attribute) {
-                if (is_subclass_of($attribute->getName(), GameComponentInterface::class)) {
-                    $components[$attribute->getName()::getId()] = $attribute->newInstance();
+                $name = $attribute->getName();
+                if (is_subclass_of($name, GameComponentInterface::class)) {
+                    $components[$name::getId()] = $attribute->newInstance();
                 }
             }
             return $components;

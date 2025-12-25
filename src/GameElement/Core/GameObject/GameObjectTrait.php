@@ -37,8 +37,7 @@ trait GameObjectTrait
         return $this->id;
     }
 
-    //TODO: fix this trait to use the correct type for components
-    // need to fix serializing
+    /** @return GameComponentInterface[] */
     public function getComponents(): array
     {
         return $this->components;

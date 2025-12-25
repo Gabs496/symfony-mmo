@@ -95,9 +95,9 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         }
     }
 
-    public function afterDefense(AttackResult $defenseResult)
+    public function afterDefense(AttackResult $defenseResult): void
     {
-        // TODO: Implement afterDefense() method.
+        return;
     }
 
     private function getAttackStats(GameObjectInterface $gameObject): StatCollection

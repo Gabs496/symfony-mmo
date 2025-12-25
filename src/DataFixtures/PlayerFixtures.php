@@ -28,7 +28,7 @@ class PlayerFixtures extends Fixture
             ->setPassword($this->passwordHasher->hashPassword($user, 'devpassword'))
         ;
 
-        $playerGameObject = $this->gameObjectEngine->getPrototype(BasePlayer::getId())->make();
+        $playerGameObject = $this->gameObjectEngine->getPrototype(BasePlayer::ID)->make();
 
         $playerCharacter = new PlayerCharacter($playerGameObject);
         $playerCharacter

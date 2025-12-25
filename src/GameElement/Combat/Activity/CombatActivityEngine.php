@@ -55,6 +55,6 @@ readonly class CombatActivityEngine implements ActivityEngineExtensionInterface
 
     public function cancel(AbstractActivity $activity): void
     {
-        // TODO: Implement cancel() method.
+        return;
     }
 }

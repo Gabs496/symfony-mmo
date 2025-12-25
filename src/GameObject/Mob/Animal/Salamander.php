@@ -24,7 +24,6 @@ use App\GameElement\Render\Component\RenderComponent;
     new PhysicalAttackStat(0.01),
 ], MobCombatManager::ID)]
 #[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
-//TODO: create a MobComponent
 class Salamander extends AbstractGameObjectPrototype implements MobPrototypeInterface
 {
     public const string ID = "MOB_SALAMANDER";

@@ -30,7 +30,6 @@ use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
     new PhysicalAttackStat(0.01),
 ], MobCombatManager::ID)]
 #[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
-//TODO: create a MobComponent
 class Sbinsol extends AbstractGameObjectPrototype implements MobPrototypeInterface
 {
     public const string ID = "MOB_SBINSOL";
