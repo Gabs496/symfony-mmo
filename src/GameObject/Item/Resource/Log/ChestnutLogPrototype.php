@@ -36,7 +36,7 @@ class ChestnutLogPrototype extends AbstractGameObjectPrototype implements Gather
         ];
     }
 
-    public static function getId(): string
+    public function getId(): string
     {
         return self::ID;
     }

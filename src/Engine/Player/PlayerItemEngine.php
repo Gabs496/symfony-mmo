@@ -5,10 +5,12 @@ namespace App\Engine\Player;
 use App\Engine\Player\Event\PlayerItemBagUpdateEvent;
 use App\Entity\Core\GameObject;
 use App\Entity\Data\PlayerCharacter;
+use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
+use App\GameElement\Item\ItemEngineInterface;
 use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
-use App\GameElement\Notification\Engine\NotificationEngine;
+use App\GameElement\Notification\Exception\UserNotificationException;
 use App\Repository\Data\ItemBagRepository;
 use App\Repository\Data\PlayerCharacterRepository;
 use Psr\Log\LoggerInterface;
@@ -19,22 +21,22 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 
-readonly class PlayerItemEngine
+readonly class PlayerItemEngine implements ItemEngineInterface
 {
     public function __construct(
         private EventDispatcherInterface  $eventDispatcher,
         private PlayerCharacterRepository $playerCharacterRepository,
         private HubInterface              $hub,
         private Environment               $twig,
-        private NotificationEngine        $notificationEngine,
         private LoggerInterface           $logger,
         private ItemBagRepository         $itemBagRepository,
     )
     {
     }
     /** @throws MaxBagSizeReachedException */
-    public function giveItem(PlayerCharacter $player, GameObject $item): void
+    public function give(GameObjectInterface $to, GameObjectInterface $item): void
     {
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $to]);
         $backPack = $player->getBackpack();
         $backPack->addItem($item);
         $this->itemBagRepository->save($backPack);
@@ -42,8 +44,9 @@ readonly class PlayerItemEngine
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $backPack));
     }
 
-    public function takeItem(PlayerCharacter $player, GameObjectPrototypeInterface|GameObject $item, int $quantity): GameObject
+    public function take(GameObjectInterface $from, GameObjectInterface $item, int $quantity): GameObject
     {
+        $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $from]);
         $bag = $player->getBackpack();
         if ($item instanceof GameObjectPrototypeInterface) {
             $item = $bag->findAndExtract($item, $quantity);
@@ -51,7 +54,7 @@ readonly class PlayerItemEngine
         } else {
             $item = $bag->extract($item, $quantity);
         }
-        $this->playerCharacterRepository->save($player);
+        $this->itemBagRepository->save($bag);
 
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $bag));
         return $item;
@@ -62,14 +65,14 @@ readonly class PlayerItemEngine
         if (!$item->hasComponent(ItemEquipmentComponent::class)) {
             return;
         }
-        $equipment = $this->takeItem($player, $item, 1);
+        $equipment = $this->take($player->getGameObject(), $item, 1);
 
         try {
             $player->getEquipment()->addItem($equipment);
             $this->itemBagRepository->save($player->getEquipment());
         } catch (MaxBagSizeReachedException) {
-            $this->giveItem($player, $equipment);
-            $this->notificationEngine->danger($player->getId(), 'Your equipment is full, you cannot equip the item.');
+            $this->give($player->getGameObject(), $equipment);
+            throw new UserNotificationException($player->getId(), 'Your equipment is full, you cannot equip the item.');
         }
 
         $this->eventDispatcher->dispatch(new PlayerItemBagUpdateEvent($player->getId(), $player->getBackpack()));
@@ -94,17 +97,15 @@ readonly class PlayerItemEngine
     #[AsEventListener(PlayerItemBagUpdateEvent::class)]
     public function onPlayerItemBagUpdated(PlayerItemBagUpdateEvent $event): void
     {
-        $player = $this->playerCharacterRepository->find($event->getPlayerId());
-
         try {
             $this->hub->publish(new Update(
-                'player_gui_' . $player->getId(),
+                'player_gui_' . $event->getPlayerId(),
                 $this->twig->render('streams/space.stream.html.twig', ['bag' => $event->getItemBag()]),
                 true
             ));
 
             $this->hub->publish(new Update(
-                'player_gui_' . $player->getId(),
+                'player_gui_' . $event->getPlayerId(),
                 $this->twig->render('item_bag/content.stream.html.twig', ['bag' => $event->getItemBag()]),
                 true
             ));

@@ -15,7 +15,7 @@ use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 class BasePlayer extends AbstractGameObjectPrototype
 {
 
-    public static function getId(): string
+    public function getId(): string
     {
         return 'base_player';
     }

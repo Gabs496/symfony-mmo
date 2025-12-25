@@ -2,15 +2,15 @@
 
 namespace App\Controller;
 
-use App\Engine\Player\PlayerCraftingEngine;
+use App\Engine\Player\PlayerItemEngine;
 use App\Entity\Data\PlayerCharacter;
 use App\Entity\Map\MapObject;
 use App\GameElement\Combat\Engine\CombatEngine;
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Crafting\Engine\CraftingEngine;
+use App\GameElement\Crafting\Exception\IngredientNotAvailableException;
 use App\GameElement\Gathering\Engine\GatheringEngine;
 use App\GameElement\Map\Engine\MapEngine;
+use App\GameElement\Notification\Exception\UserNotificationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,13 +64,16 @@ class MapController extends AbstractController
 
     #[Route('/craft/{id}', name: 'app_map_craft')]
     #[IsGranted('ROLE_USER')]
-    public function startCraftingRecipe(GameObjectEngine $gameObjectEngine, PlayerCraftingEngine $craftingEngine, string $id, Request $request): Response
+    public function startCraftingRecipe(CraftingEngine $craftingEngine, PlayerItemEngine $itemEngine, string $id, Request $request): Response
     {
-        /** @var AbstractItemRecipe $recipe */
-        $recipe = $gameObjectEngine->get($id);
         /** @var PlayerCharacter $user */
         $user = $this->getUser();
-        $craftingEngine->startCrafting($user, $recipe);
+
+        try {
+            $craftingEngine->startCrafting($user->getGameObject(), $id, $itemEngine);
+        } catch (IngredientNotAvailableException $event) {
+            throw new UserNotificationException($user->getId(), $event->getMessage());
+        }
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

@@ -5,42 +5,18 @@ namespace App\GameElement\Core\GameObjectPrototype;
 use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameComponent\Exception\InvalidGameComponentException;
 use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameObject\GameObjectTrait;
 use ReflectionClass;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterface
 {
-    private array $components = [];
+    use GameObjectTrait;
 
     public function __construct(private readonly CacheInterface $gameObjectCache)
     {
         $this->components = $this->getGameComponentFromAttributes();
-    }
-
-    public function getComponents(): array
-    {
-        return $this->components;
-    }
-
-    /**
-     * @template T of GameComponentInterface
-     * @param class-string<T> $componentClass
-     * @return T|null
-     */
-    public function getComponent(string $componentClass): ?GameComponentInterface
-    {
-        if ($component = $this->components[$componentClass::getId()] ?? null) {
-            return $component;
-        }
-
-        foreach ($this->components as $component) {
-            if ($component::getId() === $componentClass::getId()) {
-                return $component;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -58,7 +34,7 @@ abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterfa
             $reflection = new ReflectionClass($this);
             foreach ($reflection->getAttributes() as $attribute) {
                 if (is_subclass_of($attribute->getName(), GameComponentInterface::class)) {
-                    $components[] = $attribute->newInstance();
+                    $components[$attribute->getName()::getId()] = $attribute->newInstance();
                 }
             }
             return $components;

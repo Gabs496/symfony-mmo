@@ -25,7 +25,7 @@ class WoodenSwordPrototype extends AbstractGameObjectPrototype
 {
     public const string ID = "EQUIP_SWORD_WOODEN";
 
-    public static function getId(): string
+    public function getId(): string
     {
         return self::ID;
     }

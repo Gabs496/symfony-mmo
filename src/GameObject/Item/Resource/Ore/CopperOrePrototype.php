@@ -36,7 +36,7 @@ class CopperOrePrototype extends AbstractGameObjectPrototype implements Gatherab
         ];
     }
 
-    public static function getId(): string
+    public function getId(): string
     {
         return self::ID;
     }

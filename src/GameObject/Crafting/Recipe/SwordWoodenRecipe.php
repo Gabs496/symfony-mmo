@@ -20,7 +20,7 @@ class SwordWoodenRecipe extends AbstractItemRecipe
             id: self::ID,
             name: 'Wooden Sword',
             description: 'A simple sword made of chestnut wood.',
-            item: $gameObjectEngine->getPrototype(WoodenSwordPrototype::getId())->make(),
+            item: $gameObjectEngine->getPrototype(WoodenSwordPrototype::ID)->make(),
             ingredients: [
                 new RecipeIngredient(ChestnutLogPrototype::ID, 10),
             ],

@@ -15,6 +15,7 @@ use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameElement\Mastery\Engine\MasteryTypeRepository;
 use App\GameElement\Notification\Engine\NotificationEngine;
+use App\GameElement\Notification\Exception\UserNotificationException;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
@@ -87,11 +88,10 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             }
 
             try {
-                $this->playerEngine->giveItem($player, $item);
+                $this->playerEngine->give($player->getGameObject(), $item);
                 $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)->getQuantity(), $item->getComponent(RenderComponent::class)?->getName()));
             } catch (MaxBagSizeReachedException) {
-                $this->notificationEngine->danger($player->getId(), 'Your bag is full, you cannot receive the item.');
-                return;
+                throw new UserNotificationException($player->getId(), 'Your bag is full, you cannot receive the item.');
             }
         }
 

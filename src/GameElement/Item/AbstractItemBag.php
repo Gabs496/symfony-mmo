@@ -2,6 +2,7 @@
 
 namespace App\GameElement\Item;
 
+use App\Entity\Core\GameObject;
 use App\Entity\Item\ItemObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
@@ -50,15 +51,18 @@ abstract class AbstractItemBag
         }
 
         $newInstance = null;
-        $quantity = 0;
+        $itemComponent = null;
         foreach ($this->items as $itemObject) {
             $item = $itemObject->getGameObject();
-            if ($item->getPrototype() === $prototype) {
+            if ($item->isInstanceOf($prototype)) {
+                /** @var GameObject $extractedInstance */
                 $extractedInstance = $this->extract($item, $quantity);
                 if (!$newInstance) {
                     $newInstance = $extractedInstance;
+                    $itemComponent = $extractedInstance->getComponent(ItemComponent::class);
+                } else {
+                    $itemComponent->increaseBy($extractedInstance->getComponent(ItemComponent::class)->getQuantity());
                 }
-                $quantity+= $extractedInstance->getComponent(ItemComponent::class)->getQuantity();
             }
         }
 
@@ -81,7 +85,7 @@ abstract class AbstractItemBag
                     throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $item->getComponent(RenderComponent::class)->getName(), $quantity));
                 }
                 $itemComponent->decreaseBy($quantity);
-                $newGameObject = clone $item;
+                $newGameObject = $item->clone();
                 $extractedItem = $newGameObject->getComponent(ItemComponent::class);
                 $extractedItem->setQuantity($quantity);
                 return $newGameObject;

@@ -43,7 +43,7 @@ readonly class ItemActionEngine
 
     public function eat(PlayerCharacter $player, GameObject $item): void
     {
-        $item = $this->playerItemEngine->takeItem($player, $item, 1);
+        $item = $this->playerItemEngine->take($player->getGameObject(), $item, 1);
         if ($healing = $item->getComponent(HealingComponent::class)) {
             $this->healingEngine->heal($player->getGameObject(), $healing);
             if ($healing->getAmount() > 0.0) {
@@ -63,6 +63,6 @@ readonly class ItemActionEngine
 
     public function drop(PlayerCharacter $player, GameObject $item): void
     {
-        $this->playerItemEngine->takeItem($player, $item, $item->getComponent(ItemComponent::class)->getQuantity());
+        $this->playerItemEngine->take($player->getGameObject(), $item, $item->getComponent(ItemComponent::class)->getQuantity());
     }
 }

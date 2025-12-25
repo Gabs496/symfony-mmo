@@ -7,16 +7,28 @@ use App\GameElement\Core\GameComponent\GameComponentInterface;
 
 trait GameObjectTrait
 {
+    /** @var GameComponentInterface[] */
+    protected array $components;
+
+    /**
+     * @throws InvalidGameComponentException
+     */
     public function __construct(
         protected string $id,
-        /** @var GameComponentInterface[] */
-        protected array $components = [],
+        array $components = [],
     )
     {
-        foreach ($this->components as $component) {
+        foreach ($components as $component) {
             if (!$component instanceof GameComponentInterface) {
                 throw new InvalidGameComponentException(print_r($component, true) . " is not an instance of " . GameComponentInterface::class);
             }
+        }
+
+        /** @var GameComponentInterface[] $components */
+        $this->components = [];
+        foreach ($components as $component) {
+            /** @var GameComponentInterface $component */
+            $this->components[$component::getId()] = $component;
         }
     }
 
@@ -38,16 +50,29 @@ trait GameObjectTrait
         return $this;
     }
 
-    public function removeComponent(string $componentId): void
+    /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     */
+    public function removeComponent(string $componentClass): void
     {
-        unset($this->components[$componentId]);
+        unset($this->components[$componentClass::getId()]);
     }
 
+    /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     */
     public function hasComponent(string $componentClass): bool
     {
         return $this->getComponent($componentClass) !== null;
     }
 
+    /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     * @return T|null
+     */
     public function getComponent(string $componentClass): ?GameComponentInterface
     {
         if ($component = $this->components[$componentClass::getId()] ?? null) {

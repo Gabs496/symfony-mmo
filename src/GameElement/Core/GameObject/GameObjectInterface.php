@@ -16,7 +16,11 @@ interface GameObjectInterface extends Stringable
 
     public function setComponent(GameComponentInterface $component, ?string $componentId = null);
 
-    public function removeComponent(string $componentId): void;
+    /**
+     * @template T of GameComponentInterface
+     * @param class-string<T> $componentClass
+     */
+    public function removeComponent(string $componentClass): void;
 
     public function hasComponent(string $componentClass): bool;
 

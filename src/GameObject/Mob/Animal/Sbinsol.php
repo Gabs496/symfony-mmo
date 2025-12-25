@@ -44,7 +44,7 @@ class Sbinsol extends AbstractGameObjectPrototype implements MobPrototypeInterfa
         ];
     }
 
-    public static function getId(): string
+    public function getId(): string
     {
         return self::ID;
     }
