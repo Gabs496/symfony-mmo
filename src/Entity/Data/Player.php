@@ -4,7 +4,7 @@ namespace App\Entity\Data;
 
 use App\Entity\Activity\Activity;
 use App\Entity\Security\User;
-use PennyPHP\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Mastery\MasterySet;
 use App\GameElement\Position\Component\PositionComponent;

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Healing\Component;
 
-use PennyPHP\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;

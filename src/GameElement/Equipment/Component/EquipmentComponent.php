@@ -3,7 +3,7 @@
 namespace App\GameElement\Equipment\Component;
 
 use App\GameElement\Combat\Component\AbstractStat;
-use PennyPHP\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
