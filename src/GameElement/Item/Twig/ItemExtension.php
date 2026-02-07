@@ -2,8 +2,7 @@
 
 namespace App\GameElement\Item\Twig;
 
-use App\Entity\Item\ItemObject;
-use App\GameElement\Item\Render\ItemBagRenderTemplateComponent;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -20,19 +19,12 @@ class ItemExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('item_object_render', [$this, 'itemObjectRender'], ['is_safe' => ['html_attr']]),
+            new TwigFunction('item_object_render', [$this, 'itemRender'], ['is_safe' => ['html_attr']]),
         ];
     }
 
-    public function itemObjectRender(ItemObject $itemObject): string
+    public function itemRender(GameObject $item): string
     {
-        $render = $itemObject->getGameObject()->getComponent(ItemBagRenderTemplateComponent::class);
-        if (!$render) {
-            return '';
-        }
-
-        if ($render->getTemplate()) {
-            return $this->renderer->createAndRender($render->getTemplate(), ['itemObject' => $itemObject]);
-        }
+        return $this->renderer->createAndRender('Render:ItemBagRenderTemplate', ['item' => $item]);
     }
 }

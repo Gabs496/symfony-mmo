@@ -11,7 +11,7 @@ security:
                 property: email
         app_player_character_provider:
             entity:
-                class: App\Entity\Data\PlayerCharacter
+                class: App\Entity\Data\Player
                 property: name
     firewalls:
         dev:

@@ -3,9 +3,13 @@
 namespace App\Controller;
 
 use App\Engine\Item\ItemActionEngine;
-use App\Entity\Data\PlayerCharacter;
-use App\Entity\Item\ItemBag;
-use App\Entity\Item\ItemObject;
+use App\Entity\Data\Player;
+use App\GameElement\Core\GameObject\Entity\GameObject;
+use App\GameElement\Equipment\Component\EquipmentComponent;
+use App\GameElement\Equipment\EquipmentEngine;
+use App\GameElement\Item\Component\ItemBagComponent;
+use App\GameElement\Position\PositionEngine;
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,12 +21,14 @@ class ItemBagController extends AbstractController
 {
     public function __construct(
         private readonly ItemActionEngine $itemActionEngine,
+        private readonly EquipmentEngine $equipmentEngine,
+        private readonly PositionEngine $positionEngine,
     )
     {
     }
 
     #[Route('/content/{id}', name: 'app_itemBag_content')]
-    public function content(ItemBag $itemBag): Response
+    public function content(ItemBagComponent $itemBag): Response
     {
         return $this->render('item_bag/content.html.twig', [
             'bag' => $itemBag,
@@ -30,12 +36,12 @@ class ItemBagController extends AbstractController
     }
 
     #[Route('/item/drop/{id}', name: 'app_item_drop')]
-    public function drop(ItemObject $itemObject, Request $request): Response
+    public function drop(GameObject $item, Request $request): Response
     {
         //TODO: check permissions to execute action on object
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->getUser();
-        $this->itemActionEngine->drop($player, $itemObject->getGameObject());
+        $this->positionEngine->move($item, $player->getMap(), 'field');
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -45,12 +51,12 @@ class ItemBagController extends AbstractController
     }
 
     #[Route('/item/eat/{id}', name: 'app_item_eat')]
-    public function eat(ItemObject $itemObject, Request $request): Response
+    public function eat(GameObject $item, Request $request): Response
     {
         //TODO: check permissions to execute action on object
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->getUser();
-        $this->itemActionEngine->eat($player, $itemObject->getGameObject());
+        $this->itemActionEngine->eat($player, $item);
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -60,12 +66,16 @@ class ItemBagController extends AbstractController
     }
 
     #[Route('/item/equip/{id}', name: 'app_item_equip')]
-    public function equip(ItemObject $itemObject, Request $request): Response
+    public function equip(GameObject $item, Request $request): Response
     {
         //TODO: check permissions to execute action on object
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->getUser();
-        $this->itemActionEngine->equip($player, $itemObject->getGameObject());
+        $equipmentComponent = $item->getComponent(EquipmentComponent::class);
+        if (!$equipmentComponent) {
+            throw new LogicException('Invalid item type for equip action');
+        }
+        $this->equipmentEngine->equip($item, $player->getGameObject(), $equipmentComponent->getTargetSlot());
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -74,13 +84,13 @@ class ItemBagController extends AbstractController
         return $this->redirectToRoute('app_map');
     }
 
-    #[Route('/item/unequip/{id}', name: 'app_item_unequip')]
-    public function unequip(ItemObject $itemObject, Request $request): Response
+    #[Route('/item/unequip/{slot}', name: 'app_item_unequip')]
+    public function unequip(string $slot, Request $request): Response
     {
         //TODO: check permissions to execute action on object
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->getUser();
-        $this->itemActionEngine->unequip($player, $itemObject->getGameObject());
+        $this->equipmentEngine->unequip($player->getGameObject(), $slot);
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

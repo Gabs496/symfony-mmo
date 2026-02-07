@@ -2,21 +2,20 @@
 
 namespace App\GameElement\Core\GameObjectPrototype;
 
-use App\Entity\Core\GameObject;
 use App\GameElement\Core\GameComponent\Exception\InvalidGameComponentException;
-use App\GameElement\Core\GameComponent\GameComponentInterface;
-use App\GameElement\Core\GameObject\GameObjectTrait;
+use App\GameElement\Core\GameComponent\GameComponent;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use ReflectionClass;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
-abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterface
+abstract class AbstractGameObjectPrototype extends GameObject implements GameObjectPrototypeInterface
 {
-    use GameObjectTrait;
 
-    public function __construct(private readonly CacheInterface $gameObjectCache)
+    public function __construct(
+        private readonly CacheInterface $gameObjectCache
+    )
     {
-        $this->components = $this->getGameComponentFromAttributes();
+        parent::__construct(self::getType(), $this->getGameComponentFromAttributes());
     }
 
     /**
@@ -24,21 +23,30 @@ abstract class AbstractGameObjectPrototype implements GameObjectPrototypeInterfa
      */
     public function make(): GameObject
     {
-        return new GameObject($this, $this->getComponents());
+        return new GameObject(self::getType(), $this->getComponents());
     }
 
     private function getGameComponentFromAttributes(): array
     {
-        return $this->gameObjectCache->get(str_replace("\\", "_", $this::class) . '_components', function (ItemInterface $item) {
+        return $this->gameObjectCache->get(str_replace("\\", "_", $this::class) . '_components', function () {
             $components = [];
             $reflection = new ReflectionClass($this);
             foreach ($reflection->getAttributes() as $attribute) {
                 $name = $attribute->getName();
-                if (is_subclass_of($name, GameComponentInterface::class)) {
-                    $components[$name::getId()] = $attribute->newInstance();
+                if (is_subclass_of($name, GameComponent::class)) {
+
+                    /** @var GameComponent $component */
+                    $component = $attribute->newInstance();
+                    $components[$name::getComponentName()] = $component;
                 }
             }
             return $components;
         });
+    }
+
+    public static function getType(): string
+    {
+        $explodedClass = explode("\\", static::class);
+        return array_pop($explodedClass);
     }
 }

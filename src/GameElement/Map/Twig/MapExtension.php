@@ -2,8 +2,7 @@
 
 namespace App\GameElement\Map\Twig;
 
-use App\Entity\Map\MapObject;
-use App\GameElement\Map\Render\MapRenderTemplateComponent;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -20,19 +19,12 @@ class MapExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('map_object_render', [$this, 'mapObjectRender'], ['is_safe' => ['html_attr']]),
+            new TwigFunction('map_object_render', [$this, 'gameObjectRender'], ['is_safe' => ['html_attr']]),
         ];
     }
 
-    public function mapObjectRender(MapObject $mapObject): string
+    public function gameObjectRender(GameObject $gameObject): string
     {
-        $render = $mapObject->getGameObject()->getComponent(MapRenderTemplateComponent::class);
-        if (!$render) {
-            return '';
-        }
-
-        if ($render->getTemplate()) {
-            return $this->renderer->createAndRender($render->getTemplate(), ['mapObject' => $mapObject]);
-        }
+        return $this->renderer->createAndRender('Render:MapRenderTemplate', ['mapObject' => $gameObject]);
     }
 }

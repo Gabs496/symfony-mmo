@@ -5,9 +5,7 @@ namespace App\GameObject\Item\Equipment\Sword;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Item\Component\ItemComponent;
-use App\GameElement\Item\Render\ItemBagRenderTemplateComponent;
-use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
-use App\GameElement\Map\Render\MapRenderTemplateComponent;
+use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Render\Component\RenderComponent;
 
 #[RenderComponent(
@@ -16,16 +14,17 @@ use App\GameElement\Render\Component\RenderComponent;
     iconPath: '/items/equip_sword_wooden.png'
 )]
 #[ItemComponent(weight: 0.2)]
-#[ItemEquipmentComponent([
-    PhysicalAttackStat::class => new PhysicalAttackStat(0.05)
-])]
-#[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
-#[ItemBagRenderTemplateComponent('Render:ItemBagRenderTemplate')]
+#[EquipmentComponent(
+    targetSlot: 'right_arm',
+    stats: [
+        new PhysicalAttackStat(0.05)
+    ]
+)]
 class WoodenSwordPrototype extends AbstractGameObjectPrototype
 {
     public const string ID = "EQUIP_SWORD_WOODEN";
 
-    public function getId(): string
+    public static function getType(): string
     {
         return self::ID;
     }

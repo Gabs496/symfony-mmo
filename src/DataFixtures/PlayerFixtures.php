@@ -2,9 +2,12 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\Entity\Security\User;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
+use App\GameElement\Core\GameObject\Entity\GameObject;
+use App\GameElement\Map\Component\MapComponent;
+use App\GameElement\Position\Component\PositionComponent;
 use App\GameObject\Map\BirthTown;
 use App\GameObject\PlayerCharacter\BasePlayer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -22,23 +25,45 @@ class PlayerFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $playerGameObject = $this->gameObjectEngine->make(BasePlayer::class);
+
+        $user = self::createCredentials();
+        $manager->persist($user);
+
+        self::initPlayer($playerGameObject, $user);
+        self::spawnInMap($playerGameObject);
+
+        $manager->persist($playerGameObject);
+        $manager->flush();
+    }
+
+    private function createCredentials(): User
+    {
         $user = new User();
         $user
             ->setEmail('dev@dev.org')
             ->setPassword($this->passwordHasher->hashPassword($user, 'devpassword'))
         ;
 
-        $playerGameObject = $this->gameObjectEngine->getPrototype(BasePlayer::ID)->make();
+        return $user;
+    }
 
-        $playerCharacter = new PlayerCharacter($playerGameObject);
-        $playerCharacter
+    private function initPlayer(GameObject $playerGameObject, User $user): void
+    {
+        $playerComponent = $playerGameObject->getComponent(Player::class);
+        $playerComponent
             ->setUser($user)
             ->setName('Dev Player')
-            ->setMap(new BirthTown())
         ;
-        $user->addPlayerCharacter($playerCharacter);
+        $user->addPlayerCharacter($playerComponent);
+    }
 
-        $manager->persist($user);
-        $manager->flush();
+    private function spawnInMap(GameObject $playerGameObject): void
+    {
+        $playerGameObject->getComponent(PositionComponent::class)
+            ->setPlaceType(MapComponent::getComponentName())
+            ->setPlaceId(BirthTown::ID)
+            ->setPosition('field')
+        ;
     }
 }

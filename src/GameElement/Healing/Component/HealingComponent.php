@@ -2,15 +2,20 @@
 
 namespace App\GameElement\Healing\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class HealingComponent implements GameComponentInterface
+#[Entity]
+class HealingComponent extends GameComponent
 {
     public function __construct(
+        #[Column]
         protected float $amount,
     ) {
+        parent::__construct();
     }
 
     public function getAmount(): float
@@ -18,7 +23,7 @@ class HealingComponent implements GameComponentInterface
         return $this->amount;
     }
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return 'healing_component';
     }

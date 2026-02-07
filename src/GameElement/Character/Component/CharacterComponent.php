@@ -2,19 +2,25 @@
 
 namespace App\GameElement\Character\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class CharacterComponent implements GameComponentInterface
+#[Entity]
+class CharacterComponent extends GameComponent
 {
     public function __construct(
+        #[Column(type: 'float', nullable: false)]
         protected float $maxHealth = 1.0,
+        #[Column(type: 'float', nullable: false)]
         protected float $health = -1.0,
     ) {
         if ($health < 0) {
             $this->health = $maxHealth;
         }
+        parent::__construct();
     }
 
     public function getMaxHealth(): float
@@ -51,7 +57,7 @@ class CharacterComponent implements GameComponentInterface
     }
 
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return 'character_component';
     }

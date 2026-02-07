@@ -8,7 +8,6 @@ use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
 use App\GameElement\Combat\Reward\CombatStatReward;
 use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
-use App\GameElement\Map\Render\MapRenderTemplateComponent;
 use App\GameElement\Mob\Combat\MobCombatManager;
 use App\GameElement\Mob\MobPrototypeInterface;
 use App\GameElement\Render\Component\RenderComponent;
@@ -23,7 +22,6 @@ use App\GameElement\Render\Component\RenderComponent;
     new PhysicalDefenseStat(0.0),
     new PhysicalAttackStat(0.01),
 ], MobCombatManager::ID)]
-#[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
 class Salamander extends AbstractGameObjectPrototype implements MobPrototypeInterface
 {
     public const string ID = "MOB_SALAMANDER";
@@ -35,7 +33,7 @@ class Salamander extends AbstractGameObjectPrototype implements MobPrototypeInte
         ];
     }
 
-    public function getId(): string
+    public static function getType(): string
     {
         return self::ID;
     }

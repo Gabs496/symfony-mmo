@@ -16,7 +16,6 @@ use App\GameElement\Combat\StatCollection;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\Repository\Game\GameObjectRepository;
-use App\Repository\Game\MapObjectRepository;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -26,7 +25,6 @@ readonly class MobCombatManager implements CombatManagerInterface
 
     public function __construct(
         private GameObjectRepository     $gameObjectRepository,
-        private MapObjectRepository      $mapObjectRepository,
         private HealthEngine             $healthEngine,
         private CombatSystemInterface    $combatSystem,
         private EventDispatcherInterface $eventDispatcher,
@@ -74,7 +72,6 @@ readonly class MobCombatManager implements CombatManagerInterface
             throw new RuntimeException(sprintf('Defender %s:%s does not have %s component', $defender::class, $defender->getId(), CharacterComponent::class));
         }
         if (!$characterComponent->isAlive()) {
-            $this->mapObjectRepository->remove($this->mapObjectRepository->findOneBy(['gameObject' => $defender]));
             $this->gameObjectRepository->remove($defender);
             $attackResult->setIsDefeated(true);
         }

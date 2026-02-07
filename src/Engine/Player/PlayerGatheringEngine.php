@@ -2,8 +2,8 @@
 
 namespace App\Engine\Player;
 
-use App\Entity\Core\GameObject;
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Item\Reward\ItemReward;
@@ -35,7 +35,7 @@ readonly class PlayerGatheringEngine implements EventSubscriberInterface
     {
         $subject = $event->getSubject();
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $subject]);
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
 

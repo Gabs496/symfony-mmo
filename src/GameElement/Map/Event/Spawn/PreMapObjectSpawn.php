@@ -2,25 +2,32 @@
 
 namespace App\GameElement\Map\Event\Spawn;
 
-use App\Entity\Map\MapObject;
+use App\GameElement\Core\GameObject\Entity\GameObject;
+use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 
 class PreMapObjectSpawn
 {
     public function __construct(
-        protected MapObject   $mapObject,
-        protected ObjectSpawn $objectSpawn,
+        private readonly MapComponent $mapComponent,
+        private readonly ObjectSpawn  $objectSpawn,
+        private readonly GameObject   $object,
     )
     {
     }
 
-    public function getMapObject(): MapObject
+    public function getMapComponent(): MapComponent
     {
-        return $this->mapObject;
+        return $this->mapComponent;
     }
 
     public function getObjectSpawn(): ObjectSpawn
     {
         return $this->objectSpawn;
+    }
+
+    public function getObject(): GameObject
+    {
+        return $this->object;
     }
 }

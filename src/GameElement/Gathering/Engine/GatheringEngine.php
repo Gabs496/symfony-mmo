@@ -4,6 +4,7 @@ namespace App\GameElement\Gathering\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Component\AttachedResourceComponent;
@@ -13,7 +14,6 @@ use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\Repository\Game\GameObjectRepository;
-use App\Repository\Game\MapObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class GatheringEngine
@@ -21,7 +21,6 @@ readonly class GatheringEngine
 
     public function __construct(
         private GameObjectRepository     $gameObjectRepository,
-        private MapObjectRepository      $mapObjectRepository,
         private RewardEngine             $rewardEngine,
         private EventDispatcherInterface $eventDispatcher,
         private ActivityEngine           $activityEngine, private GameObjectEngine $gameObjectEngine,
@@ -43,7 +42,7 @@ readonly class GatheringEngine
         $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($subject, $newObject));
     }
 
-    protected function take(GameObjectInterface $gameObject, float $quantity): ?GameObjectInterface
+    protected function take(GameObject $gameObject, float $quantity): ?GameObjectInterface
     {
         $resource = $gameObject->getComponent(AttachedResourceComponent::class);
 
@@ -60,7 +59,6 @@ readonly class GatheringEngine
         $resource->decreaseAvailability($quantity);
         $isDepealed = $resource->getAvailability() <= 0;
         if ($isDepealed) {
-            $this->mapObjectRepository->remove($this->mapObjectRepository->findOneBy(['gameObject' => $gameObject]));
             $this->gameObjectRepository->remove($gameObject);
         } else {
             $this->gameObjectRepository->save($gameObject);
@@ -69,9 +67,9 @@ readonly class GatheringEngine
         return $newObject;
     }
 
-    protected function handleReward(GameObjectInterface $subject, GameObjectInterface $resource): void
+    protected function handleReward(GameObject $subject, GameObject $resource): void
     {
-        $objectHandler = $this->gameObjectEngine->getPrototype($resource);
+        $objectHandler = $this->gameObjectEngine->getPrototype($resource->getPrototype());
 
         if (!$objectHandler instanceof GatherableInterface) {
             return;

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,7 +14,7 @@ class PlayerCharacterController extends AbstractController
     #[Route("/stats", name: "playerCharacter_stats")]
     public function stats(UserInterface $user): Response
     {
-        /** @var PlayerCharacter $user */
+        /** @var Player $user */
         return $this->render('player_character/stats.html.twig', [
             'playerCharacter' => $user,
         ]);

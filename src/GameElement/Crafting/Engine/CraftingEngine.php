@@ -11,7 +11,6 @@ use App\GameElement\Crafting\Exception\IngredientNotAvailableException;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\ItemEngineInterface;
 use App\GameElement\Item\Reward\ItemReward;
-use App\GameElement\Notification\Exception\UserNotificationException;
 use App\GameElement\Reward\Engine\RewardEngine;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;

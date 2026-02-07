@@ -7,8 +7,6 @@ use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Item\Component\ItemComponent;
-use App\GameElement\Item\Render\ItemBagRenderTemplateComponent;
-use App\GameElement\Map\Render\MapRenderTemplateComponent;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameObject\Mastery\Gathering\Mining;
 
@@ -23,8 +21,6 @@ use App\GameObject\Mastery\Gathering\Mining;
     involvedMastery: Mining::ID,
 )]
 
-#[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
-#[ItemBagRenderTemplateComponent('Render:ItemBagRenderTemplate')]
 class CopperOrePrototype extends AbstractGameObjectPrototype implements GatherableInterface
 {
     public const string ID = 'RESOURCE_ORE_COPPER';
@@ -36,7 +32,7 @@ class CopperOrePrototype extends AbstractGameObjectPrototype implements Gatherab
         ];
     }
 
-    public function getId(): string
+    public static function getType(): string
     {
         return self::ID;
     }

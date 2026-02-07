@@ -2,22 +2,20 @@
 
 namespace App\GameElement\Core\GameObject;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Stringable;
 
 interface GameObjectInterface extends Stringable
 {
     public function getId(): string;
 
-    public function clone(): GameObjectInterface;
-
-    /** @return GameComponentInterface[] */
+    /** @return GameComponent[] */
     public function getComponents(): array;
 
-    public function setComponent(GameComponentInterface $component, ?string $componentId = null);
+    public function setComponent(GameComponent $component);
 
     /**
-     * @template T of GameComponentInterface
+     * @template T of GameComponent
      * @param class-string<T> $componentClass
      */
     public function removeComponent(string $componentClass): void;
@@ -25,11 +23,11 @@ interface GameObjectInterface extends Stringable
     public function hasComponent(string $componentClass): bool;
 
     /**
-     * @template T of GameComponentInterface
+     * @template T of GameComponent
      * @param class-string<T> $componentClass
      * @return T|null
      */
-    public function getComponent(string $componentClass): ?GameComponentInterface;
+    public function getComponent(string $componentClass): ?GameComponent;
 
     public function __toString(): string;
 }

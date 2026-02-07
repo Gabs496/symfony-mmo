@@ -2,14 +2,13 @@
 
 namespace App\GameElement\Map\Engine\Spawn\Handler;
 
-use App\Entity\Core\GameObject;
-use App\Entity\Map\MapObject;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Map\AbstractMap;
+use App\GameElement\Core\GameObject\Entity\GameObject;
+use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;
 use App\GameElement\Map\Event\Spawn\PreMapObjectSpawn;
-use App\Repository\Game\MapObjectRepository;
+use App\GameElement\Position\PositionEngine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -19,9 +18,9 @@ readonly class ObjectSpawnHandler
 {
 
     public function __construct(
-        protected MapObjectRepository $mapObjectRepository,
         protected GameObjectEngine $gameObjectEngine,
         protected EventDispatcherInterface $eventDispatcher,
+        protected PositionEngine $positionEngine,
     )
     {
 
@@ -41,30 +40,28 @@ readonly class ObjectSpawnHandler
         }
     }
 
-    private function spawnNewObject(AbstractMap $map, ObjectSpawn $objectSpawn): void
+    private function spawnNewObject(MapComponent $map, ObjectSpawn $objectSpawn): void
     {
-        $prototype = $this->gameObjectEngine->getPrototype($objectSpawn->getPrototypeId());
-        $instance = $prototype->make();
-        $mapObject = new MapObject($map, $instance);
-        $this->eventDispatcher->dispatch(new PreMapObjectSpawn($mapObject, $objectSpawn));
-        $this->mapObjectRepository->save($mapObject);
+        $instance = $this->gameObjectEngine->make($objectSpawn->getPrototypeId());
+        $this->positionEngine->move($instance, MapComponent::getComponentName(), $map->getId());
+        $this->eventDispatcher->dispatch(new PreMapObjectSpawn($map, $objectSpawn, $instance));
     }
 
-    private function hasFreeSpace(AbstractMap $map, ObjectSpawn $objectSpawn): bool
+    private function hasFreeSpace(MapComponent $map, ObjectSpawn $objectSpawn): bool
     {
 
         return $this->getFreeSpace($map, $objectSpawn) > 0;
     }
 
-    private function getFreeSpace(AbstractMap $map, ObjectSpawn $objectSpawn): int
+    private function getFreeSpace(MapComponent $map, ObjectSpawn $objectSpawn): int
     {
         return $objectSpawn->getMaxAvailability() - $this->getSpaceTaken($map, $objectSpawn);
     }
 
-    private function getSpaceTaken(AbstractMap $map, ObjectSpawn $objectSpawn): int
+    private function getSpaceTaken(MapComponent $map, ObjectSpawn $objectSpawn): int
     {
-        $spots = $this->mapObjectRepository->findBy(['map' => $map]);
-        $spots = array_filter($spots, fn(MapObject $mapObject) => $mapObject->getGameObject()->getPrototype() === $objectSpawn->getPrototypeId());
+        $spots = $this->positionEngine->getContents(MapComponent::getComponentName(),$map->getId());
+        $spots = array_filter($spots, fn(GameObject $gameObject) => $gameObject->isInstanceOf($objectSpawn->getPrototypeId()));
         return (new ArrayCollection($spots))->reduce(function (int $carry) {
             return $carry + 1;
         }, 0);

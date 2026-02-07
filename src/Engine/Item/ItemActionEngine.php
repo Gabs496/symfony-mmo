@@ -3,21 +3,16 @@
 namespace App\Engine\Item;
 
 use App\Engine\Math;
-use App\Engine\Player\PlayerItemEngine;
-use App\Entity\Core\GameObject;
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Healing\Engine\HealingEngine;
-use App\GameElement\Item\Component\ItemComponent;
-use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
-use RuntimeException;
 
 readonly class ItemActionEngine
 {
     public function __construct(
-        private PlayerItemEngine          $playerItemEngine,
         private HealingEngine             $healingEngine,
         private NotificationEngine        $notificationEngine,
         private PlayerCharacterRepository $playerCharacterRepository,
@@ -25,25 +20,8 @@ readonly class ItemActionEngine
     {
     }
 
-    public function equip(PlayerCharacter $player, GameObject $item): void
+    public function eat(Player $player, GameObject $item): void
     {
-        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
-            throw new RuntimeException('Invalid item type for equip action');
-        }
-        $this->playerItemEngine->equip($item, $player);
-    }
-
-    public function unequip(PlayerCharacter $player, GameObject $item): void
-    {
-        if (!$item->hasComponent(ItemEquipmentComponent::class)) {
-            throw new RuntimeException('Invalid item type for unequip action');
-        }
-        $this->playerItemEngine->unequip($item, $player);
-    }
-
-    public function eat(PlayerCharacter $player, GameObject $item): void
-    {
-        $item = $this->playerItemEngine->take($player->getGameObject(), $item, 1);
         if ($healing = $item->getComponent(HealingComponent::class)) {
             $this->healingEngine->heal($player->getGameObject(), $healing);
             if ($healing->getAmount() > 0.0) {
@@ -59,10 +37,5 @@ readonly class ItemActionEngine
             }
         }
         $this->playerCharacterRepository->save($player);
-    }
-
-    public function drop(PlayerCharacter $player, GameObject $item): void
-    {
-        $this->playerItemEngine->take($player->getGameObject(), $item, $item->getComponent(ItemComponent::class)->getQuantity());
     }
 }

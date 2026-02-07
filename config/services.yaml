@@ -26,12 +26,8 @@ services:
     _instanceof:
         App\GameElement\Combat\Engine\CombatManagerInterface:
             tags: ['combat.manager']
-        App\GameElement\Core\GameObject\GameObjectInterface:
-            tags: [ 'game.object' ]
         App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface:
             tags: [ 'game.object.prototype' ]
-        App\GameElement\Core\GameComponent\GameComponentInterface:
-            tags: ['game.component']
         App\GameElement\Mastery\MasteryType:
             tags: [ 'mastery.type' ]
         App\GameElement\Reward\RewardApplierInterface:

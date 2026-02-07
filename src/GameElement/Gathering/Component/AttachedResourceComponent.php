@@ -2,14 +2,19 @@
 
 namespace App\GameElement\Gathering\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class AttachedResourceComponent implements GameComponentInterface
+#[Entity]
+class AttachedResourceComponent extends GameComponent
 {
     public function __construct(
+        #[Column]
         private readonly int  $maxAvaliability = 1,
+        #[Column]
         private int $availability = 1
     ){
 
@@ -30,7 +35,7 @@ class AttachedResourceComponent implements GameComponentInterface
         $this->availability -= $amount;
     }
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return "attached_resource_component";
     }

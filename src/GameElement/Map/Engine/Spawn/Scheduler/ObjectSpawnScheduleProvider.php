@@ -2,10 +2,9 @@
 
 namespace App\GameElement\Map\Engine\Spawn\Scheduler;
 
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Map\AbstractMap;
-use App\GameElement\Map\Component\Spawn\SpawnComponent;
+use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -17,7 +16,7 @@ class ObjectSpawnScheduleProvider implements ScheduleProviderInterface
     private ?Schedule $schedule = null;
 
     public function __construct(
-        private readonly GameObjectEngine $gameObjectEngine,
+        private readonly EntityManagerInterface $entityManager,
     )
     {
     }
@@ -40,15 +39,14 @@ class ObjectSpawnScheduleProvider implements ScheduleProviderInterface
 
     private function scheduleObjectSpawn(Schedule $schedule): void
     {
-        $maps = $this->gameObjectEngine->getByClass(AbstractMap::class);
+        $maps = $this->entityManager->getRepository(MapComponent::class)->findAll();
         foreach ($maps as $map) {
-            $spawn = $map->getComponent(SpawnComponent::class);
-            if (!$spawn) {
+            $objectSpawns = $map->getSpawns();
+            if (empty($objectSpawn)) {
                 continue;
             }
 
 
-            $objectSpawns = $spawn->getSpawns();
             foreach ($objectSpawns as $objectSpawn) {
                 $message = new ObjectSpawnAction($objectSpawn, $map);
                 $recurringMessage = RecurringMessage::every('5 seconds', $message);

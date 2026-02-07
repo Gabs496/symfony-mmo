@@ -2,118 +2,50 @@
 
 namespace App\GameElement\Core\GameObject\Engine;
 
-use App\Entity\Core\GameObject;
-use App\GameElement\Core\GameObject\Doctrine\Type\GameObjectPlaceholder;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use App\GameElement\Core\GameObject\Exception\GameObjectNotFound;
 use App\GameElement\Core\GameObject\Exception\RegisteredANonGameObjectException;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
-use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\Event\PostLoadEventArgs;
-use Doctrine\ORM\Events;
-use Psr\Cache\InvalidArgumentException;
-use ReflectionObject;
+use App\Repository\Game\GameObjectRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
-/**
- * @template T
- */
-#[AsDoctrineListener(event: Events::postLoad)]
 readonly class GameObjectEngine
 {
     public function __construct(
-        #[AutowireIterator('game.object')]
-        private iterable       $gameObjectCollection,
         #[AutowireIterator('game.object.prototype')]
         private iterable       $gameObjectPrototypeCollection,
-        private CacheInterface $gameObjectCache,
+        private GameObjectRepository $gameObjectRepository,
     )
     {
     }
 
-    public function postLoad(PostLoadEventArgs $args): void
+    public function get(string $id): GameObject
     {
-        $entity = $args->getObject();
-
-        $reflection = new ReflectionObject($entity);
-
-        foreach ($reflection->getProperties() as $property) {
-            $type = $property->getType();
-            if ($type->getName() === GameObjectInterface::class) {
-                $field = $property->getName();
-                $property = $reflection->getProperty($field);
-                if (!$property->isInitialized($entity)) {
-                    break;
-                }
-                $value = $property->getValue($entity);
-                if ($value instanceof GameObjectPlaceholder) {
-                    $gameObject = $this->get($value->getId());
-                    $property->setValue($entity,$gameObject);
-                }
-            }
-        }
+        return $this->gameObjectRepository->find($id);
     }
 
-    public function get(string $id): GameObjectInterface
+    public function getPrototype(string $type): GameObjectPrototypeInterface
     {
-        return $this->gameObjectCache->get('game_object.' . $id,function (ItemInterface $item) use ($id) {
-            foreach ($this->gameObjectCollection as $gameObject) {
-                if (!$gameObject instanceof GameObjectInterface) {
-                    throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, GameObjectInterface::class));
-                }
-
-                if ($gameObject->getId() === $id) {
-                    return $gameObject;
-                }
-            }
-            throw new GameObjectNotFound('Game object for class "'.$id.'" not found');
-        });
-    }
-
-    public function getPrototype(string|GameObject $id): GameObjectPrototypeInterface
-    {
-        if ($id instanceof GameObjectInterface) {
-            $id = $id->getPrototype();
-        }
-
         foreach ($this->gameObjectPrototypeCollection as $gameObjectPrototype) {
             if (!$gameObjectPrototype instanceof GameObjectPrototypeInterface) {
                 throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObjectPrototype::class, GameObjectPrototypeInterface::class));
             }
 
-            if ($gameObjectPrototype->getid() === $id) {
+            if ($type === $gameObjectPrototype->getType()) {
                 return $gameObjectPrototype;
             }
         }
-        throw new GameObjectNotFound('Game object prototype for class "'.$id.'" not found');
+        throw new GameObjectNotFound('Game object prototype for class "'.$type.'" not found');
     }
 
-    /**
-     * @param class-string<T> $class
-     * @return T[]
-     * @throws InvalidArgumentException
-     */
-    public function getByClass(string $class): array
+    public function make(string $type): GameObject
     {
-        return $this->gameObjectCache->get(hash('md5', $class),function (ItemInterface $item) use ($class) {
-            $result = [];
-            foreach ($this->gameObjectCollection as $gameObject) {
-                if (!$gameObject instanceof GameObjectInterface) {
-                    throw new RegisteredANonGameObjectException(sprintf('Class %s is tagged as game.object but does not extend %s',$gameObject::class, GameObjectInterface::class));
-                }
+        if (is_subclass_of($type, AbstractGameObjectPrototype::class)) {
+            $type = $type::getType();
+        }
 
-                if ($gameObject instanceof $class) {
-                    $result[] = $gameObject;
-                }
-            }
-
-            if (empty($result)) {
-                throw new GameObjectNotFound('Game object for class "'.$class.'" not found');
-            }
-
-            return $result;
-        });
+        $prototype = $this->getPrototype($type);
+        return $prototype->make();
     }
 }

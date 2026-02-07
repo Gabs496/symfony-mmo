@@ -4,8 +4,7 @@ namespace App\Engine\Player;
 
 use App\Engine\Math;
 use App\Engine\Reward\MasteryReward;
-use App\Entity\Core\GameObject;
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Reward\CombatStatReward;
 use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
@@ -19,6 +18,7 @@ use App\GameElement\Notification\Exception\UserNotificationException;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
+use App\GameObject\PlayerCharacter\BasePlayer;
 use App\Repository\Data\PlayerCharacterRepository;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -28,13 +28,13 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
 {
     public function __construct(
         private PlayerCharacterRepository $repository,
-        private PlayerItemEngine          $playerEngine,
         private NotificationEngine        $notificationEngine,
         private MasteryTypeRepository     $masteryEngine,
         private GameObjectEngine          $gameObjectEngine,
         private HubInterface              $hub,
         private Environment               $twig,
         private PlayerCharacterRepository   $playerCharacterRepository,
+        private BasePlayer               $basePlayer,
     )
     {
     }
@@ -42,12 +42,12 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
     public function supports(RewardApply $rewardApply): bool
     {
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $rewardApply->getRecipe()]);
-        return $player instanceof PlayerCharacter;
+        return $player instanceof Player;
     }
 
     public function apply(RewardApply $rewardApply): void
     {
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $rewardApply->getRecipe()]);
 
         $reward = $rewardApply->getReward();
@@ -78,9 +78,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
 
         if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
             if ($reward instanceof ItemRuntimeCreatedReward) {
-                $itemPrototype = $this->gameObjectEngine->getPrototype($reward->getItemPrototypeId());
-                /** @var GameObject $item */
-                $item = $itemPrototype->make();
+                $item = $this->gameObjectEngine->make($reward->getItemPrototypeId());
                 $itemComponent = $item->getComponent(ItemComponent::class);
                 $itemComponent->setQuantity($reward->getQuantity());
             } else {
@@ -88,8 +86,8 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             }
 
             try {
-                $this->playerEngine->give($player->getGameObject(), $item);
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)->getQuantity(), $item->getComponent(RenderComponent::class)?->getName()));
+                $this->basePlayer->give($player->getGameObject(), $item);
+                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)->getQuantity(), $item->getComponent(RenderComponent::class)?->getComponentName()));
             } catch (MaxBagSizeReachedException) {
                 throw new UserNotificationException($player->getId(), 'Your bag is full, you cannot receive the item.');
             }

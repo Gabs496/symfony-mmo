@@ -2,17 +2,22 @@
 
 namespace App\GameElement\Gathering\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-readonly class ResourceComponent implements GameComponentInterface
+#[Entity]
+class ResourceComponent extends GameComponent
 {
     public function __construct(
-        private float  $gatheringDifficulty,
-        private string $involvedMastery,
+        #[Column]
+        private readonly float  $gatheringDifficulty,
+        #[Column]
+        private readonly string $involvedMastery,
     ){
-
+        parent::__construct();
     }
 
     public function getGatheringDifficulty(): float
@@ -25,7 +30,7 @@ readonly class ResourceComponent implements GameComponentInterface
         return $this->involvedMastery;
     }
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return "resource_component";
     }

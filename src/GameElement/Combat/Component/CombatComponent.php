@@ -4,18 +4,24 @@ namespace App\GameElement\Combat\Component;
 
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-readonly class CombatComponent implements GameComponentInterface
+#[Entity]
+class CombatComponent extends GameComponent
 {
     public function __construct(
         /** @var AbstractStat[] $stats */
+        #[Column(type: 'json_document', nullable: false)]
         protected array  $stats,
+        #[Column(type: 'string', nullable: false)]
         protected string $managerId,
     )
     {
+        parent::__construct();
     }
 
     public function getStats(): array
@@ -51,7 +57,7 @@ readonly class CombatComponent implements GameComponentInterface
         return $this->managerId;
     }
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return 'combat_component';
     }

@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player;
 
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\GameElement\Character\Event\HealthModifiedEvent;
 use App\GameElement\Character\Event\HealthReachedZeroEvent;
 use App\GameElement\Notification\Engine\NotificationEngine;
@@ -38,7 +38,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
     public function updateHealthBar(HealthModifiedEvent $event): void
     {
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getObject()]);
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
 
@@ -51,7 +51,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
     public function notifyGameOver(HealthReachedZeroEvent $event): void
     {
         $player = $event->getObject();
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
 

@@ -6,7 +6,7 @@ use App\GameElement\Core\GameObject\GameObjectInterface;
 use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Item\Component\ItemComponent;
-use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
+use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Render\Component\RenderComponent;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
@@ -19,7 +19,7 @@ final class ItemRenderTemplate
     #[ExposeInTemplate]
     public RenderComponent $render;
     public ItemComponent $itemComponent;
-    public ?ItemEquipmentComponent $itemEquipment = null;
+    public ?EquipmentComponent $itemEquipment = null;
     public ?HealingComponent $healing = null;
 
     public function mount(GameObjectInterface|GameObjectPrototypeInterface $item, ?RenderComponent $render = null): void
@@ -27,7 +27,7 @@ final class ItemRenderTemplate
         $this->item = $item;
         $this->render = $render ?? $this->item->getComponent(RenderComponent::class);
         $this->itemComponent = $this->item->getComponent(ItemComponent::class);
-        $this->itemEquipment = $this->item->getComponent(ItemEquipmentComponent::class);
+        $this->itemEquipment = $this->item->getComponent(EquipmentComponent::class);
         $this->healing = $this->item->getComponent(HealingComponent::class);
     }
 }

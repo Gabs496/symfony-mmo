@@ -27,7 +27,7 @@ class RecipeRenderTemplate
     public function getIngredients(): iterable
     {
         foreach ($this->recipe->getIngredients() as $ingredient) {
-            $item = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId())->make();
+            $item = $this->gameObjectEngine->make($ingredient->getItemPrototypeId());
             $item->getComponent(ItemComponent::class)->setQuantity($ingredient->getQuantity());
             yield $item;
         }

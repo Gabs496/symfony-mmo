@@ -6,6 +6,7 @@ use App\Repository\Data\ActivityRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
+#[ORM\Table(name: "activity_activity")]
 class Activity
 {
     #[ORM\Id]

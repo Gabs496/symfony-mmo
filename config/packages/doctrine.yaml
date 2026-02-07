@@ -8,14 +8,12 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
-        types:
-          game_object: App\GameElement\Core\GameObject\Doctrine\Type\GameObjectType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
         report_fields_where_declared: true
         validate_xml_mapping: true
-        naming_strategy: App\Doctrine\SubdirNamingStrategy
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
@@ -26,6 +24,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            GameElement:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/GameElement'
+                prefix: 'App\GameElement'
+                alias: Element
         controller_resolver:
             auto_mapping: false
 

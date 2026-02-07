@@ -44,6 +44,5 @@ readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensi
 
     public function cancel(AbstractActivity $activity): void
     {
-        // TODO: Implement cancel() method.
     }
 }

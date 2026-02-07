@@ -2,17 +2,24 @@
 
 namespace App\GameElement\Render\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class RenderComponent implements GameComponentInterface
+#[Entity]
+class RenderComponent extends GameComponent
 {
     public function __construct(
+        #[Column(length: 50)]
         protected string $name,
+        #[Column(nullable: true)]
         protected ?string $description = null,
+        #[Column(length: 50, nullable: true)]
         protected ?string $iconPath = null,
     ) {
+        parent::__construct();
     }
 
     public function getName(): string
@@ -45,7 +52,7 @@ class RenderComponent implements GameComponentInterface
         $this->iconPath = $iconPath;
     }
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return 'render_component';
     }

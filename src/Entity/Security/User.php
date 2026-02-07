@@ -2,7 +2,7 @@
 
 namespace App\Entity\Security;
 
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\Table(name: "security_user")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -33,9 +34,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
-     * @var Collection<int, PlayerCharacter>
+     * @var Collection<int, Player>
      */
-    #[ORM\OneToMany(targetEntity: PlayerCharacter::class, mappedBy: 'user', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'user', cascade: ['persist'])]
     private Collection $playerCharacters;
 
     public function __construct()
@@ -119,14 +120,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, PlayerCharacter>
+     * @return Collection<int, Player>
      */
     public function getPlayerCharacters(): Collection
     {
         return $this->playerCharacters;
     }
 
-    public function addPlayerCharacter(PlayerCharacter $playerCharacter): static
+    public function addPlayerCharacter(Player $playerCharacter): static
     {
         if (!$this->playerCharacters->contains($playerCharacter)) {
             $this->playerCharacters->add($playerCharacter);
@@ -136,7 +137,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removePlayerCharacter(PlayerCharacter $playerCharacter): static
+    public function removePlayerCharacter(Player $playerCharacter): static
     {
         if ($this->playerCharacters->removeElement($playerCharacter)) {
             // set the owning side to null (unless already changed)

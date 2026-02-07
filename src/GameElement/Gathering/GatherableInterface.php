@@ -2,10 +2,10 @@
 
 namespace App\GameElement\Gathering;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Reward\RewardInterface;
 
 interface GatherableInterface
 {
-    /** @return GameComponentInterface[] */
+    /** @return array<RewardInterface> */
     public function getGatherRewards(): array;
 }

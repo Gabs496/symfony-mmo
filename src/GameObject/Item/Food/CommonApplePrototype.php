@@ -8,8 +8,6 @@ use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Item\Component\ItemComponent;
-use App\GameElement\Item\Render\ItemBagRenderTemplateComponent;
-use App\GameElement\Map\Render\MapRenderTemplateComponent;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameObject\Mastery\Gathering\Harvesting;
 
@@ -25,8 +23,6 @@ use App\GameObject\Mastery\Gathering\Harvesting;
 )]
 #[HealingComponent(0.05)]
 
-#[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
-#[ItemBagRenderTemplateComponent('Render:ItemBagRenderTemplate')]
 class CommonApplePrototype extends AbstractGameObjectPrototype implements GatherableInterface
 {
     public const string ID = 'RESOURCE_FOOD_COMMON_APPLE';
@@ -38,7 +34,7 @@ class CommonApplePrototype extends AbstractGameObjectPrototype implements Gather
         ];
     }
 
-    public function getId(): string
+    public static function getType(): string
     {
         return self::ID;
     }

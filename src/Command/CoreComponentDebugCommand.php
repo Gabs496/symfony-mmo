@@ -2,13 +2,12 @@
 
 namespace App\Command;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\AutoGameComponentSubscriber;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'core:component:debug',
@@ -17,8 +16,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class CoreComponentDebugCommand extends Command
 {
     public function __construct(
-        /** @var iterable<GameComponentInterface> */
-        private ParameterBagInterface $parameterBag,
+        private AutoGameComponentSubscriber $engine,
     )
     {
         parent::__construct();
@@ -33,13 +31,12 @@ class CoreComponentDebugCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $rows = [];
-        foreach ($this->parameterBag->get('game.components') as $id => $component) {
+        foreach ($this->engine->getSubscribedComponents() as $component) {
             $rows[] = [
-                'id' => $id,
                 'class' => $component,
             ];
         }
-        $io->table(['id', 'class'], $rows);
+        $io->table(['class'], $rows);
 
         return Command::SUCCESS;
     }

@@ -2,13 +2,13 @@
 
 namespace App\Repository\Data;
 
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PlayerCharacter>
+ * @extends ServiceEntityRepository<Player>
  */
 class PlayerCharacterRepository extends ServiceEntityRepository
 {
@@ -17,10 +17,10 @@ class PlayerCharacterRepository extends ServiceEntityRepository
     }
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PlayerCharacter::class);
+        parent::__construct($registry, Player::class);
     }
 
-    public function save(PlayerCharacter $entity): void
+    public function save(Player $entity): void
     {
         $entity->cloneMasterySet();
         $this->defaultSave($entity);

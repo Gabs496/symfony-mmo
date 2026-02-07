@@ -3,11 +3,11 @@
 namespace App\GameElement\Core\GameObject;
 
 use App\GameElement\Core\GameComponent\Exception\InvalidGameComponentException;
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 
 trait GameObjectTrait
 {
-    /** @var GameComponentInterface[] */
+    /** @var GameComponent[] */
     protected array $components;
 
     /**
@@ -19,16 +19,16 @@ trait GameObjectTrait
     )
     {
         foreach ($components as $component) {
-            if (!$component instanceof GameComponentInterface) {
-                throw new InvalidGameComponentException(print_r($component, true) . " is not an instance of " . GameComponentInterface::class);
+            if (!$component instanceof GameComponent) {
+                throw new InvalidGameComponentException(print_r($component, true) . " is not an instance of " . GameComponent::class);
             }
         }
 
-        /** @var GameComponentInterface[] $components */
+        /** @var GameComponent[] $components */
         $this->components = [];
         foreach ($components as $component) {
-            /** @var GameComponentInterface $component */
-            $this->components[$component::getId()] = $component;
+            /** @var GameComponent $component */
+            $this->components[$component::getComponentName()] = $component;
         }
     }
 
@@ -37,29 +37,29 @@ trait GameObjectTrait
         return $this->id;
     }
 
-    /** @return GameComponentInterface[] */
+    /** @return GameComponent[] */
     public function getComponents(): array
     {
         return $this->components;
     }
 
-    public function setComponent(GameComponentInterface $component, ?string $componentId = null): self
+    public function setComponent(GameComponent $component, ?string $componentId = null): self
     {
-        $this->components[$componentId ?? $component::getId()] = $component;
+        $this->components[$componentId ?? $component::getComponentName()] = $component;
         return $this;
     }
 
     /**
-     * @template T of GameComponentInterface
+     * @template T of GameComponent
      * @param class-string<T> $componentClass
      */
     public function removeComponent(string $componentClass): void
     {
-        unset($this->components[$componentClass::getId()]);
+        unset($this->components[$componentClass::getComponentName()]);
     }
 
     /**
-     * @template T of GameComponentInterface
+     * @template T of GameComponent
      * @param class-string<T> $componentClass
      */
     public function hasComponent(string $componentClass): bool
@@ -68,36 +68,23 @@ trait GameObjectTrait
     }
 
     /**
-     * @template T of GameComponentInterface
+     * @template T of GameComponent
      * @param class-string<T> $componentClass
      * @return T|null
      */
-    public function getComponent(string $componentClass): ?GameComponentInterface
+    public function getComponent(string $componentClass): ?GameComponent
     {
-        if ($component = $this->components[$componentClass::getId()] ?? null) {
+        if ($component = $this->components[$componentClass::getComponentName()] ?? null) {
             return $component;
         }
 
         foreach ($this->components as $component) {
-            if ($component::getId() === $componentClass::getId()) {
+            if ($component::getComponentName() === $componentClass::getComponentName()) {
                 return $component;
             }
         }
 
         return null;
-    }
-
-    public function clone(): GameObjectInterface
-    {
-        return new $this($this->getPrototype(), $this->cloneComponents());
-    }
-
-    /** @return GameComponentInterface[] */
-    private function cloneComponents(): array
-    {
-        return array_map(function ($component) {
-            return clone $component;
-        }, $this->components);
     }
 
     public  function __toString(): string

@@ -2,21 +2,28 @@
 
 namespace App\GameElement\Item\Component;
 
-use App\GameElement\Core\GameComponent\GameComponentInterface;
+use App\GameElement\Core\GameComponent\GameComponent;
 use Attribute;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class ItemComponent implements GameComponentInterface
+#[Entity]
+class ItemComponent extends GameComponent
 {
     public function __construct(
-        private float $weight = 0.0,
-        private int $maxStackSize = 99,
-        private int $quantity = 0,
+        #[Column]
+        private float            $weight = 0.0,
+        #[Column]
+        private int              $maxStackSize = 99,
+        #[Column]
+        private int              $quantity = 0,
     )
     {
         if ($quantity <= 0) {
             $this->quantity = 1;
         }
+        parent::__construct();
     }
 
     public function getWeight(): float
@@ -64,7 +71,7 @@ class ItemComponent implements GameComponentInterface
         $this->quantity += $quantity;
     }
 
-    public static function getId(): string
+    public static function getComponentName(): string
     {
         return 'item_weight_component';
     }

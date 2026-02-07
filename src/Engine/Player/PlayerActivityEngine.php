@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player;
 
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\GameElement\Activity\Event\ActivityEndEvent;
 use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
@@ -45,7 +45,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
     public function checkIfPlayerLocked(BeforeActivityStartEvent $event): void
     {
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
         if ($player->getCurrentActivity()) {
@@ -56,7 +56,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
     public function lockPlayer(ActivityStartEvent $event): void
     {
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
 
@@ -74,14 +74,14 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
     public function onActivityEnd(ActivityEndEvent $event): void
     {
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
 
         $this->unlockPlayer($player);
     }
 
-    public function unlockPlayer(PlayerCharacter $player): void
+    public function unlockPlayer(Player $player): void
     {
         $activityEntity = $player->getCurrentActivity();
         if (!$activityEntity) {
@@ -103,7 +103,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
     public function unlockIfShouldBeUnlocked(BeforeActivityStartEvent $event): void
     {
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $event->getActivity()->getSubject()]);
-        if (!$player instanceof PlayerCharacter) {
+        if (!$player instanceof Player) {
             return;
         }
         if (!$currentActivity = $player->getCurrentActivity()) {

@@ -3,8 +3,7 @@
 namespace App\Engine\Player;
 
 use App\Engine\Math;
-use App\Entity\Core\GameObject;
-use App\Entity\Data\PlayerCharacter;
+use App\Entity\Data\Player;
 use App\GameElement\Character\Component\CharacterComponent;
 use App\GameElement\Character\Engine\HealthEngine;
 use App\GameElement\Combat\Component\CombatComponent;
@@ -16,8 +15,10 @@ use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\ItemEquiment\Component\ItemEquipmentComponent;
+use App\GameElement\Equipment\Component\EquipmentComponent;
+use App\GameElement\Equipment\Component\EquipmentSetComponent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\GameElement\Render\Component\RenderComponent;
 use App\Repository\Data\PlayerCharacterRepository;
@@ -35,7 +36,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         private NotificationEngine        $notificationEngine,
         private HealthEngine              $healthEngine,
         private CombatSystemInterface     $combatSystem,
-        private GameObjectRepository $gameObjectRepository,
+        private GameObjectRepository      $gameObjectRepository,
     )
     {
     }
@@ -82,7 +83,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface
      */
     public function afterAttack(AttackResult $attackResult): void
     {
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $attackResult->getAttack()->getAttacker()]);
         $this->notificationEngine->success($player->getId(), '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($attackResult->getDamage()->getValue()) . ' damage');
 
@@ -90,14 +91,13 @@ readonly class PlayerCombatManager implements CombatManagerInterface
 
         if ($attackResult->isDefeated()) {
             if ($render = $defender->getComponent(RenderComponent::class)) {
-                $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $render->getName());
+                $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $render->getComponentName());
             }
         }
     }
 
     public function afterDefense(AttackResult $defenseResult): void
     {
-        return;
     }
 
     private function getAttackStats(GameObjectInterface $gameObject): StatCollection
@@ -110,7 +110,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         return $statCollection;
     }
 
-    private function calculateBaseAttack(PlayerCharacter $attacker, StatCollection $statCollection): void
+    private function calculateBaseAttack(Player $attacker, StatCollection $statCollection): void
     {
         $combatComponent = $attacker->getGameObject()->getComponent(CombatComponent::class);
         foreach ($combatComponent->getOffensiveStats() as $stat) {
@@ -118,13 +118,11 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         }
     }
 
-    private function calculateEquipmentAttack(PlayerCharacter $attacker, StatCollection $statCollection): void
+    private function calculateEquipmentAttack(Player $attacker, StatCollection $statCollection): void
     {
-        foreach ($attacker->getEquipment()->getItems() as $itemObject) {
-            /** @var GameObject $item */
-            $item = $itemObject->getGameObject();
-            $equipmentComponent = $item->getComponent(ItemEquipmentComponent::class);
-            foreach ($equipmentComponent->getStats() as $stat) {
+        $equipmentSet = $attacker->getGameObject()->getComponent(EquipmentSetComponent::class);
+        foreach ($equipmentSet->getEquipments() as $equipment) {
+            foreach ($equipment->getComponent(EquipmentComponent::class)->getStats() as $stat) {
                 if ($stat instanceof OffensiveStat) {
                     $statCollection->increase($stat::class, $stat->getValue());
                 }
@@ -145,13 +143,10 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         //Defense can only be increased by equipment or others
     }
 
-    private function calculateEquipmentDefense(PlayerCharacter $defender, StatCollection $statCollection): void
+    private function calculateEquipmentDefense(Player $defender, StatCollection $statCollection): void
     {
-        foreach ($defender->getEquipment()->getItems() as $itemObject) {
-            /** @var GameObject $item */
-            $item = $itemObject->getGameObject();
-            $equipmentComponent = $item->getComponent(ItemEquipmentComponent::class);
-            foreach ($equipmentComponent->getStats() as $stat) {
+        foreach ($defender->getGameObject()->getComponent(EquipmentSetComponent::class)->getEquipments() as $equipment) {
+            foreach ($equipment->getComponent(EquipmentComponent::class)->getStats() as $stat) {
                 if ($stat instanceof DefensiveStat) {
                     $statCollection->increase($stat::class, $stat->getValue());
                 }

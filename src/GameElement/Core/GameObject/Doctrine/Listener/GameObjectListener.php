@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Core\GameObject\Doctrine\Listener;
 
-use App\Entity\Core\GameObject;
+use App\GameElement\Core\GameObject\Entity\GameObject;
 use App\GameElement\Core\GameObject\Event\GameObjectNewEvent;
 use App\GameElement\Core\GameObject\Event\GameObjectRemoveEvent;
 use App\GameElement\Core\GameObject\Event\GameObjectUpdateEvent;

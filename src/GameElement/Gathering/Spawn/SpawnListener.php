@@ -25,7 +25,7 @@ readonly class SpawnListener implements EventSubscriberInterface
 
     public function onPreMapObjectSpawn(PreMapObjectSpawn $event): void
     {
-        $object = $event->getMapObject()->getGameObject();
+        $object = $event->getObject();
 
         if (!$object->hasComponent(ResourceComponent::class)) {
             return;

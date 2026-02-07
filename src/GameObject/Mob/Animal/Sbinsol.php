@@ -10,7 +10,6 @@ use App\GameElement\Combat\Reward\CombatStatReward;
 use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
-use App\GameElement\Map\Render\MapRenderTemplateComponent;
 use App\GameElement\Mob\Combat\MobCombatManager;
 use App\GameElement\Mob\MobPrototypeInterface;
 use App\GameElement\Render\Component\RenderComponent;
@@ -29,7 +28,6 @@ use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;
     new PhysicalDefenseStat(0.02),
     new PhysicalAttackStat(0.01),
 ], MobCombatManager::ID)]
-#[MapRenderTemplateComponent('Render:MapRenderTemplate',)]
 class Sbinsol extends AbstractGameObjectPrototype implements MobPrototypeInterface
 {
     public const string ID = "MOB_SBINSOL";
@@ -43,7 +41,7 @@ class Sbinsol extends AbstractGameObjectPrototype implements MobPrototypeInterfa
         ];
     }
 
-    public function getId(): string
+    public static function getType(): string
     {
         return self::ID;
     }

@@ -2,15 +2,13 @@
 
 namespace App\Controller;
 
-use App\Engine\Player\PlayerItemEngine;
-use App\Entity\Data\PlayerCharacter;
-use App\Entity\Map\MapObject;
+use App\Entity\Data\Player;
 use App\GameElement\Combat\Engine\CombatEngine;
 use App\GameElement\Crafting\Engine\CraftingEngine;
 use App\GameElement\Crafting\Exception\IngredientNotAvailableException;
 use App\GameElement\Gathering\Engine\GatheringEngine;
-use App\GameElement\Map\Engine\MapEngine;
 use App\GameElement\Notification\Exception\UserNotificationException;
+use App\GameObject\PlayerCharacter\BasePlayer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +23,7 @@ class MapController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function home(CraftingEngine $craftingEngine): Response
     {
-        /** @var PlayerCharacter $user */
+        /** @var Player $user */
         $user = $this->getUser();
 
         return $this->render('map/home.html.twig', [
@@ -36,13 +34,13 @@ class MapController extends AbstractController
 
     #[Route('/map/field', name: 'app_map_field')]
     #[IsGranted('ROLE_USER')]
-    public function field(MapEngine $mapEngine): Response
+    public function field(): Response
     {
-        /** @var PlayerCharacter $user */
+        /** @var Player $user */
         $user = $this->getUser();
 
         return $this->render('map/field.html.twig', [
-            'mapObjects' => $mapEngine->getMapObjects($user->getMap()),
+            'mapObjects' => $user->getMap()->getFields(),
         ]);
     }
 
@@ -50,7 +48,7 @@ class MapController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function startGathering(MapObject $resource, GatheringEngine $gatheringEngine, Request $request): Response
     {
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
         $gatheringEngine->startGathering($player->getGameObject(), $resource->getGameObject());
@@ -64,13 +62,13 @@ class MapController extends AbstractController
 
     #[Route('/craft/{id}', name: 'app_map_craft')]
     #[IsGranted('ROLE_USER')]
-    public function startCraftingRecipe(CraftingEngine $craftingEngine, PlayerItemEngine $itemEngine, string $id, Request $request): Response
+    public function startCraftingRecipe(CraftingEngine $craftingEngine, BasePlayer $basePlayer, string $id, Request $request): Response
     {
-        /** @var PlayerCharacter $user */
+        /** @var Player $user */
         $user = $this->getUser();
 
         try {
-            $craftingEngine->startCrafting($user->getGameObject(), $id, $itemEngine);
+            $craftingEngine->startCrafting($user->getGameObject(), $id, $basePlayer);
         } catch (IngredientNotAvailableException $event) {
             throw new UserNotificationException($user->getId(), $event->getMessage());
         }
@@ -86,7 +84,7 @@ class MapController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function startMobFight(Request $request, MapObject $mob, CombatEngine $combatEngine): Response
     {
-        /** @var PlayerCharacter $player */
+        /** @var Player $player */
         $player = $this->getUser();
         $combatEngine->startAttack($player->getGameObject(), $mob->getGameObject());
 
