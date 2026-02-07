@@ -3,7 +3,7 @@
 namespace App\GameObject\Item\Equipment\Sword;
 
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
-use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
+use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Render\Component\RenderComponent;

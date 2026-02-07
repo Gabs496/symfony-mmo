@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Engine\Item\ItemActionEngine;
 use App\Entity\Data\Player;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Equipment\EquipmentEngine;
 use App\GameElement\Item\Component\ItemBagComponent;

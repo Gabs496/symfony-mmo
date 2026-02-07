@@ -6,7 +6,7 @@ use App\Engine\Math;
 use App\GameElement\Character\Component\CharacterComponent;
 use App\GameElement\Character\Event\HealthModifiedEvent;
 use App\GameElement\Character\Event\HealthReachedZeroEvent;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class HealthEngine

@@ -2,8 +2,8 @@
 
 namespace App\Twig\Components\Render;
 
-use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\GameObjectPrototype\GameObjectPrototypeInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectPrototype\GameObjectPrototypeInterface;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Equipment\Component\EquipmentComponent;

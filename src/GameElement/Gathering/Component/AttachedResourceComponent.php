@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Gathering\Component;
 
-use App\GameElement\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameComponent\GameComponent;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;

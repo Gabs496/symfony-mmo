@@ -3,7 +3,7 @@
 namespace App\GameElement\Item\Event;
 
 use App\Engine\Item\Action\AbstractAvailableAction;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 
 class ItemActionPerformedEvent
 {

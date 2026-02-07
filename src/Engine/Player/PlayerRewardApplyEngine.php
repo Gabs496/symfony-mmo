@@ -7,7 +7,7 @@ use App\Engine\Reward\MasteryReward;
 use App\Entity\Data\Player;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Reward\CombatStatReward;
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Item\Reward\ItemReward;

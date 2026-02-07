@@ -1,0 +1,3 @@
+[submodule "packages/penny-php/core"]
+	path = packages/penny-php/core
+	url = git@github.com:penny-php/core.git

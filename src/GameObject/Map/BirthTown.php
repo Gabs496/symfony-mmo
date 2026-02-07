@@ -2,7 +2,7 @@
 
 namespace App\GameObject\Map;
 
-use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
+use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Gathering\Spawn\ResourceSpawn;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;

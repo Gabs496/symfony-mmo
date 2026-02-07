@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Item;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 
 interface ItemEngineInterface

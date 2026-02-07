@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44f2f341ef0288727548d318bed8a4f3",
+    "content-hash": "614ff193f7d7dffb8ff88238e5f2cae3",
     "packages": [
         {
             "name": "composer/semver",
@@ -1530,6 +1530,31 @@
                 }
             ],
             "time": "2025-03-24T10:02:05+00:00"
+        },
+        {
+            "name": "penny-php/core",
+            "version": "0.1",
+            "dist": {
+                "type": "path",
+                "url": "packages/penny-php/core",
+                "reference": "0d89072f44b7eaa296bfce91b2855b47c27a703f"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PennyPHP\\Core\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "gabs496",
+                    "email": "gabs496@hotmail.it"
+                }
+            ],
+            "description": "PHP Entity Component System (ECS) core for developing browsergame using Symfony",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -10857,10 +10882,10 @@
     "platform": {
         "php": ">=8.3",
         "ext-amqp": "*",
+        "ext-apcu": "*",
         "ext-bcmath": "*",
         "ext-ctype": "*",
-        "ext-iconv": "*",
-        "ext-apcu": "*"
+        "ext-iconv": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Mob\Event;
 
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 
 readonly class MobDefeatEvent
 {

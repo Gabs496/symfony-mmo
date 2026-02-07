@@ -3,7 +3,7 @@
 namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Reward\RewardInterface;
 

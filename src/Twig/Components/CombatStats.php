@@ -3,7 +3,7 @@
 namespace App\Twig\Components;
 
 use App\GameElement\Combat\Component\CombatComponent;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]

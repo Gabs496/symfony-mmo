@@ -3,7 +3,7 @@
 namespace App\GameElement\Combat\Phase;
 
 use App\GameElement\Combat\StatCollection;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 
 class Attack
 {

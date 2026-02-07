@@ -4,8 +4,8 @@ namespace App\DataFixtures;
 
 use App\Entity\Data\Player;
 use App\Entity\Security\User;
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Position\Component\PositionComponent;
 use App\GameObject\Map\BirthTown;

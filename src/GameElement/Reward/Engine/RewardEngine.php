@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Reward\Engine;
 
-use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\Token\TokenEngine;
+use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\Token\TokenEngine;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
 use App\GameElement\Reward\RewardInterface;

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Position\Event;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Position\Component\PositionComponent;
 
 readonly class GameObjectMovingEvent

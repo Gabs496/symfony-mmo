@@ -3,7 +3,7 @@
 namespace App\GameObject\Item\Food;
 
 use App\Engine\Reward\MasteryReward;
-use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
+use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Healing\Component\HealingComponent;

@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Item;
 
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Item\Event\ItemBagUpdate;

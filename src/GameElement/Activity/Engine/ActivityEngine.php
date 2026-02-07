@@ -9,7 +9,7 @@ use App\GameElement\Activity\Event\ActivityStartEvent;
 use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Activity\Exception\ActivityUnexpectedStopException;
 use App\GameElement\Activity\Message\ActivityTimeout;
-use App\GameElement\Core\Token\TokenEngine;
+use PennyPHP\Core\Token\TokenEngine;
 use App\Repository\Data\ActivityRepository;
 use InvalidArgumentException;
 use RuntimeException;

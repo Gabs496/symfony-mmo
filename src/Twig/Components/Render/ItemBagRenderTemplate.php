@@ -2,7 +2,7 @@
 
 namespace App\Twig\Components\Render;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;

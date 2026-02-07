@@ -2,7 +2,7 @@
 
 namespace App\Repository\Game;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\Repository\RemoveEntityTrait;
 use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

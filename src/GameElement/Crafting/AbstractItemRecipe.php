@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Crafting;
 
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Reward\RewardInterface;
 
 abstract class AbstractItemRecipe

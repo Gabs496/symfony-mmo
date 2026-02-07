@@ -3,7 +3,7 @@
 namespace App\GameElement\Combat\Event;
 
 use App\GameElement\Combat\Phase\Attack;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 
 readonly class AttackEvent
 {

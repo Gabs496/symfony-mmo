@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map\Event\Spawn;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 

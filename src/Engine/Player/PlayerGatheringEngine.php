@@ -3,7 +3,7 @@
 namespace App\Engine\Player;
 
 use App\Entity\Data\Player;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Item\Reward\ItemReward;

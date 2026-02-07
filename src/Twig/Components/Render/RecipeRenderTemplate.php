@@ -2,8 +2,8 @@
 
 namespace App\Twig\Components\Render;
 
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Item\Component\ItemComponent;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;

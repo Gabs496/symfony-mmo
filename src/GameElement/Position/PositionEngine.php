@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Position;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Position\Component\PositionComponent;
 use App\GameElement\Position\Event\GameObjectMovingEvent;
 use App\Repository\Game\GameObjectRepository;

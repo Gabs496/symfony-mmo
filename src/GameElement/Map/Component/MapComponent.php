@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map\Component;
 
-use App\GameElement\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameComponent\GameComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Render\Component\RenderComponent;
 use Attribute;

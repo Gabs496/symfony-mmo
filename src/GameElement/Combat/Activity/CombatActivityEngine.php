@@ -6,8 +6,8 @@ use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Engine\CombatEngine;
-use App\GameElement\Core\GameObject\GameObjectInterface;
-use App\GameElement\Core\Token\TokenEngine;
+use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\Token\TokenEngine;
 use RuntimeException;
 
 /** @extends ActivityEngineExtensionInterface<AttackActivity> */

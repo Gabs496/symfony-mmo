@@ -3,9 +3,9 @@
 namespace App\GameElement\Gathering\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObject\Entity\GameObject;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Component\AttachedResourceComponent;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;

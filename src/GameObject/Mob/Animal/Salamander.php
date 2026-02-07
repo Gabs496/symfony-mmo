@@ -7,7 +7,7 @@ use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use App\GameElement\Combat\Component\Stat\PhysicalDefenseStat;
 use App\GameElement\Combat\Reward\CombatStatReward;
-use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
+use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Mob\Combat\MobCombatManager;
 use App\GameElement\Mob\MobPrototypeInterface;
 use App\GameElement\Render\Component\RenderComponent;

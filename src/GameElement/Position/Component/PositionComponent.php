@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Position\Component;
 
-use App\GameElement\Core\GameComponent\GameComponent;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Position\Repository\PositionRepository;
 use Attribute;
 use Doctrine\ORM\Mapping as ORM;

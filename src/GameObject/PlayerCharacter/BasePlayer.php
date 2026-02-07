@@ -7,7 +7,7 @@ use App\Entity\Data\Player;
 use App\GameElement\Character\Component\CharacterComponent;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
-use App\GameElement\Core\GameObjectPrototype\AbstractGameObjectPrototype;
+use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Equipment\Component\EquipmentSetComponent;
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Position\Component\PositionComponent;

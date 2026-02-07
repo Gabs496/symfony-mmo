@@ -2,7 +2,7 @@
 
 namespace App\Engine\Player;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Equipment\Event\UnequipEvent;
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\ItemBagEngine;

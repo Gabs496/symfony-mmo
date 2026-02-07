@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Map\Engine\Spawn\Handler;
 
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Map\Engine\Spawn\Event\ObjectSpawnAction;

@@ -3,8 +3,8 @@
 namespace App\GameElement\Crafting\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
-use App\GameElement\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Crafting\Exception\IngredientNotAvailableException;

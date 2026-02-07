@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Equipment;
 
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Equipment\Component\EquipmentSetComponent;
 use App\GameElement\Equipment\Event\EquipEvent;

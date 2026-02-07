@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Mob\Combat;
 
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Drop\Engine\DropEngine;
 use App\GameElement\Mob\Event\MobDefeatEvent;

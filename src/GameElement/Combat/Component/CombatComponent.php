@@ -4,7 +4,7 @@ namespace App\GameElement\Combat\Component;
 
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
-use App\GameElement\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameComponent\GameComponent;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;

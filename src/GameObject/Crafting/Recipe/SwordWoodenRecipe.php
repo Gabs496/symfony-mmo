@@ -3,7 +3,7 @@
 namespace App\GameObject\Crafting\Recipe;
 
 use App\Engine\Reward\MasteryReward;
-use App\GameElement\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Crafting\RecipeIngredient;
 use App\GameObject\Item\Equipment\Sword\WoodenSwordPrototype;

@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Equipment\Component;
 
-use App\GameElement\Core\GameComponent\GameComponent;
-use App\GameElement\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\GameComponent\GameComponent;
+use PennyPHP\Core\GameObject\Entity\GameObject;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
