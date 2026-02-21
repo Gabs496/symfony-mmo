@@ -2,15 +2,15 @@
 
 namespace App\Twig\Components\Render;
 
-use PennyPHP\Core\GameObject\Entity\GameObject;
+use App\GameElement\Equipment\Component\EquipmentComponent;
+use App\GameElement\Equipment\Interaction\UnequipInteraction;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;
 use App\GameElement\Item\Interaction\DropInteraction;
 use App\GameElement\Item\Interaction\EatInteraction;
-use App\GameElement\Equipment\Component\EquipmentComponent;
-use App\GameElement\Equipment\Interaction\UnequipInteraction;
 use App\GameElement\Render\Component\RenderComponent;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: "Render:ItemBagRenderTemplate", template: 'components/Render/ItemBagRenderTemplate.html.twig')]

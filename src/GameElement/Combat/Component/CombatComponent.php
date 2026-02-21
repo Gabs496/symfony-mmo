@@ -4,10 +4,10 @@ namespace App\GameElement\Combat\Component;
 
 use App\GameElement\Combat\Component\Stat\DefensiveStat;
 use App\GameElement\Combat\Component\Stat\OffensiveStat;
-use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use PennyPHP\Core\Entity\GameComponent;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 #[Entity]

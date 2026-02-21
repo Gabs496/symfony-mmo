@@ -10,10 +10,10 @@ use App\GameElement\Combat\Component\Stat\PhysicalAttackStat;
 use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Equipment\Component\EquipmentSetComponent;
 use App\GameElement\Item\Component\ItemBagComponent;
-use App\GameElement\Position\Component\PositionComponent;
+use App\GameElement\Position\Component\PlacedComponent;
 
 #[Player]
-#[PositionComponent]
+#[PlacedComponent]
 #[CharacterComponent(maxHealth: 0.25)]
 #[CombatComponent([
         new PhysicalAttackStat(0.0)
@@ -21,7 +21,7 @@ use App\GameElement\Position\Component\PositionComponent;
     PlayerCombatManager::ID
 )]
 #[EquipmentSetComponent(slots: ['head', 'body', 'legs', 'feet', 'left_arm', 'right_arm', 'accessory'])]
-#[ItemBagComponent(size: 10)]
+#[ItemBagComponent(maxSize: 10)]
 class BasePlayer extends AbstractGameObjectPrototype
 {
     public const string ID = "base_player";

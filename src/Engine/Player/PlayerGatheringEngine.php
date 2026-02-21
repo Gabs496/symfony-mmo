@@ -3,12 +3,12 @@
 namespace App\Engine\Player;
 
 use App\Entity\Data\Player;
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\Engine\RewardEngine;
 use App\Repository\Data\PlayerCharacterRepository;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class PlayerGatheringEngine implements EventSubscriberInterface

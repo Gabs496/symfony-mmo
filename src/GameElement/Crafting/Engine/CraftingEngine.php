@@ -13,17 +13,18 @@ use App\GameElement\Item\ItemEngineInterface;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\Engine\RewardEngine;
 use InvalidArgumentException;
+use PennyPHP\Core\GameObject\Repository\GameObjectRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class CraftingEngine
 {
     public function __construct(
-        private RewardEngine $rewardEngine,
-        private ActivityEngine $activityEngine,
+        private RewardEngine     $rewardEngine,
+        private ActivityEngine   $activityEngine,
         /** @var iterable<AbstractItemRecipe> */
         #[AutowireIterator('crafting.item_recipe')]
-        private iterable $recipes,
-        private GameObjectEngine $gameObjectEngine,
+        private iterable         $recipes,
+        private GameObjectEngine $gameObjectEngine, private GameObjectRepository $gameObjectRepository,
     )
     {}
 
@@ -39,7 +40,10 @@ readonly class CraftingEngine
         try {
             foreach ($recipe->getIngredients() as $ingredient) {
                 $item = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId());
-                $itemEngine->take($subject, $item, $ingredient->getQuantity());
+                $extractions = $itemEngine->take($subject, $item, $ingredient->getQuantity());
+                foreach ($extractions as $extraction) {
+                    $this->gameObjectRepository->remove($extraction->getItem()->getGameObject());
+                }
             }
         } catch (ItemQuantityNotAvailableException $event) {
             throw new IngredientNotAvailableException('Recipe ingredients not availables', 0, $event);

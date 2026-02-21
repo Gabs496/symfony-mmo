@@ -2,9 +2,9 @@
 
 namespace App\GameElement\Map\Event\Spawn;
 
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
+use PennyPHP\Core\Entity\GameObject;
 
 class PreMapObjectSpawn
 {

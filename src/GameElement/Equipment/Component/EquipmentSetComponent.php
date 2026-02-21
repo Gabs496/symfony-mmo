@@ -2,12 +2,10 @@
 
 namespace App\GameElement\Equipment\Component;
 
-use PennyPHP\Core\GameComponent\Entity\GameComponent;
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\OneToOne;
+use PennyPHP\Core\Entity\GameComponent;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 #[Entity]

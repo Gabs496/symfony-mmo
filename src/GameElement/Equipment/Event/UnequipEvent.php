@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Equipment\Event;
 
-use PennyPHP\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\Entity\GameObject;
 
 readonly class UnequipEvent
 {

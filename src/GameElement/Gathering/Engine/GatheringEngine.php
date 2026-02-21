@@ -3,9 +3,6 @@
 namespace App\GameElement\Gathering\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
-use PennyPHP\Core\GameObject\Entity\GameObject;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
 use App\GameElement\Gathering\Component\AttachedResourceComponent;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
@@ -13,7 +10,10 @@ use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Reward\Engine\RewardEngine;
-use App\Repository\Game\GameObjectRepository;
+use PennyPHP\Core\Entity\GameObject;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObject\Repository\GameObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class GatheringEngine

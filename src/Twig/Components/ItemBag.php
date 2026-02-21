@@ -2,7 +2,7 @@
 
 namespace App\Twig\Components;
 
-use PennyPHP\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]

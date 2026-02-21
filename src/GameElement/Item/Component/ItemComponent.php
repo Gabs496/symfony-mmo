@@ -2,10 +2,11 @@
 
 namespace App\GameElement\Item\Component;
 
-use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToOne;
+use PennyPHP\Core\Entity\GameComponent;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 #[Entity]
@@ -13,16 +14,19 @@ class ItemComponent extends GameComponent
 {
     public function __construct(
         #[Column]
-        private float            $weight = 0.0,
+        private float        $weight = 0.0,
         #[Column]
-        private int              $maxStackSize = 99,
-        #[Column]
-        private int              $quantity = 0,
+        private int          $maxStackSize = 99,
+        /** @deprecated  */
+        int                  $quantity = 0,
+        #[OneToOne(ItemBagSlot::class, mappedBy: "item", orphanRemoval: true)]
+        private ?ItemBagSlot $slot = null,
     )
     {
-        if ($quantity <= 0) {
-            $this->quantity = 1;
+        if ($quantity !== null && $this->slot) {
+            $this->setQuantity($quantity);
         }
+
         parent::__construct();
     }
 
@@ -46,29 +50,44 @@ class ItemComponent extends GameComponent
         $this->maxStackSize = $maxStackSize;
     }
 
+    public function getSlot(): ?ItemBagSlot
+    {
+        return $this->slot;
+    }
+
+    public function setSlot(?ItemBagSlot $slot): void
+    {
+        $this->slot = $slot;
+    }
+
+    /** @deprecated */
     public function getQuantity(): int
     {
-        return $this->quantity;
+        return $this->slot?->getQuantity() ?? 0;
     }
 
+    /** @deprecated */
     public function setQuantity(int $quantity): void
     {
-        $this->quantity = $quantity;
+        $this->slot->setQuantity($quantity);
     }
 
+    /** @deprecated  */
     public function isStackFull(): bool
     {
-        return $this->quantity >= $this->maxStackSize;
+        return $this->slot?->isFull() ?? false;
     }
 
+    /** @deprecated  */
     public function decreaseBy(int $quantity): void
     {
-        $this->quantity -= $quantity;
+        $this->slot?->decreaseBy($quantity);
     }
 
+    /** @deprecated  */
     public function increaseBy(int $quantity): void
     {
-        $this->quantity += $quantity;
+        $this->slot?->increaseBy($quantity);
     }
 
     public static function getComponentName(): string

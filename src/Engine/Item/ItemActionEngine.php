@@ -4,11 +4,11 @@ namespace App\Engine\Item;
 
 use App\Engine\Math;
 use App\Entity\Data\Player;
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Healing\Engine\HealingEngine;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
+use PennyPHP\Core\Entity\GameObject;
 
 readonly class ItemActionEngine
 {

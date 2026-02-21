@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Map\Twig;
 
-use PennyPHP\Core\GameObject\Entity\GameObject;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\UX\TwigComponent\ComponentRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

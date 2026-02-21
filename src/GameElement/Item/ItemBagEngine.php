@@ -2,18 +2,19 @@
 
 namespace App\GameElement\Item;
 
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
-use PennyPHP\Core\GameObject\Entity\GameObject;
+use App\Engine\Math;
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\Component\ItemComponent;
+use App\GameElement\Item\Component\ItemBagSlot;
 use App\GameElement\Item\Event\ItemBagUpdate;
+use App\GameElement\Item\Event\ItemExtractedEvent;
+use App\GameElement\Item\Exception\CannotMergeItemException;
 use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
-use App\GameElement\Position\Event\GameObjectMovingEvent;
-use App\GameElement\Position\PositionEngine;
 use App\GameElement\Render\Component\RenderComponent;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use PennyPHP\Core\Entity\GameObject;
+use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 readonly class ItemBagEngine
@@ -21,45 +22,45 @@ readonly class ItemBagEngine
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         private GameObjectEngine         $gameObjectEngine,
-        private PositionEngine           $positionEngine,
-        private EntityManagerInterface $entityManager,
+        private EntityManagerInterface   $entityManager,
     )
     {
     }
 
-    #[AsEventListener(GameObjectMovingEvent::class)]
-    public function onMoving(GameObjectMovingEvent $event): void
+    public function put(ItemBagComponent $bag, ItemComponent $item, int $quantity = 1): void
     {
-        if (!$event->getGameObject()->hasComponent(ItemComponent::class)) {
-            return;
-        }
-
-        if ($event->getPositionComponent()->getPlaceType() !== ItemBagComponent::getComponentName()) {
-            return;
-        }
-
-        $itemBag = $this->entityManager->getRepository(ItemBagComponent::class)->find($event->getPositionComponent()->getPlaceId());
-
-        if ($this->isFull($itemBag)) {
+        if ($this->isFull($bag)) {
             throw new MaxBagSizeReachedException();
         }
 
-        self::tryToMerge($itemBag,$event->getGameObject());
+        try {
+            self::tryToMerge($bag,$item->getGameObject(), $quantity);
+        } catch (CannotMergeItemException) {
+            $slot = new ItemBagSlot($bag, $item, $quantity);
+            $bag->addSlot($slot);
+        }
+        $this->entityManager->flush();
 
-        $this->eventDispatcher->dispatch(new ItemBagUpdate($itemBag));
+        $this->eventDispatcher->dispatch(new ItemBagUpdate($bag));
     }
 
 
-    public function tryToMerge(ItemBagComponent $bag, GameObject $itemToAdd): void
+    /**
+     * @throws CannotMergeItemException
+     */
+    public function tryToMerge(ItemBagComponent $bag, GameObject $itemToAdd, int $quantity = 0): void
     {
-        foreach (self::getItems($bag) as $existingItem) {
-            $existingItemComponent = $existingItem->getComponent(ItemComponent::class);
-            if ($existingItem->isInstanceOf($itemToAdd) && !$existingItemComponent->isStackFull()) {
-                self::merge($existingItem, $itemToAdd);
+        foreach ($bag->getSlots() as $slot) {
+            $existingItem = $slot->getItem()->getGameObject();
+
+            if ($existingItem->isInstanceOf($itemToAdd) && !$slot->isFull()) {
+                $slot->increaseBy($quantity);
                 $this->entityManager->remove($itemToAdd);
                 return;
             }
         }
+
+        throw new CannotMergeItemException();
     }
 
     public function isFull(ItemBagComponent $bag): bool
@@ -67,27 +68,19 @@ readonly class ItemBagEngine
         return round(self::getFullness($bag), 4) === 1.0;
     }
 
-    /** @return array<GameObject> */
-    public function getItems(ItemBagComponent $bag): array
-    {
-        return $this->positionEngine->getContents(ItemBagComponent::getComponentName(), $bag->getId());
-    }
-
     public function getOccupedSpace(ItemBagComponent $bag): float
     {
-        return array_reduce(self::getItems($bag),
-            fn($carry, GameObject $item)
-            => (float)bcadd($carry, bcmul($item->getComponent(ItemComponent::class)->getWeight(), $item->getComponent(ItemComponent::class)->getQuantity(), 2), 2),
-            0.0
-        );
+        return $bag->getSlots()->reduce(function (float $carry, ItemBagSlot $slot) {
+            return Math::round($carry + $slot->getItem()->getWeight() * $slot->getQuantity());
+        }, 0.0);
     }
 
     public function getFullness(ItemBagComponent $bag): float
     {
-        return (float)bcdiv($this->getOccupedSpace($bag), $bag->getSize(), 2);
+        return (float)bcdiv($this->getOccupedSpace($bag), $bag->getMaxSize(), 2);
     }
 
-    /** @return array<GameObject> */
+    /** @return array<ItemExtractedEvent> */
     public function findAndExtract(ItemBagComponent $bag, string $type, int $quantity = 1): array
     {
         if (!$this->has($bag, $type, $quantity)) {
@@ -95,19 +88,20 @@ readonly class ItemBagEngine
             throw new ItemQuantityNotAvailableException(sprintf('%s quantity (%s) not available', $prototype->getComponent(RenderComponent::class)->getName(), $quantity));
         }
 
-        $items = [];
+        $extractionEvents = [];
         $extractedQuantity = 0;
-        foreach (self::getItems($bag) as $item) {
+        foreach ($bag->getSlots() as $slot) {
+            $item = $slot->getItem()->getGameObject();
             if (!$item->isInstanceOf($type)) {
                 continue;
             }
 
-            $extractedItem = self::extract($item, $quantity-$extractedQuantity);
-            $extractedQuantity += $extractedItem->getComponent(ItemComponent::class)->getQuantity();
-            $items[] = $extractedItem;
+            $extractionEvent = self::extract($slot, $quantity-$extractedQuantity);
+            $extractedQuantity += $extractionEvent->getQuantity();
+            $extractionEvents[] = $extractionEvent;
 
             if ($extractedQuantity === $quantity) {
-                return $items;
+                return $extractionEvents;
             }
         }
 
@@ -117,18 +111,17 @@ readonly class ItemBagEngine
     /**
      * @throws ItemQuantityNotAvailableException
      */
-    private function extract(GameObject $itemToExtract, int $maxQuantity = 0): GameObject
+    private function extract(ItemBagSlot $sourceSlot, int $maxQuantity = 0): ItemExtractedEvent
     {
-            $itemComponent = $itemToExtract->getComponent(ItemComponent::class);
-            if ($itemComponent->getQuantity() <= $maxQuantity) {
-                return $itemToExtract;
+            $itemComponent = $sourceSlot->getItem();
+            if ($sourceSlot->getQuantity() <= $maxQuantity) {
+                $sourceSlot->getBag()->removeSlot($sourceSlot);
+                return new ItemExtractedEvent($itemComponent, $sourceSlot->getQuantity());
             }
 
-            $itemComponent->decreaseBy($maxQuantity);
-            $newGameObject = $itemToExtract->clone();
-            $extractedItem = $newGameObject->getComponent(ItemComponent::class);
-            $extractedItem->setQuantity($maxQuantity);
-            return $newGameObject;
+            $sourceSlot->decreaseBy($maxQuantity);
+            $newGameObject = $itemComponent->getGameObject()->clone();
+            return new ItemExtractedEvent($newGameObject->getComponent(ItemComponent::class), $maxQuantity);
     }
 
     public function has(ItemBagComponent $bag, string $type, int $quantity = 1): bool
@@ -138,26 +131,22 @@ readonly class ItemBagEngine
 
     public function getQuantity(ItemBagComponent $bag, string $type): int
     {
-        $instances = $this->find($bag, $type);
-        return array_reduce($instances, fn($carry, ItemComponent $instance)
-        => $carry + $instance->getGameObject()->getComponent(ItemComponent::class)->getQuantity(), 0
+        $slots = $this->find($bag, $type);
+        return array_reduce($slots,
+            fn($carry, ItemBagSlot $slot) => $carry + $slot->getQuantity(),
+            0
         );
     }
 
-    /** @return ItemComponent[] */
+    /** @return ItemBagSlot[] */
     public function find(ItemBagComponent $bag, string $type): array
     {
-        $items = [];
-        foreach (self::getItems($bag) as $item) {
-            if ($item->isInstanceOf($type)) {
-                $items[] = $item;
+        $slots = [];
+        foreach ($bag->getSlots() as $slot) {
+            if ($slot->getItem()->getGameObject()->isInstanceOf($type)) {
+                $slots[] = $slot;
             }
         }
-        return $items;
-    }
-
-    private function merge(GameObject $item, GameObject $toMerge): void
-    {
-        $item->getComponent(ItemComponent::class)->increaseBy($toMerge->getComponent(ItemComponent::class)->getQuantity());
+        return $slots;
     }
 }

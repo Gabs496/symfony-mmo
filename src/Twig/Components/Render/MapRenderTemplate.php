@@ -5,7 +5,6 @@ namespace App\Twig\Components\Render;
 use App\GameElement\Character\Component\CharacterComponent;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Interaction\FightInteraction;
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Gathering\Component\AttachedResourceComponent;
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\Interaction\GatherInteraction;
@@ -14,6 +13,7 @@ use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Render\Component\RenderComponent;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: 'Render:MapRenderTemplate', template: 'components/Render/MapRenderTemplate.html.twig')]

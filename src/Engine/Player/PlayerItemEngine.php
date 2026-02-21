@@ -2,19 +2,19 @@
 
 namespace App\Engine\Player;
 
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Equipment\Event\UnequipEvent;
 use App\GameElement\Item\Component\ItemBagComponent;
+use App\GameElement\Item\Component\ItemComponent;
+use App\GameElement\Item\Event\ItemExtractedEvent;
 use App\GameElement\Item\ItemBagEngine;
 use App\GameElement\Item\ItemEngineInterface;
-use App\GameElement\Position\PositionEngine;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 readonly class PlayerItemEngine implements ItemEngineInterface
 {
     public function __construct(
-        private ItemBagEngine  $itemBagEngine,
-        private PositionEngine $positionEngine,
+        private ItemBagEngine $itemBagEngine,
     )
     {
     }
@@ -24,7 +24,7 @@ readonly class PlayerItemEngine implements ItemEngineInterface
         self::putInBackpack($to, $item);
     }
 
-    /** @return array<GameObject> */
+    /** @return array<ItemExtractedEvent> */
     public function take(GameObject $player, string $type, int $quantity): array
     {
         return self::takeFromBackpack($player, $type, $quantity);
@@ -38,10 +38,11 @@ readonly class PlayerItemEngine implements ItemEngineInterface
 
     private function putInBackpack(GameObject $player, GameObject $item): void
     {
-        $this->positionEngine->move($item, $itemBagComponent = $player->getComponent(ItemBagComponent::class), $itemBagComponent->getId());
+        $itemBagComponent = $player->getComponent(ItemBagComponent::class);
+        $this->itemBagEngine->put($itemBagComponent, $item->getComponent(ItemComponent::class));
     }
 
-    /** @return array<GameObject> */
+    /** @return array<ItemExtractedEvent> */
     private function takeFromBackpack(GameObject $player, string $type, int $quantity): array
     {
         $itemBagComponet = $player->getComponent(ItemBagComponent::class);

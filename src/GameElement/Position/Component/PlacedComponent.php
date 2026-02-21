@@ -2,16 +2,15 @@
 
 namespace App\GameElement\Position\Component;
 
-use PennyPHP\Core\GameComponent\Entity\GameComponent;
-use PennyPHP\Core\GameObject\Entity\GameObject;
-use App\GameElement\Position\Repository\PositionRepository;
 use Attribute;
 use Doctrine\ORM\Mapping as ORM;
+use PennyPHP\Core\Entity\GameComponent;
+use PennyPHP\Core\Entity\GameObject;
 
+/** @deprecated  */
 #[Attribute(Attribute::TARGET_CLASS)]
-#[ORM\Entity(repositoryClass: PositionRepository::class)]
 #[ORM\Index(fields: ['placeType', 'placeId'])]
-class PositionComponent extends GameComponent
+class PlacedComponent extends GameComponent
 {
     public function __construct(
         ?GameObject       $gameObject = null,
@@ -19,8 +18,6 @@ class PositionComponent extends GameComponent
         protected ?string $placeType = null,
         #[ORM\Column(length: 100, nullable: false)]
         protected ?string $placeId = null,
-        #[ORM\Column(length: 50)]
-        protected ?string $position = null,
     )
     {
         parent::__construct($gameObject);
@@ -48,15 +45,5 @@ class PositionComponent extends GameComponent
         $this->placeId = $placeId;
 
         return $this;
-    }
-
-    public function getPosition(): ?string
-    {
-        return $this->position;
-    }
-
-    public function setPosition(?string $position): void
-    {
-        $this->position = $position;
     }
 }

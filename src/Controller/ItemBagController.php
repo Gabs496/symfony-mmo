@@ -4,12 +4,12 @@ namespace App\Controller;
 
 use App\Engine\Item\ItemActionEngine;
 use App\Entity\Data\Player;
-use PennyPHP\Core\GameObject\Entity\GameObject;
 use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Equipment\EquipmentEngine;
 use App\GameElement\Item\Component\ItemBagComponent;
-use App\GameElement\Position\PositionEngine;
+use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +21,8 @@ class ItemBagController extends AbstractController
 {
     public function __construct(
         private readonly ItemActionEngine $itemActionEngine,
-        private readonly EquipmentEngine $equipmentEngine,
-        private readonly PositionEngine $positionEngine,
+        private readonly EquipmentEngine  $equipmentEngine,
+        private readonly EntityManagerInterface $entityManager,
     )
     {
     }
@@ -39,9 +39,9 @@ class ItemBagController extends AbstractController
     public function drop(GameObject $item, Request $request): Response
     {
         //TODO: check permissions to execute action on object
-        /** @var Player $player */
-        $player = $this->getUser();
-        $this->positionEngine->move($item, $player->getMap(), 'field');
+
+        //TODO: move to a service or a message handler
+        $this->entityManager->remove($item);
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

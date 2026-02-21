@@ -2,13 +2,13 @@
 
 namespace App\GameElement\Map\Component;
 
-use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Render\Component\RenderComponent;
 use Attribute;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use PennyPHP\Core\Entity\GameComponent;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 #[ORM\Entity]

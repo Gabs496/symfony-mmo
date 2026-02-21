@@ -4,13 +4,13 @@ namespace App\Entity\Data;
 
 use App\Entity\Activity\Activity;
 use App\Entity\Security\User;
-use PennyPHP\Core\GameComponent\Entity\GameComponent;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Mastery\MasterySet;
-use App\GameElement\Position\Component\PositionComponent;
+use App\GameElement\Position\Component\PlacedComponent;
 use App\Repository\Data\PlayerCharacterRepository;
 use Attribute;
 use Doctrine\ORM\Mapping as ORM;
+use PennyPHP\Core\Entity\GameComponent;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -132,7 +132,7 @@ class Player extends GameComponent implements UserInterface
 
     public function getMap(): MapComponent
     {
-        return $this->gameObject->getComponent(PositionComponent::class)->getPlaceId()->getComponent(MapComponent::class);
+        return $this->gameObject->getComponent(PlacedComponent::class)->getPlaceId()->getComponent(MapComponent::class);
     }
 
     public function __serialize(): array
