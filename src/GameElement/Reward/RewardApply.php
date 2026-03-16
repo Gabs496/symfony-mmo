@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Reward;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 class RewardApply
 {

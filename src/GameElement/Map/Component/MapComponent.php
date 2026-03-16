@@ -45,6 +45,7 @@ class MapComponent extends GameComponent
         return $this->coordinateY;
     }
 
+    /** @return Collection<int, ObjectSpawn> */
     public function getSpawns(): Collection
     {
         return $this->spawns;

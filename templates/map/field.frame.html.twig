@@ -1,0 +1,7 @@
+<turbo-frame id="map_objects">
+    {% for inMapComponent in inMapComponents %}
+        <turbo-frame id="map_object_{{ inMapComponent.gameObject.id }}" class="animate__animated animate__zoomIn animate__faster">
+            {{ component("Render:MapRenderTemplate", {gameObject: inMapComponent.gameObject}) }}
+        </turbo-frame>
+    {% endfor %}
+</turbo-frame>

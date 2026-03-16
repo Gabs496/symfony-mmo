@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Character\Event;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 class HealthReachedZeroEvent
 {

@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Activity;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 abstract class AbstractActivity
 {

@@ -4,9 +4,9 @@ namespace App\GameElement\Healing\Engine;
 
 use App\GameElement\Character\Component\CharacterComponent;
 use App\GameElement\Character\Engine\HealthEngine;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Healing\Component\HealingComponent;
 use InvalidArgumentException;
+use PennyPHP\Core\GameObjectInterface;
 
 class HealingEngine
 {

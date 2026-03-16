@@ -2,12 +2,12 @@
 
 namespace App\Twig\Components\Render;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
-use PennyPHP\Core\GameObjectPrototype\GameObjectPrototypeInterface;
+use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Item\Component\ItemComponent;
-use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Render\Component\RenderComponent;
+use PennyPHP\Core\GameObjectInterface;
+use PennyPHP\Core\GameObjectPrototypeInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -21,6 +21,8 @@ final class ItemRenderTemplate
     public ItemComponent $itemComponent;
     public ?EquipmentComponent $itemEquipment = null;
     public ?HealingComponent $healing = null;
+
+    public int $quantity = 1;
 
     public function mount(GameObjectInterface|GameObjectPrototypeInterface $item, ?RenderComponent $render = null): void
     {

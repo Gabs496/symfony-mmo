@@ -4,9 +4,8 @@ namespace App\Entity\Data;
 
 use App\Entity\Activity\Activity;
 use App\Entity\Security\User;
-use App\GameElement\Map\Component\MapComponent;
+use App\GameElement\Map\Component\InMapComponent;
 use App\GameElement\Mastery\MasterySet;
-use App\GameElement\Position\Component\PlacedComponent;
 use App\Repository\Data\PlayerCharacterRepository;
 use Attribute;
 use Doctrine\ORM\Mapping as ORM;
@@ -130,9 +129,9 @@ class Player extends GameComponent implements UserInterface
         return $this->currentActivity === $activity;
     }
 
-    public function getMap(): MapComponent
+    public function getMap(): ?string
     {
-        return $this->gameObject->getComponent(PlacedComponent::class)->getPlaceId()->getComponent(MapComponent::class);
+        return $this->gameObject->getComponent(InMapComponent::class)?->getMapId();
     }
 
     public function __serialize(): array

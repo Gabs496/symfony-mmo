@@ -2,10 +2,10 @@
 
 namespace App\Twig\Components\Render;
 
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
-use App\GameElement\Item\Component\ItemComponent;
+use PennyPHP\Core\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObjectInterface;
+use PennyPHP\Core\GameObjectPrototypeInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent(name: 'Render:RecipeRenderTemplate', template: 'components/Render/RecipeRenderTemplate.html.twig')]
@@ -19,17 +19,8 @@ class RecipeRenderTemplate
     {
     }
 
-    public function getItem(): GameObjectInterface
+    public function getItem(): GameObjectPrototypeInterface
     {
         return $this->recipe->getItem();
-    }
-
-    public function getIngredients(): iterable
-    {
-        foreach ($this->recipe->getIngredients() as $ingredient) {
-            $item = $this->gameObjectEngine->make($ingredient->getItemPrototypeId());
-            $item->getComponent(ItemComponent::class)->setQuantity($ingredient->getQuantity());
-            yield $item;
-        }
     }
 }

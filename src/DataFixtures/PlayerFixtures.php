@@ -4,13 +4,14 @@ namespace App\DataFixtures;
 
 use App\Entity\Data\Player;
 use App\Entity\Security\User;
-use App\GameElement\Position\Component\PlacedComponent;
+use App\GameElement\Map\Component\InMapComponent;
+use App\GameElement\Render\Component\RenderComponent;
 use App\GameObject\Map\BirthTown;
-use App\GameObject\PlayerCharacter\BasePlayer;
+use App\GameObjectPrototype\PlayerCharacter\BasePlayer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use PennyPHP\Core\Engine\GameObjectEngine;
 use PennyPHP\Core\Entity\GameObject;
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class PlayerFixtures extends Fixture
@@ -54,14 +55,13 @@ class PlayerFixtures extends Fixture
             ->setUser($user)
             ->setName('Dev Player')
         ;
+        $playerGameObject->setComponent(new RenderComponent('Dev Player'));
         $user->addPlayerCharacter($playerComponent);
     }
 
     private function spawnInMap(GameObject $playerGameObject): void
     {
-        $playerGameObject->getComponent(PlacedComponent::class)
-            ->setPlaceType('map_field')
-            ->setPlaceId(BirthTown::ID)
-        ;
+        /** @var GameObject $birthtown */
+        $playerGameObject->setComponent(new InMapComponent(BirthTown::ID, "field"));
     }
 }

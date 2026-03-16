@@ -3,9 +3,9 @@
 namespace App\Repository\Data;
 
 use App\Entity\Activity\Activity;
-use App\Repository\RemoveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use PennyPHP\Core\Repository\RemoveEntityTrait;
 
 class ActivityRepository extends ServiceEntityRepository
 {

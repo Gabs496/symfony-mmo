@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Crafting;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Reward\RewardInterface;
+use PennyPHP\Core\GameObjectPrototypeInterface;
 
 abstract class AbstractItemRecipe
 {
@@ -11,7 +11,7 @@ abstract class AbstractItemRecipe
         protected string              $id,
         protected string              $name,
         protected string              $description,
-        protected GameObjectInterface $item,
+        protected GameObjectPrototypeInterface $item,
         /** @var RecipeIngredient[] */
         protected array               $ingredients,
         /** In seconds */
@@ -25,6 +25,11 @@ abstract class AbstractItemRecipe
     {
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -35,6 +40,7 @@ abstract class AbstractItemRecipe
         return $this->description;
     }
 
+    /** @return array<int, RecipeIngredient> */
     public function getIngredients(): array
     {
         return $this->ingredients;
@@ -56,10 +62,8 @@ abstract class AbstractItemRecipe
         return $this->rewards;
     }
 
-    public function getItem(): GameObjectInterface
+    public function getItem(): GameObjectPrototypeInterface
     {
         return $this->item;
     }
-
-    public abstract static function getId(): string;
 }

@@ -3,7 +3,7 @@
 namespace App\GameElement\Combat\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 class AttackActivity extends AbstractActivity
 {

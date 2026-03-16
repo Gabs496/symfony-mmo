@@ -2,16 +2,17 @@
 
 namespace App\GameObject\Map;
 
-use PennyPHP\Core\GameObjectPrototype\AbstractGameObjectPrototype;
 use App\GameElement\Gathering\Spawn\ResourceSpawn;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Render\Component\RenderComponent;
-use App\GameObject\Item\Food\CommonApplePrototype;
-use App\GameObject\Item\Resource\Log\ChestnutLogPrototype;
-use App\GameObject\Item\Resource\Ore\CopperOrePrototype;
-use App\GameObject\Mob\Animal\Salamander;
-use App\GameObject\Mob\Animal\Sbinsol;
+use App\GameObjectPrototype\Item\Food\CommonApplePrototype;
+use App\GameObjectPrototype\Item\Resource\Log\ChestnutLogPrototype;
+use App\GameObjectPrototype\Item\Resource\Ore\CopperOrePrototype;
+use App\GameObjectPrototype\Mob\Animal\Salamander;
+use App\GameObjectPrototype\Mob\Animal\Sbinsol;
+use PennyPHP\Core\AbstractGameObject;
+use PennyPHP\Core\InMemoryGameObjectInterface;
 
 #[RenderComponent(name: 'BirthTown')]
 #[MapComponent(
@@ -25,9 +26,14 @@ use App\GameObject\Mob\Animal\Sbinsol;
         new ObjectSpawn(Sbinsol::ID, 3, 0.25),
     ]
 )]
-class BirthTown extends AbstractGameObjectPrototype
+class BirthTown extends AbstractGameObject implements InMemoryGameObjectInterface
 {
     public const string ID = "MapBirthTown";
+
+    public function __construct()
+    {
+        parent::__construct(self::ID);
+    }
 
     public function getId(): string
     {

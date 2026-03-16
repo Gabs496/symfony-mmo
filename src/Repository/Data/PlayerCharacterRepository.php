@@ -3,9 +3,9 @@
 namespace App\Repository\Data;
 
 use App\Entity\Data\Player;
-use App\Repository\SaveEntityTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use PennyPHP\Core\Repository\SaveEntityTrait;
 
 /**
  * @extends ServiceEntityRepository<Player>

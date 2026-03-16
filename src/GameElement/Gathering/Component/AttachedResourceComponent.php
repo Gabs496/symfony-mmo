@@ -5,10 +5,12 @@ namespace App\GameElement\Gathering\Component;
 use Attribute;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\Table;
 use PennyPHP\Core\Entity\GameComponent;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 #[Entity]
+#[Table(name: "resource_attached_component")]
 class AttachedResourceComponent extends GameComponent
 {
     public function __construct(
@@ -17,7 +19,7 @@ class AttachedResourceComponent extends GameComponent
         #[Column]
         private int $availability = 1
     ){
-
+        parent::__construct();
     }
 
     public function getMaxAvaliability(): int

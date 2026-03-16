@@ -4,11 +4,8 @@ namespace App\GameElement\Combat\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
-use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Engine\CombatEngine;
-use PennyPHP\Core\GameObject\GameObjectInterface;
-use PennyPHP\Core\Token\TokenEngine;
-use RuntimeException;
+use PennyPHP\Core\Engine\TokenEngine;
 
 /** @extends ActivityEngineExtensionInterface<AttackActivity> */
 readonly class CombatActivityEngine implements ActivityEngineExtensionInterface

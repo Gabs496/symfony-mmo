@@ -2,11 +2,11 @@
 
 namespace App\GameElement\Reward\Engine;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
-use PennyPHP\Core\Token\TokenEngine;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
 use App\GameElement\Reward\RewardInterface;
+use PennyPHP\Core\Engine\TokenEngine;
+use PennyPHP\Core\GameObjectInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

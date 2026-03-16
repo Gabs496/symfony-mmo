@@ -4,60 +4,55 @@ namespace App\GameElement\Equipment;
 
 use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Equipment\Component\EquipmentSetComponent;
+use App\GameElement\Equipment\Component\EquippedComponent;
 use App\GameElement\Equipment\Event\EquipEvent;
 use App\GameElement\Equipment\Event\UnequipEvent;
-use App\GameElement\Position\PlacedEngine;
-use PennyPHP\Core\Entity\GameObject;
-use PennyPHP\Core\GameObject\Repository\GameObjectRepository;
+use App\GameElement\Equipment\Exception\IncompatibleEquipmentTargetSlotException;
+use App\GameElement\Equipment\Repository\EquippedRepository;
+use PennyPHP\Core\GameObjectInterface;
+use PennyPHP\Core\Repository\GameObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class EquipmentEngine
 {
     public function __construct(
-        private PlacedEngine             $placedEngine,
         private GameObjectRepository     $gameObjectRepository,
         private EventDispatcherInterface $eventDispatcher,
+        private EquippedRepository $equippedRepository,
     )
     {
 
     }
 
-    public function equip(GameObject $equipment, GameObject $to, string $slot): void
+    /**
+     * @throws IncompatibleEquipmentTargetSlotException
+     */
+    public function equip(EquipmentComponent $equipment, EquipmentSetComponent $equipmentSet, string $slot): void
     {
-        if (!$equipment->hasComponent(EquipmentComponent::class)) {
-            //TODO: throw exception
-            return;
-        }
-
-        if (!($equipmentSet = $to->getComponent(EquipmentSetComponent::class))) {
-            //TODO: throw exception
-            return;
-        }
-
         if (!$equipmentSet->hasSlot($slot)) {
-            //TODO: throw exception
-            return;
+            throw new IncompatibleEquipmentTargetSlotException($slot, $equipmentSet->getSlots());
+        }
+        if ($equipment->getTargetSlot() !== $slot) {
+            throw new IncompatibleEquipmentTargetSlotException($slot, [$equipment->getTargetSlot()]);
         }
 
-        self::unequip($to, $slot);
-        $this->placedEngine->move($equipment, 'equipment_' . $slot, $to);
-        $this->eventDispatcher->dispatch(new EquipEvent($equipment, $to, $slot));
+        self::unequip($equipmentSet->getGameObject(), $slot);
+        $equipment->getGameObject()->setComponent(new EquippedComponent($equipmentSet->getGameObject(), $slot));
+        $this->eventDispatcher->dispatch(new EquipEvent($equipment->getGameObject(), $equipmentSet->getGameObject(), $slot));
         $this->gameObjectRepository->save($equipment);
     }
 
 
-    public function unequip(GameObject $from ,string $slot): void
+    public function unequip(GameObjectInterface $from ,string $slot): void
     {
-        $this->eventDispatcher->dispatch(new UnequipEvent(self::getEquipment($from, $slot), $from, $slot));
+        $equipment = self::getEquipment($from, $slot);
+        $equipment->removeComponent(EquippedComponent::class);
+        $this->eventDispatcher->dispatch(new UnequipEvent($equipment, $from, $slot));
     }
 
-    public function getEquipment(GameObject $gameObject, string $slot): ?GameObject
+    public function getEquipment(GameObjectInterface $gameObject, string $slot): ?GameObjectInterface
     {
-        if (!($place = $gameObject->getComponent(PlaceComponent::class))) {
-            //TODO: throw exception
-            return null;
-        }
 
-        return $place->getContentByPosition('equipment_' . $slot);
+        return $this->equippedRepository->findEquipped($gameObject, $slot)?->getGameObject();
     }
 }

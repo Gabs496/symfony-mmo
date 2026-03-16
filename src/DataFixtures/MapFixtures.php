@@ -2,10 +2,10 @@
 
 namespace App\DataFixtures;
 
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use App\GameObject\Map\BirthTown;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use PennyPHP\Core\Engine\GameObjectEngine;
 
 class MapFixtures extends Fixture
 {
@@ -17,10 +17,10 @@ class MapFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $birthTown = $this->gameObjectEngine->make(BirthTown::class);
-        $manager->persist($birthTown);
-        $this->addReference('map_birthTown', $birthTown);
-
-        $manager->flush();
+//        $birthTown = $this->gameObjectEngine->make(BirthTown::class);
+//        $manager->persist($birthTown);
+//        $this->addReference('map_birthTown', $birthTown);
+//
+//        $manager->flush();
     }
 }

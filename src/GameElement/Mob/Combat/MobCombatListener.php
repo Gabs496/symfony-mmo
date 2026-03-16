@@ -2,12 +2,12 @@
 
 namespace App\GameElement\Mob\Combat;
 
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
 use App\GameElement\Drop\Component\Drop;
 use App\GameElement\Drop\Engine\DropEngine;
 use App\GameElement\Mob\Event\MobDefeatEvent;
 use App\GameElement\Mob\MobPrototypeInterface;
 use App\GameElement\Reward\Engine\RewardEngine;
+use PennyPHP\Core\Engine\GameObjectEngine;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MobCombatListener implements EventSubscriberInterface

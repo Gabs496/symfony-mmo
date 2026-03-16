@@ -3,9 +3,9 @@
 namespace App\GameElement\Crafting\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Reward\RewardInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 class RecipeCraftingActivity extends AbstractActivity
 {

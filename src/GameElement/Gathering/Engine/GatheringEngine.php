@@ -10,10 +10,10 @@ use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
 use App\GameElement\Gathering\GatherableInterface;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Reward\Engine\RewardEngine;
+use PennyPHP\Core\Engine\GameObjectEngine;
 use PennyPHP\Core\Entity\GameObject;
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
-use PennyPHP\Core\GameObject\GameObjectInterface;
-use PennyPHP\Core\GameObject\Repository\GameObjectRepository;
+use PennyPHP\Core\GameObjectInterface;
+use PennyPHP\Core\Repository\GameObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class GatheringEngine

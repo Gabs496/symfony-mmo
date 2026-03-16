@@ -2,25 +2,25 @@
 
 namespace App\GameElement\Equipment\Event;
 
-use PennyPHP\Core\Entity\GameObject;
+use PennyPHP\Core\GameObjectInterface;
 
 readonly class UnequipEvent
 {
     public function __construct(
-        private GameObject $equipment,
-        private GameObject $from,
+        private GameObjectInterface $equipment,
+        private GameObjectInterface $from,
         private string     $slot
     )
     {
 
     }
 
-    public function getEquipment(): GameObject
+    public function getEquipment(): GameObjectInterface
     {
         return $this->equipment;
     }
 
-    public function getFrom(): GameObject
+    public function getFrom(): GameObjectInterface
     {
         return $this->from;
     }

@@ -2,14 +2,14 @@
     <div class="row align-items-center">
         <div class="col-auto">
             {% block icon %}
-            <div style="width: 5em; height: 5em;">
-                <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100">
-            </div>
+                <div style="width: 5em; height: 5em;">
+                    <img src="{{ asset('images' ~ render.iconPath) }}" alt="{{ render.name }}" class="h-100">
+                </div>
             {% endblock %}
         </div>
         <div class="col">
             {% block name %}
-            <div class="fw-bold">{{ render.name }}</div>
+                <div class="fw-bold">{{ render.name }}</div>
             {% endblock %}
             {% block moreInfo %}
                 <div>

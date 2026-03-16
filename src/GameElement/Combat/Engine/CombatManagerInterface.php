@@ -5,7 +5,7 @@ namespace App\GameElement\Combat\Engine;
 use App\GameElement\Combat\Phase\Attack;
 use App\GameElement\Combat\Phase\AttackResult;
 use App\GameElement\Combat\Phase\Defense;
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 interface CombatManagerInterface
 {

@@ -4,8 +4,8 @@ namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
 use App\GameElement\Activity\Engine\ActivityEngineExtensionInterface;
-use PennyPHP\Core\Token\TokenEngine;
 use App\GameElement\Gathering\Engine\GatheringEngine;
+use PennyPHP\Core\Engine\TokenEngine;
 
 /** @extends ActivityEngineExtensionInterface<ResourceGatheringActivity> */
 readonly class ResourceGatheringEngineExtension implements ActivityEngineExtensionInterface

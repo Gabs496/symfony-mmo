@@ -3,7 +3,7 @@
 namespace App\GameElement\Character\Event;
 
 use App\GameElement\Character\Component\CharacterComponent;
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 class HealthModifiedEvent
 {

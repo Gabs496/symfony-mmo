@@ -3,8 +3,8 @@
 namespace App\Twig\Components;
 
 use App\GameElement\Character\Component\CharacterComponent;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use InvalidArgumentException;
+use PennyPHP\Core\GameObjectInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 

@@ -14,8 +14,8 @@ use App\GameElement\Combat\Phase\Damage;
 use App\GameElement\Combat\Phase\Defense;
 use App\GameElement\Combat\StatCollection;
 use App\GameElement\Mob\Event\MobDefeatEvent;
-use PennyPHP\Core\GameObject\GameObjectInterface;
-use PennyPHP\Core\GameObject\Repository\GameObjectRepository;
+use PennyPHP\Core\GameObjectInterface;
+use PennyPHP\Core\Repository\GameObjectRepository;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

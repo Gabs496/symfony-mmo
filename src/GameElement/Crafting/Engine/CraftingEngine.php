@@ -3,8 +3,6 @@
 namespace App\GameElement\Crafting\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
-use PennyPHP\Core\GameObject\Engine\GameObjectEngine;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
 use App\GameElement\Crafting\Exception\IngredientNotAvailableException;
@@ -13,7 +11,9 @@ use App\GameElement\Item\ItemEngineInterface;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Reward\Engine\RewardEngine;
 use InvalidArgumentException;
-use PennyPHP\Core\GameObject\Repository\GameObjectRepository;
+use PennyPHP\Core\Engine\GameObjectEngine;
+use PennyPHP\Core\GameObjectInterface;
+use PennyPHP\Core\Repository\GameObjectRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class CraftingEngine
@@ -39,7 +39,7 @@ readonly class CraftingEngine
 
         try {
             foreach ($recipe->getIngredients() as $ingredient) {
-                $item = $this->gameObjectEngine->getPrototype($ingredient->getItemPrototypeId());
+                $item = $this->gameObjectEngine->getPrototype($ingredient->getPrototype());
                 $extractions = $itemEngine->take($subject, $item, $ingredient->getQuantity());
                 foreach ($extractions as $extraction) {
                     $this->gameObjectRepository->remove($extraction->getItem()->getGameObject());

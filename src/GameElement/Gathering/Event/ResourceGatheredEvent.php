@@ -2,7 +2,7 @@
 
 namespace App\GameElement\Gathering\Event;
 
-use PennyPHP\Core\GameObject\GameObjectInterface;
+use PennyPHP\Core\GameObjectInterface;
 
 readonly class ResourceGatheredEvent
 {

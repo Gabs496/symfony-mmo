@@ -8,9 +8,9 @@
     </div>
     <div class="col-12">
         <div class="d-flex align-items-center">
-            {% for ingredient in this.ingredients %}
+            {% for ingredient in this.recipe.ingredients %}
                 <div class="ms-auto">
-                    {{ component('Render:ItemRenderTemplate', {item: ingredient}) }}
+                    {{ component('Render:ItemRenderTemplate', {item: ingredient.prototype, quantity: ingredient.quantity}) }}
                 </div>
             {% endfor %}
             <div class="activity_panel ms-2">

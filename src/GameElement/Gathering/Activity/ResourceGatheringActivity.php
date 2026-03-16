@@ -3,8 +3,8 @@
 namespace App\GameElement\Gathering\Activity;
 
 use App\GameElement\Activity\AbstractActivity;
-use PennyPHP\Core\GameObject\GameObjectInterface;
 use App\GameElement\Gathering\Component\ResourceComponent;
+use PennyPHP\Core\GameObjectInterface;
 
 class ResourceGatheringActivity extends AbstractActivity
 {

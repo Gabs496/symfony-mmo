@@ -36,9 +36,4 @@ class EquipmentComponent extends GameComponent
     {
         $this->stats = $stats;
     }
-
-    public static function getComponentName(): string
-    {
-        return 'item_equipment_component';
-    }
 }
