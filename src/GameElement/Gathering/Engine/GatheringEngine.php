@@ -4,16 +4,17 @@ namespace App\GameElement\Gathering\Engine;
 
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Gathering\Activity\ResourceGatheringActivity;
-use App\GameElement\Gathering\Component\AttachedResourceComponent;
+use App\GameElement\Gathering\Component\ResourceStatus;
 use App\GameElement\Gathering\Event\ResourceGatheredEvent;
 use App\GameElement\Gathering\Event\ResourceGatheringEndedEvent;
-use App\GameElement\Gathering\GatherableInterface;
-use App\GameElement\Item\Component\ItemComponent;
+use App\GameElement\Gathering\Exception\ResourceDepealedException;
+use App\GameElement\Gathering\GatherRewardsInterface;
 use App\GameElement\Reward\Engine\RewardEngine;
+use Doctrine\ORM\EntityManagerInterface;
 use PennyPHP\Core\Engine\GameObjectEngine;
-use PennyPHP\Core\Entity\GameObject;
 use PennyPHP\Core\GameObjectInterface;
 use PennyPHP\Core\Repository\GameObjectRepository;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class GatheringEngine
@@ -23,7 +24,9 @@ readonly class GatheringEngine
         private GameObjectRepository     $gameObjectRepository,
         private RewardEngine             $rewardEngine,
         private EventDispatcherInterface $eventDispatcher,
-        private ActivityEngine           $activityEngine, private GameObjectEngine $gameObjectEngine,
+        private ActivityEngine           $activityEngine,
+        private GameObjectEngine         $gameObjectEngine,
+        private EntityManagerInterface   $entityManager,
     )
     {
 
@@ -34,44 +37,47 @@ readonly class GatheringEngine
         $this->activityEngine->run(new ResourceGatheringActivity($subject, $resource));
     }
 
-    public function gather(GameObjectInterface $subject, GameObjectInterface $gameObject, float $quantity = 1.0): void
+    public function gather(GameObjectInterface $subject, GameObjectInterface $resource): void
     {
-        $newObject = $this->take($gameObject, $quantity);
-        $this->eventDispatcher->dispatch(new ResourceGatheredEvent($subject, $newObject));
-        $this->handleReward($subject, $newObject);
-        $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($subject, $newObject));
+        try {
+            $this->depeal($resource);
+            $this->eventDispatcher->dispatch(new ResourceGatheredEvent($subject, $resource));
+            $this->entityManager->flush();
+            $this->eventDispatcher->dispatch(new ResourceGatheringEndedEvent($subject, $resource));
+        } catch (ResourceDepealedException) {
+            $this->gameObjectRepository->remove($resource);
+        }
+
     }
 
-    protected function take(GameObject $gameObject, float $quantity): ?GameObjectInterface
+    /**
+     * @throws ResourceDepealedException
+     */
+    protected function depeal(GameObjectInterface $gameObject): void
     {
-        $resource = $gameObject->getComponent(AttachedResourceComponent::class);
+        $resource = $gameObject->getComponent(ResourceStatus::class);
 
         if (!$resource->getAvailability()) {
-            $this->gameObjectRepository->remove($gameObject);
-            return null;
+            throw new ResourceDepealedException();
         }
 
-        $newObject = $gameObject->clone();
-        $newObject->removeComponent(AttachedResourceComponent::class);
-        $itemComponent = $newObject->getComponent(ItemComponent::class);
-        $itemComponent->setQuantity(min($quantity,$resource->getAvailability()));
-
-        $resource->decreaseAvailability($quantity);
+        $resource->decreaseAvailability();
         $isDepealed = $resource->getAvailability() <= 0;
         if ($isDepealed) {
-            $this->gameObjectRepository->remove($gameObject);
-        } else {
-            $this->gameObjectRepository->save($gameObject);
+            $this->entityManager->remove($gameObject);
         }
 
-        return $newObject;
+        return;
     }
 
-    protected function handleReward(GameObject $subject, GameObject $resource): void
+    #[AsEventListener(ResourceGatheredEvent::class)]
+    public function handleRewards(ResourceGatheredEvent $event): void
     {
+        $subject = $event->getSubject();
+        $resource = $event->getResource();
         $objectHandler = $this->gameObjectEngine->getPrototype($resource->getPrototype());
 
-        if (!$objectHandler instanceof GatherableInterface) {
+        if (!$objectHandler instanceof GatherRewardsInterface) {
             return;
         }
 

@@ -17,8 +17,8 @@ use App\GameElement\Notification\Exception\UserNotificationException;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
-use App\GameObjectPrototype\PlayerCharacter\BasePlayer;
 use App\Repository\Data\PlayerCharacterRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PennyPHP\Core\Engine\GameObjectEngine;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -33,8 +33,9 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         private GameObjectEngine          $gameObjectEngine,
         private HubInterface              $hub,
         private Environment               $twig,
-        private PlayerCharacterRepository   $playerCharacterRepository,
-        private BasePlayer               $basePlayer,
+        private PlayerCharacterRepository $playerCharacterRepository,
+        private PlayerItemEngine $playerItemEngine,
+        private EntityManagerInterface $entityManager,
     )
     {
     }
@@ -79,18 +80,19 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
             if ($reward instanceof ItemRuntimeCreatedReward) {
                 $item = $this->gameObjectEngine->make($reward->getItemPrototypeId());
-                $itemComponent = $item->getComponent(ItemComponent::class);
-                $itemComponent->setQuantity($reward->getQuantity());
             } else {
                 $item = $reward->getItem();
             }
+            $this->entityManager->persist($item);
 
             try {
-                $this->basePlayer->give($player->getGameObject(), $item);
-                $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $item->getComponent(ItemComponent::class)->getQuantity(), $item->getComponent(RenderComponent::class)?->getComponentName()));
+                $this->playerItemEngine->give($player->getGameObject(), $item, $reward->getQuantity());
             } catch (MaxBagSizeReachedException) {
                 throw new UserNotificationException($player->getId(), 'Your bag is full, you cannot receive the item.');
             }
+
+            $this->entityManager->flush();
+            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $reward->getQuantity(), $item->getComponent(RenderComponent::class)?->getComponentName()));
         }
 
     }

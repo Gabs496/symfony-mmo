@@ -2,15 +2,18 @@
 
 namespace App\GameElement\Gathering\Spawn;
 
-use App\GameElement\Gathering\Component\AttachedResourceComponent;
+use App\GameElement\Gathering\Component\ResourceStatus;
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Map\Event\PreMapObjectSpawnEvent;
-use Exception;
+use PennyPHP\Core\Exception\GameComponentRequiredException;
 use Random\RandomException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 readonly class SpawnListener
 {
+    /**
+     * @throws GameComponentRequiredException
+     */
     #[AsEventListener(PreMapObjectSpawnEvent::class)]
     public function onPreMapObjectSpawn(PreMapObjectSpawnEvent $event): void
     {
@@ -22,7 +25,7 @@ readonly class SpawnListener
         }
 
         if (!$object->hasComponent(ResourceComponent::class)) {
-            throw new Exception();
+            throw new GameComponentRequiredException(ResourceComponent::class, $object);
         }
 
         try {
@@ -30,7 +33,7 @@ readonly class SpawnListener
         } catch (RandomException) {
             $resourceQuantity = 1;
         }
-        $object->setComponent(new AttachedResourceComponent($resourceQuantity, $resourceQuantity));
+        $object->setComponent(new ResourceStatus($resourceQuantity, $resourceQuantity));
     }
 
 }

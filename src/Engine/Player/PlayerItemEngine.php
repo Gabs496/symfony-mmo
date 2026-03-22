@@ -19,9 +19,9 @@ readonly class PlayerItemEngine implements ItemEngineInterface
     {
     }
 
-    public function give(GameObject $to, GameObject $item): void
+    public function give(GameObject $to, GameObject $item, int $quantity = 1): void
     {
-        self::putInBackpack($to, $item);
+        self::putInBackpack($to, $item, $quantity);
     }
 
     /** @return array<ItemExtractedEvent> */
@@ -36,10 +36,10 @@ readonly class PlayerItemEngine implements ItemEngineInterface
         self::putInBackpack($event->getFrom(), $event->getEquipment());
     }
 
-    private function putInBackpack(GameObject $player, GameObject $item): void
+    private function putInBackpack(GameObject $player, GameObject $item, int $quantity = 1): void
     {
         $itemBagComponent = $player->getComponent(ItemBagComponent::class);
-        $this->itemBagEngine->put($itemBagComponent, $item->getComponent(ItemComponent::class));
+        $this->itemBagEngine->put($itemBagComponent, $item->getComponent(ItemComponent::class), $quantity);
     }
 
     /** @return array<ItemExtractedEvent> */

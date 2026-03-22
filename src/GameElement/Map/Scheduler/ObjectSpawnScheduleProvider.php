@@ -5,9 +5,12 @@ namespace App\GameElement\Map\Scheduler;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Message\ObjectSpawnAction;
 use Doctrine\ORM\EntityManagerInterface;
+use Error;
 use PennyPHP\Core\InMemoryGameObjectInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
+use Symfony\Component\Scheduler\Event\FailureEvent;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
@@ -65,5 +68,17 @@ class ObjectSpawnScheduleProvider implements ScheduleProviderInterface
                 $schedule->add($recurringMessage);
             }
         }
+    }
+
+    #[AsEventListener(FailureEvent::class)]
+    public function onFail(FailureEvent $event): void
+    {
+        /** @var Error[] $trace */
+        $error = $event->getError();
+        while($previous = $error->getPrevious()) {
+            $error = $previous;
+        }
+        print_r($error->getMessage());
+        print_r($error->getTraceAsString());
     }
 }

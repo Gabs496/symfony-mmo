@@ -9,13 +9,9 @@ use App\GameElement\Map\Engine\MapSpawnEngine;
 use App\GameElement\Map\Event\PreMapObjectSpawnEvent;
 use App\GameElement\Map\Message\ObjectSpawnAction;
 use App\GameElement\Map\Repository\InMapRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Twig\Environment;
 
 #[AsMessageHandler]
 readonly class ObjectSpawnHandler
@@ -25,8 +21,6 @@ readonly class ObjectSpawnHandler
         private MapSpawnEngine  $mapSpawnEngine,
         private EventDispatcherInterface $eventDispatcher,
         private EntityManagerInterface $entityManager,
-        private HubInterface $hub,
-        private Environment $twig,
     )
     {
 
@@ -46,10 +40,6 @@ readonly class ObjectSpawnHandler
             $this->eventDispatcher->dispatch(new PreMapObjectSpawnEvent($map, $objectSpawn, $gameObject));
             $this->entityManager->persist($gameObject);
             $this->entityManager->flush();
-            $this->hub->publish(new Update(
-                'map_objects_' . $map->getGameObject()->getId(),
-                $this->twig->load('map/field.stream.html.twig')->renderBlock('create', ['id' => $gameObject->getId(), 'entity' => $gameObject])
-            ));
         }
     }
 

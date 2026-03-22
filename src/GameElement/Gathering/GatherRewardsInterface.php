@@ -4,7 +4,7 @@ namespace App\GameElement\Gathering;
 
 use App\GameElement\Reward\RewardInterface;
 
-interface GatherableInterface
+interface GatherRewardsInterface
 {
     /** @return array<RewardInterface> */
     public function getGatherRewards(): array;

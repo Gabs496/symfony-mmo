@@ -5,7 +5,7 @@ namespace App\Twig\Components\Render;
 use App\GameElement\Character\Component\CharacterComponent;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Interaction\FightInteraction;
-use App\GameElement\Gathering\Component\AttachedResourceComponent;
+use App\GameElement\Gathering\Component\ResourceStatus;
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\Interaction\GatherInteraction;
 use App\GameElement\Interaction\AbstractInteraction;
@@ -29,7 +29,7 @@ class MapRenderTemplate implements InteractableTemplateInterface
 
     public ?ResourceComponent $gatheringComponent = null;
 
-    public ?AttachedResourceComponent $attachedResourceComponent = null;
+    public ?ResourceStatus $attachedResourceComponent = null;
     public function mount(GameObject $gameObject): void
     {
         $this->gameObject = $gameObject;
@@ -37,7 +37,7 @@ class MapRenderTemplate implements InteractableTemplateInterface
         $this->itemComponent = $this->gameObject->getComponent(ItemComponent::class);
         $this->characterComponent = $this->gameObject->getComponent(CharacterComponent::class);
         $this->gatheringComponent = $this->gameObject->getComponent(ResourceComponent::class);
-        $this->attachedResourceComponent = $this->gameObject->getComponent(AttachedResourceComponent::class);
+        $this->attachedResourceComponent = $this->gameObject->getComponent(ResourceStatus::class);
     }
 
     /** @return iterable<AbstractInteraction> */

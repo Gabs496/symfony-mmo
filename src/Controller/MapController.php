@@ -11,6 +11,7 @@ use App\GameElement\Gathering\Engine\GatheringEngine;
 use App\GameElement\Map\Component\InMapComponent;
 use App\GameElement\Map\Repository\InMapRepository;
 use App\GameElement\Notification\Exception\UserNotificationException;
+use PennyPHP\Core\Entity\GameObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,7 @@ class MapController extends AbstractController
         private readonly InMapRepository  $inMapRepository,
         private readonly CraftingEngine   $craftingEngine,
         private readonly PlayerItemEngine $playerItemEngine,
+        private readonly GatheringEngine $gatheringEngine,
     )
     {
 
@@ -61,12 +63,12 @@ class MapController extends AbstractController
 
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
     #[IsGranted('ROLE_USER')]
-    public function startGathering(InMapComponent $resource, GatheringEngine $gatheringEngine, Request $request): Response
+    public function startGathering(GameObject $resource, Request $request): Response
     {
         /** @var Player $player */
         $player = $this->getUser();
         //TODO: check if player is on the same map as the resource
-        $gatheringEngine->startGathering($player->getGameObject(), $resource->getGameObject());
+        $this->gatheringEngine->startGathering($player->getGameObject(), $resource);
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

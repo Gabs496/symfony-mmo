@@ -9,6 +9,7 @@ readonly class ItemReward implements RewardInterface
 {
     public function __construct(
         private GameObjectInterface $item,
+        private int                 $quantity = 1,
         private array               $attributes = [],
     )
     {
@@ -19,6 +20,12 @@ readonly class ItemReward implements RewardInterface
     {
         return $this->item;
     }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
     public function getAttributes(): array
     {
         return $this->attributes;

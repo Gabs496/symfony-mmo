@@ -8,7 +8,7 @@ readonly class ResourceGatheredEvent
 {
     public function __construct(
         private GameObjectInterface $subject,
-        private GameObjectInterface $item,
+        private GameObjectInterface $resource,
     ) {
     }
 
@@ -17,8 +17,8 @@ readonly class ResourceGatheredEvent
         return $this->subject;
     }
 
-    public function getItem(): GameObjectInterface
+    public function getResource(): GameObjectInterface
     {
-        return $this->item;
+        return $this->resource;
     }
 }
