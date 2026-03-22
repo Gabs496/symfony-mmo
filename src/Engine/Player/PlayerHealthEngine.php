@@ -50,6 +50,6 @@ readonly class PlayerHealthEngine implements EventSubscriberInterface
             return;
         }
 
-        $this->notificationEngine->danger($player->getId(), 'GAME OVER!');
+        $this->notificationEngine->danger($player, 'GAME OVER!');
     }
 }

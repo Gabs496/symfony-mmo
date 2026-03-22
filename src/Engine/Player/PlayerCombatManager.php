@@ -71,7 +71,7 @@ readonly class PlayerCombatManager implements CombatManagerInterface
         $this->gameObjectRepository->save($defender);
 
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $defense->getDefender()]);
-        $this->notificationEngine->danger($player->getId(), '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($damage->getValue()) . ' damage');
+        $this->notificationEngine->danger($player, '<span class="fas fa-shield"></span> You have received ' . Math::getStatViewValue($damage->getValue()) . ' damage');
 
         return new AttackResult($attack, $defense, $damage, !$defender->getComponent(CharacterComponent::class)->isAlive());
     }
@@ -85,13 +85,13 @@ readonly class PlayerCombatManager implements CombatManagerInterface
     {
         /** @var Player $player */
         $player = $this->playerCharacterRepository->findOneBy(['gameObject' => $attackResult->getAttack()->getAttacker()]);
-        $this->notificationEngine->success($player->getId(), '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($attackResult->getDamage()->getValue()) . ' damage');
+        $this->notificationEngine->success($player, '<span class="fas fa-sword"></span> You have inflicted ' . Math::getStatViewValue($attackResult->getDamage()->getValue()) . ' damage');
 
         $defender = $attackResult->getDefense()->getDefender();
 
         if ($attackResult->isDefeated()) {
             if ($render = $defender->getComponent(RenderComponent::class)) {
-                $this->notificationEngine->success($player->getId(), '<span class="fas fa-swords"></span> You have defeated ' . $render->getComponentName());
+                $this->notificationEngine->success($player, '<span class="fas fa-swords"></span> You have defeated ' . $render->getComponentName());
             }
         }
     }

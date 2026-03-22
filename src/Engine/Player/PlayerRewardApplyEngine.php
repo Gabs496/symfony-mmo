@@ -52,7 +52,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         if ($reward instanceof MasteryReward) {
             $player->increaseMasteryExperience($reward->getMasteryId(), $reward->getExperience());
             $this->repository->save($player);
-            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-dumbbell"></span> +%s experience on %s', $reward->getQuantity(), $this->masteryEngine->get($reward->getMasteryId())::getName()));
+            $this->notificationEngine->success($player, sprintf('<span class="fas fa-dumbbell"></span> +%s experience on %s', $reward->getQuantity(), $this->masteryEngine->get($reward->getMasteryId())::getName()));
             $this->streamer->send(new PlayerStatsStream($player));
         }
 
@@ -62,7 +62,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             ;
             $stat->increase($reward->getAmount());
             $this->repository->save($player);
-            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-arrow-up"></span> +%d %s', Math::getStatViewValue($reward->getAmount()), ucfirst($stat::getLabel())));
+            $this->notificationEngine->success($player, sprintf('<span class="fas fa-arrow-up"></span> +%d %s', Math::getStatViewValue($reward->getAmount()), ucfirst($stat::getLabel())));
             $this->streamer->send(new PlayerStatsStream($player));
         }
 
@@ -81,7 +81,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             }
 
             $this->entityManager->flush();
-            $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-gift"></span> +%d %s', $reward->getQuantity(), $item->getComponent(RenderComponent::class)?->getComponentName()));
+            $this->notificationEngine->success($player, sprintf('<span class="fas fa-gift"></span> +%d %s', $reward->getQuantity(), $item->getComponent(RenderComponent::class)->getName()));
         }
 
     }
