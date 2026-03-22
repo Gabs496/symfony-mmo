@@ -9,18 +9,16 @@ use App\GameElement\Activity\Event\BeforeActivityStartEvent;
 use App\GameElement\Notification\Exception\UserNotificationException;
 use App\Repository\Data\ActivityRepository;
 use App\Repository\Data\PlayerCharacterRepository;
+use App\Stream\PlayerActivityStream;
+use App\Stream\Streamer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Twig\Environment;
 
 readonly class PlayerActivityEngine implements EventSubscriberInterface
 {
     public function __construct(
-        private HubInterface $hub,
-        private Environment $twig,
         private PlayerCharacterRepository $playerCharacterRepository,
-        private ActivityRepository $activityRepository,
+        private ActivityRepository        $activityRepository,
+        private Streamer $streamer,
     )
     {
 
@@ -64,11 +62,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
         $player->startActivity($activityEntity);
         $this->playerCharacterRepository->save($player);
 
-        $this->hub->publish(new Update(
-            'player_gui_' . $player->getId(),
-            $this->twig->load('streams/PlayerActivity.stream.html.twig')->renderBlock('start',['activity' => $player->getCurrentActivity()]),
-            true
-        ));
+        $this->streamer->send(new PlayerActivityStream($activityEntity, 'start', $player));
     }
 
     public function onActivityEnd(ActivityEndEvent $event): void
@@ -93,11 +87,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
 
         $activityEntity = $this->activityRepository->find($activityEntity->getId());
 
-        $this->hub->publish(new Update(
-            'player_gui_' . $player->getId(),
-            $this->twig->load('streams/PlayerActivity.stream.html.twig')->renderBlock('end', ['activity' => $activityEntity]),
-            true
-        ));
+        $this->streamer->send(new PlayerActivityStream($activityEntity, 'end', $player));
     }
 
     public function unlockIfShouldBeUnlocked(BeforeActivityStartEvent $event): void

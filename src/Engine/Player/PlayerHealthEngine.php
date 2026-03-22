@@ -7,18 +7,16 @@ use App\GameElement\Character\Event\HealthModifiedEvent;
 use App\GameElement\Character\Event\HealthReachedZeroEvent;
 use App\GameElement\Notification\Engine\NotificationEngine;
 use App\Repository\Data\PlayerCharacterRepository;
+use App\Stream\PlayerHealthStream;
+use App\Stream\Streamer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Twig\Environment;
 
-class PlayerHealthEngine implements EventSubscriberInterface
+readonly class PlayerHealthEngine implements EventSubscriberInterface
 {
     public function __construct(
-        protected HubInterface $hub,
-        protected Environment $twig,
-        protected PlayerCharacterRepository $playerCharacterRepository,
-        protected NotificationEngine $notificationEngine,
+        private PlayerCharacterRepository $playerCharacterRepository,
+        private NotificationEngine        $notificationEngine,
+        private Streamer                  $streamer,
     )
     {
     }
@@ -42,10 +40,7 @@ class PlayerHealthEngine implements EventSubscriberInterface
             return;
         }
 
-        $this->hub->publish(new Update('player_gui_' . $player->getId(),
-            $this->twig->load('streams/player_health.stream.html.twig')->renderBlock('update', ['player' => $player]),
-            true
-        ));
+        $this->streamer->send(new PlayerHealthStream('update', $player));
     }
 
     public function notifyGameOver(HealthReachedZeroEvent $event): void

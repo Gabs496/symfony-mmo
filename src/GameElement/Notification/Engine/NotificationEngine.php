@@ -2,34 +2,33 @@
 
 namespace App\GameElement\Notification\Engine;
 
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Symfony\Component\Uid\Uuid;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use App\Entity\Data\Player;
+use App\Repository\Data\PlayerCharacterRepository;
+use App\Stream\PlayerNotificationStream;
+use App\Stream\Streamer;
 
-class NotificationEngine
+readonly class NotificationEngine
 {
     public function __construct(
-        protected HubInterface $hub,
-        protected Environment $twig,
+        private Streamer $streamer,
+        private PlayerCharacterRepository $playerCharacterRepository,
     )
     {
     }
 
-    /**
-     * @throws LoaderError
-     * @throws SyntaxError|RuntimeError
-     */
-    public function success(string $recipeId, string $message): void
+    public function success(string|Player $recipe, string $message): void
     {
-        $this->hub->publish(new Update('player_gui_' . $recipeId, $this->twig->load('notification/notification.stream.html.twig')->renderBlock('success', ['message' => $message, 'id' => Uuid::v7()]), true));
+        if (is_string($recipe)) {
+            $recipe = $this->playerCharacterRepository->find($recipe);
+        }
+        $this->streamer->send(new PlayerNotificationStream($message, "success", $recipe));
     }
 
-    public function danger(string $recipeId, string $message): void
+    public function danger(string $recipe, string $message): void
     {
-        $this->hub->publish(new Update('player_gui_' . $recipeId, $this->twig->load('notification/notification.stream.html.twig')->renderBlock('danger',['message' => $message, 'id' => Uuid::v7()]), true));
+        if (is_string($recipe)) {
+            $recipe = $this->playerCharacterRepository->find($recipe);
+        }
+        $this->streamer->send(new PlayerNotificationStream($message, "danger", $recipe));
     }
 }

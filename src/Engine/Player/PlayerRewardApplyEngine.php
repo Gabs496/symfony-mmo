@@ -7,7 +7,6 @@ use App\Engine\Reward\MasteryReward;
 use App\Entity\Data\Player;
 use App\GameElement\Combat\Component\CombatComponent;
 use App\GameElement\Combat\Reward\CombatStatReward;
-use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Item\Exception\MaxBagSizeReachedException;
 use App\GameElement\Item\Reward\ItemReward;
 use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
@@ -18,11 +17,10 @@ use App\GameElement\Render\Component\RenderComponent;
 use App\GameElement\Reward\RewardApplierInterface;
 use App\GameElement\Reward\RewardApply;
 use App\Repository\Data\PlayerCharacterRepository;
+use App\Stream\PlayerStatsStream;
+use App\Stream\Streamer;
 use Doctrine\ORM\EntityManagerInterface;
 use PennyPHP\Core\Engine\GameObjectEngine;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Twig\Environment;
 
 readonly class PlayerRewardApplyEngine implements RewardApplierInterface
 {
@@ -31,11 +29,10 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
         private NotificationEngine        $notificationEngine,
         private MasteryTypeRepository     $masteryEngine,
         private GameObjectEngine          $gameObjectEngine,
-        private HubInterface              $hub,
-        private Environment               $twig,
         private PlayerCharacterRepository $playerCharacterRepository,
-        private PlayerItemEngine $playerItemEngine,
-        private EntityManagerInterface $entityManager,
+        private PlayerItemEngine          $playerItemEngine,
+        private EntityManagerInterface    $entityManager,
+        private Streamer $streamer,
     )
     {
     }
@@ -56,11 +53,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             $player->increaseMasteryExperience($reward->getMasteryId(), $reward->getExperience());
             $this->repository->save($player);
             $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-dumbbell"></span> +%s experience on %s', $reward->getQuantity(), $this->masteryEngine->get($reward->getMasteryId())::getName()));
-            $this->hub->publish(new Update(
-                'player_gui_' . $player->getId(),
-                $this->twig->render('player_character/stats.stream.html.twig', ['playerCharacter' => $player]),
-                true
-            ));
+            $this->streamer->send(new PlayerStatsStream($player));
         }
 
         if ($reward instanceof CombatStatReward) {
@@ -70,11 +63,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             $stat->increase($reward->getAmount());
             $this->repository->save($player);
             $this->notificationEngine->success($player->getId(), sprintf('<span class="fas fa-arrow-up"></span> +%d %s', Math::getStatViewValue($reward->getAmount()), ucfirst($stat::getLabel())));
-            $this->hub->publish(new Update(
-                'player_gui_' . $player->getId(),
-                $this->twig->render('player_character/stats.stream.html.twig', ['playerCharacter' => $player]),
-                true
-            ));
+            $this->streamer->send(new PlayerStatsStream($player));
         }
 
         if ($reward instanceof ItemRuntimeCreatedReward || $reward instanceof ItemReward) {
