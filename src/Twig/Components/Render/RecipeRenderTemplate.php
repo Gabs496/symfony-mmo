@@ -4,7 +4,6 @@ namespace App\Twig\Components\Render;
 
 use App\GameElement\Crafting\AbstractItemRecipe;
 use PennyPHP\Core\Engine\GameObjectEngine;
-use PennyPHP\Core\GameObjectInterface;
 use PennyPHP\Core\GameObjectPrototypeInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 

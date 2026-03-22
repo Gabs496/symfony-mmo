@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\GameObject\Map\BirthTown;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use PennyPHP\Core\Engine\GameObjectEngine;

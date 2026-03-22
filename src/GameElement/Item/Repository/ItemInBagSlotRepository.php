@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Item\Repository;
 
-use App\GameElement\Item\Component\ItemInBagSlotComponent;
 use App\GameElement\Item\Component\ItemBagComponent;
+use App\GameElement\Item\Component\ItemInBagSlotComponent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

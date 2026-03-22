@@ -2,7 +2,6 @@
 
 namespace App\GameElement\Equipment\Exception;
 
-use App\GameElement\Equipment\Component\EquipmentSetComponent;
 use Exception;
 use Throwable;
 

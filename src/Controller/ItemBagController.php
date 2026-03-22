@@ -8,7 +8,6 @@ use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Equipment\EquipmentEngine;
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\Component\ItemInBagSlotComponent;
-use App\GameElement\Item\ItemBagEngine;
 use App\GameElement\Item\Repository\ItemInBagSlotRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;

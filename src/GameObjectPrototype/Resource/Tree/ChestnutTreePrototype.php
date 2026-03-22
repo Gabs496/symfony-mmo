@@ -5,7 +5,6 @@ namespace App\GameObjectPrototype\Resource\Tree;
 use App\Engine\Reward\MasteryReward;
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\GatherRewardsInterface;
-use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameElement\Render\Component\RenderComponent;
 use App\GameObject\Mastery\Gathering\Woodcutting;

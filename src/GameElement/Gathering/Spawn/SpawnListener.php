@@ -2,8 +2,8 @@
 
 namespace App\GameElement\Gathering\Spawn;
 
-use App\GameElement\Gathering\Component\ResourceStatus;
 use App\GameElement\Gathering\Component\ResourceComponent;
+use App\GameElement\Gathering\Component\ResourceStatus;
 use App\GameElement\Map\Event\PreMapObjectSpawnEvent;
 use PennyPHP\Core\Exception\GameComponentRequiredException;
 use Random\RandomException;

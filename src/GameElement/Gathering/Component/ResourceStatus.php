@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
 use PennyPHP\Core\Entity\GameComponent;
-use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 #[Entity]
