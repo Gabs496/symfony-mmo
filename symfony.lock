@@ -56,6 +56,9 @@
             "ref": "c2ab78f625df0c89af5908d50a28602ff8c4919f"
         }
     },
+    "penny-php/core": {
+        "version": "0.1"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {
@@ -298,6 +301,18 @@
             "version": "7.0",
             "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
         }
+    },
+    "symfony/ux-live-component": {
+        "version": "2.26",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.6",
+            "ref": "b7130b7b5ddc2f8994bd6149d7c093b184782f0c"
+        },
+        "files": [
+            "config/routes/ux_live_component.yaml"
+        ]
     },
     "symfony/ux-turbo": {
         "version": "2.22",

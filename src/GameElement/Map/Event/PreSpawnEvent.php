@@ -6,12 +6,12 @@ use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use PennyPHP\Core\GameObjectInterface;
 
-class PreMapObjectSpawnEvent
+readonly class PreSpawnEvent
 {
     public function __construct(
-        private readonly MapComponent        $mapComponent,
-        private readonly ObjectSpawn         $objectSpawn,
-        private readonly GameObjectInterface $object,
+        private MapComponent        $mapComponent,
+        private ObjectSpawn         $objectSpawn,
+        private GameObjectInterface $object,
     )
     {
     }

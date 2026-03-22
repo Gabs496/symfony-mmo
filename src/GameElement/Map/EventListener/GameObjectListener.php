@@ -3,7 +3,6 @@
 namespace App\GameElement\Map\EventListener;
 
 use App\GameElement\Map\Component\InMapComponent;
-use PennyPHP\Core\Event\GameObjectNewEvent;
 use PennyPHP\Core\Event\GameObjectRemoveEvent;
 use PennyPHP\Core\Event\GameObjectUpdateEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -16,17 +15,6 @@ readonly class GameObjectListener
     )
     {
 
-    }
-
-    #[AsEventListener(GameObjectNewEvent::class)]
-    public function onCreate(GameObjectNewEvent $event): void
-    {
-        if ($event->getGameObject()->hasComponent(InMapComponent::class)) {
-            $this->twigBroadcaster->broadcast($event->getGameObject(), 'create', [
-                'template' => 'map/field.stream.html.twig',
-                'topics' => 'map_field_'. $event->getGameObject()->getComponent(InMapComponent::class)->getMapId(),
-            ]);
-        }
     }
 
     #[AsEventListener(GameObjectUpdateEvent::class)]

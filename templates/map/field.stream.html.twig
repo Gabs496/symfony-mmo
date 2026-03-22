@@ -1,13 +1,3 @@
-{% block create %}
-    <turbo-stream action="append" target="map_objects">
-        <template>
-            <div id="map_object_{{ id }}" class="animate__animated animate__zoomIn animate__faster">
-                {{ component("Render:MapRenderTemplate", {gameObject: entity}) }}
-            </div>
-        </template>
-    </turbo-stream>
-{% endblock %}
-
 {% block update %}
     <turbo-stream action="replace" target="map_object_{{ id }}" method="morph">
         <template>

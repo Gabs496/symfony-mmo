@@ -1,0 +1,8 @@
+<div {{ attributes.defaults({"data-poll": "delay(2000)|$render"}) }}>
+    <div {{ custom_turbo_stream_listen('map_field_' ~ this.player.map) }}></div>
+    {% for inMapComponent in this.inMapComponents %}
+        <div id="map_object_{{ inMapComponent.gameObject.id }}" class="animate__animated animate__zoomIn animate__faster">
+            {{ component("Render:MapRenderTemplate", {gameObject: inMapComponent.gameObject}) }}
+        </div>
+    {% endfor %}
+</div>

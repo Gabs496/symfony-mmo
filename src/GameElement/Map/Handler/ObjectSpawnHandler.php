@@ -6,7 +6,7 @@ use App\GameElement\Map\Component\InMapComponent;
 use App\GameElement\Map\Component\MapComponent;
 use App\GameElement\Map\Component\Spawn\ObjectSpawn;
 use App\GameElement\Map\Engine\MapSpawnEngine;
-use App\GameElement\Map\Event\PreMapObjectSpawnEvent;
+use App\GameElement\Map\Event\PreSpawnEvent;
 use App\GameElement\Map\Message\ObjectSpawnAction;
 use App\GameElement\Map\Repository\InMapRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,7 +37,7 @@ readonly class ObjectSpawnHandler
 
         if ($this->isTimeToSpawn($objectSpawn->getSpawnRate())) {
             $gameObject = $this->mapSpawnEngine->spawnNewObject($map, $objectSpawn);
-            $this->eventDispatcher->dispatch(new PreMapObjectSpawnEvent($map, $objectSpawn, $gameObject));
+            $this->eventDispatcher->dispatch(new PreSpawnEvent($map, $objectSpawn, $gameObject));
             $this->entityManager->persist($gameObject);
             $this->entityManager->flush();
         }

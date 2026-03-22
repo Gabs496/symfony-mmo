@@ -4,7 +4,7 @@ namespace App\GameElement\Gathering\Spawn;
 
 use App\GameElement\Gathering\Component\ResourceComponent;
 use App\GameElement\Gathering\Component\ResourceStatus;
-use App\GameElement\Map\Event\PreMapObjectSpawnEvent;
+use App\GameElement\Map\Event\PreSpawnEvent;
 use PennyPHP\Core\Exception\GameComponentRequiredException;
 use Random\RandomException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -14,8 +14,8 @@ readonly class SpawnListener
     /**
      * @throws GameComponentRequiredException
      */
-    #[AsEventListener(PreMapObjectSpawnEvent::class)]
-    public function onPreMapObjectSpawn(PreMapObjectSpawnEvent $event): void
+    #[AsEventListener(PreSpawnEvent::class)]
+    public function onPreSpawn(PreSpawnEvent $event): void
     {
         $object = $event->getObject();
 

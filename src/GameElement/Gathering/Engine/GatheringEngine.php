@@ -66,8 +66,6 @@ readonly class GatheringEngine
         if ($isDepealed) {
             $this->entityManager->remove($gameObject);
         }
-
-        return;
     }
 
     #[AsEventListener(ResourceGatheredEvent::class)]

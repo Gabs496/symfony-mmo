@@ -47,6 +47,7 @@
         "symfony/translation": "7.1.*",
         "symfony/twig-bundle": "7.1.*",
         "symfony/uid": "7.1.*",
+        "symfony/ux-live-component": "^2.26",
         "symfony/ux-turbo": "^2.22",
         "symfony/ux-twig-component": "^2.25",
         "symfony/validator": "7.1.*",
