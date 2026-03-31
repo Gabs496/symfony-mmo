@@ -1,0 +1,3 @@
+services:
+  mercure:
+    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
