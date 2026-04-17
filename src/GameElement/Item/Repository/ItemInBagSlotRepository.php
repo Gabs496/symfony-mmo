@@ -16,10 +16,10 @@ class ItemInBagSlotRepository extends ServiceEntityRepository
 
 
     /** @return array<ItemInBagSlotComponent> */
-    public function findInBag(ItemBagComponent|string $bagComponent): array
+    public function findInBag(ItemBagComponent|string $bag): array
     {
         return $this->findBy([
-            'bagId' => $bagComponent->getId() ?? $bagComponent
+            'bagId' => $bag->getGameObject()->getId() ?? $bag
         ]);
     }
 }

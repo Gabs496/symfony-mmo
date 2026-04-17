@@ -14,7 +14,7 @@ final class ItemBag
     public ItemBagComponent $bag;
 
     public function __construct(
-        private ItemBagEngine $bagEngine
+        private readonly ItemBagEngine $bagEngine
     )
     {}
 

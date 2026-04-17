@@ -1,5 +1,5 @@
 <turbo-frame id="item_bag_content_{{ bag.id }}">
     {% for item in items %}
-        {{ component('Render:ItemBagRenderTemplate', {item: itemObject}) }}
+        {{ component('Render:ItemBagRenderTemplate', {item: item}) }}
     {% endfor %}
 </turbo-frame>

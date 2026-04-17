@@ -1,0 +1,24 @@
+{% block update %}
+    <turbo-stream action="replace" target="map_object_{{ id }}" method="morph">
+        <template>
+            {{ component("Render:MapRenderTemplate", {gameObject: entity, id: "map_object_" ~ id}) }}
+        </template>
+    </turbo-stream>
+{% endblock %}
+
+{% block remove %}
+    <turbo-stream action="replace" target="map_object_{{ id }}">
+        <template>
+            {{ component("Render:MapRenderTemplate", {gameObject: entity, id: "map_object_" ~ id, class: "animate__animated animate__zoomOut animate__faster", style: "ransition: height .5s;"}) }}
+            <script>
+                document.getElementById('map_object_{{ id }}').style.height = document.getElementById('map_object_{{ id }}').offsetHeight + 'px';
+                setTimeout(function(){
+                    document.getElementById('map_object_{{ id }}').style.height = 0;
+                    setTimeout(function(){
+                        document.getElementById('map_object_{{ id }}').remove();
+                    }, 500);
+                }, 500);
+            </script>
+        </template>
+    </turbo-stream>
+{% endblock %}

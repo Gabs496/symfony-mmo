@@ -14,7 +14,7 @@
                 </turbo-frame>
             </div>
         </div>
-        <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
+        <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ this.bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
         </turbo-frame>
     </div>
 </div>

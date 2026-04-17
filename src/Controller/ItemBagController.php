@@ -50,6 +50,7 @@ class ItemBagController extends AbstractController
 
         //TODO: move to a service or a message handler
         $this->entityManager->remove($item);
+        $this->entityManager->flush();
 
         if ($request->headers->get('Turbo-Frame')) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
