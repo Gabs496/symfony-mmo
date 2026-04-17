@@ -34,7 +34,7 @@ readonly class MapFieldStream implements StreamInterface, BroadcastStreamInterfa
 
     public function getObject(): ?object
     {
-        return $this->getObject();
+        return $this->gameObject;
     }
 
     public function getAction(): ?string
