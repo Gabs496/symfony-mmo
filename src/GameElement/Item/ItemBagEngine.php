@@ -38,9 +38,9 @@ readonly class ItemBagEngine
         try {
             self::tryToMerge($bag,$item->getGameObject(), $quantity);
         } catch (CannotMergeItemException) {
-            $slot = new ItemInBagSlotComponent($bag, $quantity);
+            $slot = new ItemInBagSlotComponent($bag, $quantity, $item->getMaxStackSize());
             $item->getGameObject()->setComponent($slot);
-            $this->entityManager->persist($slot);
+            $this->entityManager->persist($item->getGameObject());
         }
         $this->entityManager->flush();
 

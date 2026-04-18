@@ -13,7 +13,8 @@ class ItemComponent extends GameComponent
 {
     public function __construct(
         #[Column]
-        private float                   $weight = 0.0,
+        private float $weight = 0.0,
+        private int $maxStackSize = 1,
     )
     {
         parent::__construct();
@@ -27,6 +28,16 @@ class ItemComponent extends GameComponent
     public function setWeight(float $weight): void
     {
         $this->weight = $weight;
+    }
+
+    public function getMaxStackSize(): int
+    {
+        return $this->maxStackSize;
+    }
+
+    public function setMaxStackSize(int $maxStackSize): void
+    {
+        $this->maxStackSize = $maxStackSize;
     }
 
     public static function getComponentName(): string

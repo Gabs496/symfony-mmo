@@ -28,7 +28,7 @@ readonly class MapFieldStream implements StreamInterface, BroadcastStreamInterfa
     {
         return [
             'entity' => $this->gameObject,
-            'id' => $this->mapId,
+            'id' => $this->gameObject->getId(),
         ];
     }
 

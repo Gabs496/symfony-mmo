@@ -72,7 +72,6 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             } else {
                 $item = $reward->getItem();
             }
-            $this->entityManager->persist($item);
 
             try {
                 $this->playerItemEngine->give($player->getGameObject(), $item, $reward->getQuantity());
