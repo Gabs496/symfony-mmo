@@ -11,7 +11,7 @@ use PennyPHP\Core\AbstractGameObjectPrototype;
     description: 'A log from a chestnut tree.',
     iconPath: '/items/resource_log_chestnut.png'
 )]
-#[ItemComponent(weight: 0.1)]
+#[ItemComponent(weight: 0.1, maxStackSize: 999)]
 class ChestnutLogPrototype extends AbstractGameObjectPrototype
 {
     public const string ID = 'LOG_CHESTNUT';

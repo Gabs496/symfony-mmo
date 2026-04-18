@@ -12,7 +12,7 @@ use PennyPHP\Core\AbstractGameObjectPrototype;
     description: 'A common apple, perfect for a quick snack or to restore a small amount of health.',
     iconPath: '/items/resource_food_common_apple.png'
 )]
-#[ItemComponent(weight: 0.5)]
+#[ItemComponent(weight: 0.5, maxStackSize: 999)]
 #[HealingComponent(0.05)]
 class CommonApplePrototype extends AbstractGameObjectPrototype
 {

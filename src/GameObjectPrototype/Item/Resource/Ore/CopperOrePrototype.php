@@ -11,7 +11,7 @@ use PennyPHP\Core\AbstractGameObjectPrototype;
     description: 'A piece of copper ore.',
     iconPath: '/items/resource_ore_copper.png'
 )]
-#[ItemComponent(weight: 0.2)]
+#[ItemComponent(weight: 0.2, maxStackSize: 999)]
 class CopperOrePrototype extends AbstractGameObjectPrototype
 {
     public const string ID = 'ORE_COPPER';
