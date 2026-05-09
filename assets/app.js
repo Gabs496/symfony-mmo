@@ -10,7 +10,6 @@ import 'animate.css';
 import './styles/app.css';
 
 import $ from 'jquery';
-import 'bootstrap';
 import * as polyfill from 'event-source-polyfill';
 
 window.$ = $;

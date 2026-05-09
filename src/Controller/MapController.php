@@ -55,13 +55,9 @@ class MapController extends AbstractController
     {
         /** @var Player $user */
         $user = $this->getUser();
-        $mapId = $user->getMap();
-        $objects = array_filter($this->inMapRepository->findInMap($mapId, 'field'), function (InMapComponent $inMapComponent) use ($user) {
-            return $inMapComponent->getGameObject()->getId() !== $user->getGameObject()->getId();
-        });
 
-        return $this->render('map/field.frame.html.twig', [
-            'inMapComponents' => $objects,
+        return $this->renderBlock('streams/map_field.stream.html.twig', 'renderMap', [
+            'player' => $user,
         ]);
     }
 
