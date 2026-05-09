@@ -184,7 +184,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "0.3",
-            "ref": "528285147494380298f8f991ee8c47abebaf79db"
+            "ref": "b682842d20a2e512913e3542c927b371d9ec1962"
         },
         "files": [
             "config/packages/mercure.yaml"
