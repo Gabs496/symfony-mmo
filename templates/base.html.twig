@@ -13,8 +13,8 @@
         {% endblock %}
 
         {% block javascripts %}
-            <script type="javascript" src="{{ asset('fa-pro/js/pro.min.js') }}"></script>
             {% block importmap %}{{ importmap('app') }}{% endblock %}
+            <script type="javascript" src="{{ asset('fa-pro/js/pro.min.js') }}"></script>
         {% endblock %}
     </head>
     <body>
