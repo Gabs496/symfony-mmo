@@ -4,14 +4,12 @@ namespace App\Stream;
 
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
-use Symfony\UX\Turbo\Broadcaster\BroadcasterInterface;
 use Twig\Environment;
 
 readonly class Streamer
 {
 
     public function __construct(
-        private BroadcasterInterface $twigBroadcaster,
         private HubInterface $mercure,
         private Environment $twig,
     )
