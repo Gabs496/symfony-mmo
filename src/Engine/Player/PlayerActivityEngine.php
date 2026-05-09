@@ -47,7 +47,7 @@ readonly class PlayerActivityEngine implements EventSubscriberInterface
             return;
         }
         if ($player->getCurrentActivity()) {
-            throw new UserNotificationException($player->getId(), 'You are too busy',);
+            throw new UserNotificationException($player, 'You are too busy',);
         }
     }
 

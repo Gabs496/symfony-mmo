@@ -1,22 +1,22 @@
 <?php
 
-namespace App\GameElement\Item\Event;
+namespace App\GameElement\Crafting;
 
 use PennyPHP\Core\Entity\GameObject;
 
-readonly class ItemExtractedEvent
+readonly class CraftingIngredient
 {
+
     public function __construct(
-        private GameObject $item,
+        private GameObject $gameObject,
         private int        $quantity,
     )
     {
-
     }
 
-    public function getItem(): GameObject
+    public function getGameObject(): GameObject
     {
-        return $this->item;
+        return $this->gameObject;
     }
 
     public function getQuantity(): int

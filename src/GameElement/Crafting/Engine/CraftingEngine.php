@@ -5,48 +5,36 @@ namespace App\GameElement\Crafting\Engine;
 use App\GameElement\Activity\Engine\ActivityEngine;
 use App\GameElement\Crafting\AbstractItemRecipe;
 use App\GameElement\Crafting\Activity\RecipeCraftingActivity;
+use App\GameElement\Crafting\CraftingIngredient;
 use App\GameElement\Crafting\Exception\IngredientNotAvailableException;
-use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
-use App\GameElement\Item\ItemEngineInterface;
-use App\GameElement\Item\Reward\ItemReward;
+use App\GameElement\Crafting\RecipeIngredientChecker;
+use App\GameElement\Item\Reward\ItemRuntimeCreatedReward;
 use App\GameElement\Reward\Engine\RewardEngine;
-use InvalidArgumentException;
-use PennyPHP\Core\Engine\GameObjectEngine;
 use PennyPHP\Core\GameObjectInterface;
-use PennyPHP\Core\Repository\GameObjectRepository;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class CraftingEngine
 {
     public function __construct(
-        private RewardEngine     $rewardEngine,
-        private ActivityEngine   $activityEngine,
-        /** @var iterable<AbstractItemRecipe> */
-        #[AutowireIterator('crafting.item_recipe')]
-        private iterable         $recipes,
-        private GameObjectEngine $gameObjectEngine, private GameObjectRepository $gameObjectRepository,
+        private RewardEngine   $rewardEngine,
+        private ActivityEngine $activityEngine,
+        private RecipeBook     $recipeBook,
     )
     {}
 
     /**
+     * @param array<CraftingIngredient> $ingredients
      * @throws IngredientNotAvailableException
      */
-    public function startCrafting(GameObjectInterface $subject, AbstractItemRecipe|string $recipe, ItemEngineInterface $itemEngine): void
+    public function startCrafting(GameObjectInterface $subject, AbstractItemRecipe|string $recipe, array $ingredients): void
     {
         if (is_string($recipe)) {
-            $recipe = $this->getRecipe($recipe);
+            $recipe = $this->recipeBook->getRecipe($recipe);
         }
 
-        try {
-            foreach ($recipe->getIngredients() as $ingredient) {
-                $item = $this->gameObjectEngine->getPrototype($ingredient->getPrototype());
-                $extractions = $itemEngine->take($subject, $item, $ingredient->getQuantity());
-                foreach ($extractions as $extraction) {
-                    $this->gameObjectRepository->remove($extraction->getItem()->getGameObject());
-                }
-            }
-        } catch (ItemQuantityNotAvailableException $event) {
-            throw new IngredientNotAvailableException('Recipe ingredients not availables', 0, $event);
+        $ingredentsChecker = new RecipeIngredientChecker($recipe,$ingredients);
+
+        if (!$ingredentsChecker->match()) {
+            throw new IngredientNotAvailableException('Recipe ingredients not availables');
         }
 
         $this->activityEngine->run(new RecipeCraftingActivity($subject, $recipe));
@@ -54,26 +42,10 @@ readonly class CraftingEngine
 
     public function craft(GameObjectInterface $subject, AbstractItemRecipe $recipe): void
     {
-        $this->rewardEngine->apply(new ItemReward($recipe->getItem()), $subject);
+        $this->rewardEngine->apply(new ItemRuntimeCreatedReward($recipe->getItem()::getType()), $subject);
 
         foreach ($recipe->getRewards() as $reward) {
             $this->rewardEngine->apply($reward, $subject);
         }
-    }
-
-    public function getRecipes(): iterable
-    {
-        return $this->recipes;
-    }
-
-    public function getRecipe(string $recipeId): AbstractItemRecipe
-    {
-        foreach ($this->recipes as $recipe) {
-            if ($recipe->getId() === $recipeId) {
-                return $recipe;
-            }
-        }
-
-        throw new InvalidArgumentException("Recipe id '$recipeId' not found");
     }
 }

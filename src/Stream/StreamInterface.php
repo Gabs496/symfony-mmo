@@ -11,4 +11,5 @@ interface StreamInterface
 
     public function getOptions(): array;
 
+    public function getAction(): ?string;
 }

@@ -76,7 +76,7 @@ readonly class PlayerRewardApplyEngine implements RewardApplierInterface
             try {
                 $this->playerItemEngine->give($player->getGameObject(), $item, $reward->getQuantity());
             } catch (MaxBagSizeReachedException) {
-                throw new UserNotificationException($player->getId(), 'Your bag is full, you cannot receive the item.');
+                throw new UserNotificationException($player, 'Your bag is full, you cannot receive the item.');
             }
 
             $this->entityManager->flush();

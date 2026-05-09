@@ -84,7 +84,10 @@ readonly class ItemBagEngine
         return (float)bcdiv($this->getOccupedSpace($bag), $bag->getMaxSize(), 2);
     }
 
-    /** @return array<ItemExtractedEvent> */
+    /**
+     * @return array<ItemExtractedEvent>
+     * @throws ItemQuantityNotAvailableException
+     */
     public function findAndExtract(ItemBagComponent $bag, string $type, int $quantity = 1): array
     {
         if (!$this->has($bag, $type, $quantity)) {
@@ -118,15 +121,17 @@ readonly class ItemBagEngine
      */
     private function extract(ItemInBagSlotComponent $sourceSlot, int $maxQuantity = 0): ItemExtractedEvent
     {
-            $itemComponent = $sourceSlot->getItem();
-            if ($sourceSlot->getQuantity() <= $maxQuantity) {
-                $this->entityManager->remove($sourceSlot);
-                return new ItemExtractedEvent($itemComponent, $sourceSlot->getQuantity());
-            }
+        $itemComponent = $sourceSlot->getItem();
+        /** @var GameObject $gameObject */
+        $gameObject = $itemComponent->getGameObject();
+        if ($sourceSlot->getQuantity() <= $maxQuantity) {
+            $this->entityManager->remove($sourceSlot);
+            return new ItemExtractedEvent($gameObject, $sourceSlot->getQuantity());
+        }
 
-            $sourceSlot->decreaseBy($maxQuantity);
-            $newGameObject = $itemComponent->getGameObject()->clone();
-            return new ItemExtractedEvent($newGameObject->getComponent(ItemComponent::class), $maxQuantity);
+        $sourceSlot->decreaseBy($maxQuantity);
+        $newGameObject = $gameObject->clone();
+        return new ItemExtractedEvent($newGameObject, $maxQuantity);
     }
 
     public function has(ItemBagComponent $bag, string $type, int $quantity = 1): bool

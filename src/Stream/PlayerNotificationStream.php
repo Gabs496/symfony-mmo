@@ -2,24 +2,18 @@
 
 namespace App\Stream;
 
-use App\Entity\Data\Player;
 use Symfony\Component\Uid\Uuid;
 
-readonly class PlayerNotificationStream extends AbstractPlayerGuiStream implements BroadcastStreamInterface
+readonly class PlayerNotificationStream extends AbstractPlayerGuiStream
 {
 
     public function __construct(
         private string $message,
         private string $action,
-        Player $player
+        string $player
     )
     {
         parent::__construct($player);
-    }
-
-    public function getObject(): ?object
-    {
-        return $this->getPlayer();
     }
 
     public function getAction(): ?string

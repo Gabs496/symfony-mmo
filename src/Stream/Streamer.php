@@ -20,22 +20,21 @@ readonly class Streamer
 
     public function send(StreamInterface $stream): void
     {
+        $parameters = $stream->getOptions();
+        $loadedTemplate = $this->twig->load($stream->getTemplate());
         if ($stream instanceof BroadcastStreamInterface) {
-            $this->twigBroadcaster->broadcast(
-                $stream->getObject(),
-                $stream->getAction(),
-                [
-                    'template' => $stream->getTemplate(),
-                    'topics' => $stream->getTopics(),
-                ] + $stream->getOptions()
-            );
-        } else {
-            $this->mercure->publish(new Update(
-                $stream->getTopics(),
-                $this->twig->render($stream->getTemplate(), $stream->getOptions()),
-                true
-            ));
+            $parameters['object'] = $stream->getObject();
         }
+        if ($stream->getAction()) {
+            $template = $loadedTemplate->renderBlock($stream->getAction(), $parameters);
+        } else {
+            $template = $loadedTemplate->render($parameters);
+        }
+        $this->mercure->publish(new Update(
+            $stream->getTopics(),
+            $template,
+            true
+        ));
     }
 
 }

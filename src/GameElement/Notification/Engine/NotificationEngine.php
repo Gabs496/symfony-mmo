@@ -14,12 +14,12 @@ readonly class NotificationEngine
     {
     }
 
-    public function success(Player $recipe, string $message): void
+    public function success(string $recipe, string $message): void
     {
         $this->streamer->send(new PlayerNotificationStream($message, "success", $recipe));
     }
 
-    public function danger(Player $recipe, string $message): void
+    public function danger(string $recipe, string $message): void
     {
         $this->streamer->send(new PlayerNotificationStream($message, "danger", $recipe));
     }

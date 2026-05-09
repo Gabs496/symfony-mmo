@@ -6,12 +6,13 @@ use App\GameElement\Equipment\Event\UnequipEvent;
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\Component\ItemComponent;
 use App\GameElement\Item\Event\ItemExtractedEvent;
+use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Item\ItemBagEngine;
-use App\GameElement\Item\ItemEngineInterface;
 use PennyPHP\Core\Entity\GameObject;
+use PennyPHP\Core\GameObjectInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-readonly class PlayerItemEngine implements ItemEngineInterface
+readonly class PlayerItemEngine
 {
     public function __construct(
         private ItemBagEngine $itemBagEngine,
@@ -22,12 +23,6 @@ readonly class PlayerItemEngine implements ItemEngineInterface
     public function give(GameObject $to, GameObject $item, int $quantity = 1): void
     {
         self::putInBackpack($to, $item, $quantity);
-    }
-
-    /** @return array<ItemExtractedEvent> */
-    public function take(GameObject $player, string $type, int $quantity): array
-    {
-        return self::takeFromBackpack($player, $type, $quantity);
     }
 
     #[AsEventListener(UnequipEvent::class)]
@@ -42,10 +37,13 @@ readonly class PlayerItemEngine implements ItemEngineInterface
         $this->itemBagEngine->put($itemBagComponent, $item->getComponent(ItemComponent::class), $quantity);
     }
 
-    /** @return array<ItemExtractedEvent> */
-    private function takeFromBackpack(GameObject $player, string $type, int $quantity): array
+    /**
+     * @return array<ItemExtractedEvent>
+     * @throws ItemQuantityNotAvailableException
+     */
+    public function takeFromBackpack(GameObjectInterface $player, string $prototype, int $quantity = 1): array
     {
         $itemBagComponet = $player->getComponent(ItemBagComponent::class);
-        return $this->itemBagEngine->findAndExtract($itemBagComponet, $type, $quantity);
+        return $this->itemBagEngine->findAndExtract($itemBagComponet, $prototype, $quantity);
     }
 }

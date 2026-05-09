@@ -5,9 +5,12 @@ namespace App\Controller;
 use App\Engine\Player\PlayerItemEngine;
 use App\Entity\Data\Player;
 use App\GameElement\Combat\Engine\CombatEngine;
+use App\GameElement\Crafting\CraftingIngredient;
 use App\GameElement\Crafting\Engine\CraftingEngine;
+use App\GameElement\Crafting\Engine\RecipeBook;
 use App\GameElement\Crafting\Exception\IngredientNotAvailableException;
 use App\GameElement\Gathering\Engine\GatheringEngine;
+use App\GameElement\Item\Exception\ItemQuantityNotAvailableException;
 use App\GameElement\Map\Component\InMapComponent;
 use App\GameElement\Map\Repository\InMapRepository;
 use App\GameElement\Notification\Exception\UserNotificationException;
@@ -23,10 +26,11 @@ use Symfony\UX\Turbo\TurboBundle;
 class MapController extends AbstractController
 {
     public function __construct(
-        private readonly InMapRepository  $inMapRepository,
-        private readonly CraftingEngine   $craftingEngine,
-        private readonly PlayerItemEngine $playerItemEngine,
+        private readonly InMapRepository $inMapRepository,
+        private readonly CraftingEngine  $craftingEngine,
         private readonly GatheringEngine $gatheringEngine,
+        private readonly PlayerItemEngine $playerItemEngine,
+        private readonly RecipeBook $recipeBook,
     )
     {
 
@@ -41,7 +45,7 @@ class MapController extends AbstractController
 
         return $this->render('map/home.html.twig', [
             'player' => $user,
-            'recipes' => $this->craftingEngine->getRecipes(),
+            'recipes' => $this->recipeBook->getRecipes(),
         ]);
     }
 
@@ -83,9 +87,23 @@ class MapController extends AbstractController
     {
         /** @var Player $user */
         $user = $this->getUser();
+        $recipe = $this->recipeBook->getRecipe($id);
+
+        /** @var array<CraftingIngredient> $ingredients */
+        $ingredients = [];
+        try {
+            foreach ($recipe->getIngredients() as $ingredient) {
+                $itemTakeEvents = $this->playerItemEngine->takeFromBackpack($user->getGameObject(), $ingredient->getPrototype()::getType(), $ingredient->getQuantity());
+                foreach ($itemTakeEvents as $itemTake) {
+                    $ingredients[] = new CraftingIngredient($itemTake->getItem(), $itemTake->getQuantity());
+                }
+            }
+        } catch (ItemQuantityNotAvailableException $event) {
+            throw new UserNotificationException($user->getId(), 'Recipe ingredients not availables', previous: $event);
+        }
 
         try {
-            $this->craftingEngine->startCrafting($user->getGameObject(), $id, $this->playerItemEngine);
+            $this->craftingEngine->startCrafting($user->getGameObject(), $id, $ingredients);
         } catch (IngredientNotAvailableException $event) {
             throw new UserNotificationException($user->getId(), $event->getMessage());
         }
