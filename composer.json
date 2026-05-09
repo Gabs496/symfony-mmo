@@ -93,6 +93,13 @@
             "importmap:install": "symfony-cmd",
             "sass:build": "symfony-cmd"
         },
+        "install-git-submodules" : [
+            "git submodule init",
+            "git submodule update"
+        ],
+        "pre-install-cmd": [
+            "@install-git-submodules"
+        ],
         "post-install-cmd": [
             "@auto-scripts"
         ],

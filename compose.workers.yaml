@@ -1,0 +1,22 @@
+services:
+  php-fpm:
+    restart: unless-stopped
+    build:
+      dockerfile: environment/php-fpm/Dockerfile
+    volumes:
+      - ./:/var/www/html
+      - ./environment/.env.dev.local:/var/www/html/.env.dev.local
+      - ./environment/php-fpm/php.ini-production:/usr/local/etc/php/php.ini
+  worker:
+    extends:
+      service: php-fpm
+    depends_on:
+      - database
+  worker_database:
+    extends:
+      service: worker
+    command: "/var/www/html/bin/console messenger:consume game_reward scheduler_game_map_spawn"
+  worker_game_activity:
+    extends:
+      service: worker
+    command: "/var/www/html/bin/console messenger:consume game_activity --sleep=0.05"
