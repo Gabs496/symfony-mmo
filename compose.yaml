@@ -41,3 +41,11 @@ services:
       - "80:80"
     expose:
       - "80"
+  php-fpm:
+    restart: unless-stopped
+    build:
+      dockerfile: environment/php-fpm/Dockerfile
+    volumes:
+      - ./:/var/www/html
+      - ./environment/.env.dev.local:/var/www/html/.env.dev.local
+      - ./environment/php-fpm/php.ini-production:/usr/local/etc/php/php.ini
