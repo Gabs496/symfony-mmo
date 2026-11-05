@@ -68,7 +68,7 @@ readonly class ActivityEngine
 
             $activityEntity = $this->activityRepository->find($activity->getEntityId());
             if (!$activityEntity instanceof Activity) {
-                throw new RuntimeException('Activity not found (id ' . $activityEntity->getId() . ')');
+                throw new RuntimeException('Activity not found (id ' . $activity->getEntityId() . ')');
             }
 
             $activity->setSubject($this->tokenEngine->exchange($activity->getSubjectToken()));

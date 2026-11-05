@@ -13,7 +13,11 @@ class ActivityUnexpectedStopException extends RuntimeException
         ?Throwable                        $previous = null
     )
     {
-        parent::__construct("Activity " . $this->activity->getId() . " had unexpected stop", 0, $previous);
+        $message = "Activity " . $this->activity->getId() . " had unexpected stop";
+        if ($previous) {
+            $message .= sprintf(': [%s] %s (%s:%d)', $previous::class, $previous->getMessage(), $previous->getFile(), $previous->getLine());
+        }
+        parent::__construct($message, 0, $previous);
     }
 
     public function getActivity(): AbstractActivity
