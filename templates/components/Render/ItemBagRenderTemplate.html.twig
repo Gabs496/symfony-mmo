@@ -1,6 +1,6 @@
 <div id="item-instance-{{ this.item.id }}" class="bg-dark border-primary rounded m-1 dropdown">
     <a data-bs-toggle="dropdown" href="#" class="dropdown-toggle">
-        {{ component('Render:ItemRenderTemplate', {item: this.item, render: this.render}) }}
+        {{ component('Render:ItemRenderTemplate', {item: this.item, render: this.render, quantity: this.slotComponent.quantity}) }}
     </a>
     {{ component('Interaction', {interactions: this.interactions}) }}
 </div>

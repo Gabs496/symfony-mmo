@@ -7,6 +7,7 @@ use App\GameElement\Equipment\Interaction\UnequipInteraction;
 use App\GameElement\Healing\Component\HealingComponent;
 use App\GameElement\Interaction\Action;
 use App\GameElement\Interaction\InteractableTemplateInterface;
+use App\GameElement\Item\Component\ItemInBagSlotComponent;
 use App\GameElement\Item\Interaction\DropInteraction;
 use App\GameElement\Item\Interaction\EatInteraction;
 use App\GameElement\Render\Component\RenderComponent;
@@ -18,11 +19,13 @@ final class ItemBagRenderTemplate implements InteractableTemplateInterface
 {
     public GameObject $item;
     public RenderComponent $render;
+    public ItemInBagSlotComponent $slotComponent;
 
     public function mount(GameObject $item): void
     {
         $this->item = $item;
         $this->render = $item->getComponent(RenderComponent::class);
+        $this->slotComponent = $item->getComponent(ItemInBagSlotComponent::class);
     }
 
     public function getInteractions(): iterable
