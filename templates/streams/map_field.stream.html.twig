@@ -1,5 +1,9 @@
 {% block renderMap %}
-    {{ component('MapField',{class: 'card-body', id: "map_field", player: player}) }}
+    <turbo-stream action="replace" target="map_field" method="morph">
+        <template>
+            {{ component('MapField',{class: 'card-body', id: "map_field", playerId: object.id, map: mapId}) }}
+        </template>
+    </turbo-stream>
 {% endblock %}
 {% block update %}
     <turbo-stream action="update" target="map_object_{{ id }}" method="morph">

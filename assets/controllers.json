@@ -1,5 +1,11 @@
 {
     "controllers": {
+        "@penny-php/server-to-client-event": {
+            "server-event-listener": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        },
         "@symfony/ux-live-component": {
             "live": {
                 "enabled": true,

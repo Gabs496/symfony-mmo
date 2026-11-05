@@ -59,6 +59,9 @@
     "penny-php/core": {
         "version": "0.1"
     },
+    "penny-php/server-to-client-event": {
+        "version": "0.1"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {

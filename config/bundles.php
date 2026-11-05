@@ -20,4 +20,5 @@ return [
     Symfony\UX\TwigComponent\TwigComponentBundle::class => ['all' => true],
     PennyPHP\Core\CoreBundle::class => ['all' => true],
     Symfony\UX\LiveComponent\LiveComponentBundle::class => ['all' => true],
+    PennyPhp\ServerToClientEvent\ServerToClientEventBundle::class => ['all' => true],
 ];

@@ -49,18 +49,6 @@ class MapController extends AbstractController
         ]);
     }
 
-    #[Route('/map/field', name: 'app_map_field')]
-    #[IsGranted('ROLE_USER')]
-    public function field(): Response
-    {
-        /** @var Player $user */
-        $user = $this->getUser();
-
-        return $this->renderBlock('streams/map_field.stream.html.twig', 'renderMap', [
-            'player' => $user,
-        ]);
-    }
-
     #[Route('/resource_gather/{id}', name: 'app_map_resource_gather')]
     #[IsGranted('ROLE_USER')]
     public function startGathering(GameObject $resource, Request $request): Response

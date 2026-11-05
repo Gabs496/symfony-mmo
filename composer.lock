@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7d0e824f138007d32c70880e87c471e0",
+    "content-hash": "f1e9d17a20f99e1f05a815c0afb2ae90",
     "packages": [
         {
             "name": "composer/semver",
@@ -1556,6 +1556,39 @@
                 }
             ],
             "description": "PHP Entity Component System (ECS) core for developing browsergame using Symfony",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "penny-php/server-to-client-event",
+            "version": "0.1",
+            "dist": {
+                "type": "path",
+                "url": "packages/penny-php/server-to-client-event",
+                "reference": "c1d41f1c87a7b8095380ad5dbdd2d54f5d4922dd"
+            },
+            "require": {
+                "symfony/event-dispatcher": "^7.4",
+                "symfony/http-kernel": "^7.4",
+                "symfony/mercure-bundle": "^0.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PennyPhp\\ServerToClientEvent\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "gabs495",
+                    "email": "gabs496@hotmail.it"
+                }
+            ],
+            "description": "Bundle that provides ability to send event from server to client, managing them with javascript (for exemple)",
+            "keywords": [
+                "symfony-ux"
+            ],
             "transport-options": {
                 "relative": true
             }

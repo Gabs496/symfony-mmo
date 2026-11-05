@@ -9,6 +9,7 @@ use App\GameElement\Map\Component\MapComponent;
 use PennyPHP\Core\Engine\GameObjectEngine;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Mercure\HubInterface;
+use Symfony\UX\StimulusBundle\Dto\StimulusAttributes;
 use Symfony\UX\StimulusBundle\Helper\StimulusHelper;
 use Symfony\UX\StimulusBundle\Twig\StimulusTwigExtension;
 use Twig\Extension\AbstractExtension;
@@ -35,7 +36,7 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function renderTurboStreamListen(string $topic): string
+    public function renderTurboStreamListen(string $topic): StimulusAttributes
     {
         $stimulusExtension = new StimulusTwigExtension($this->stimulusHelper);
         return $stimulusExtension->renderStimulusController(

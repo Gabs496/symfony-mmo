@@ -1,0 +1,23 @@
+{
+    "name": "penny-php/server-to-client-event",
+    "description": "Bundle that provides ability to send event from server to client, managing them with javascript (for exemple)",
+    "type": "library",
+    "version": "0.1",
+    "keywords": ["symfony-ux"],
+    "autoload": {
+        "psr-4": {
+            "PennyPhp\\ServerToClientEvent\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "gabs495",
+            "email": "gabs496@hotmail.it"
+        }
+    ],
+    "require": {
+        "symfony/http-kernel": "^7.4",
+        "symfony/event-dispatcher": "^7.4",
+        "symfony/mercure-bundle": "^0.4"
+    }
+}

@@ -1,9 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <turbo-frame
-            {{ custom_turbo_stream_listen('player_gui_' ~ app.user.id) }}
-    ></turbo-frame>
+    <div
+        {{
+            custom_turbo_stream_listen('player_gui_' ~ app.user.id)
+            | stimulus_controller('@penny-php/server-to-client-event/server-event-listener', {channelUrl: mercure('server:event')})
+        }}
+    ></div>
     <div class="row h-100">
         <div class="col-auto position-relative">
             <div class="bg-dark h-100 px-1" id="sidebarLeft">

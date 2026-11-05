@@ -1,5 +1,6 @@
-<div {{ attributes }}>
-    <div {{ custom_turbo_stream_listen('map_field_' ~ this.player.map) }}></div>
+<div {{ attributes.defaults(
+    stimulus_action('live', "$render", "server.map_field_changed_" ~ this.mapId ~ '@document')
+) }}>
     {% for inMapComponent in this.inMapComponents %}
         <div id="map_object_{{ inMapComponent.gameObject.id }}" class="animate__animated animate__zoomIn animate__faster">
             {{ component("Render:MapRenderTemplate", {gameObject: inMapComponent.gameObject}) }}
