@@ -14,8 +14,8 @@ use App\GameElement\Render\Component\RenderComponent;
 use PennyPHP\Core\Entity\GameObject;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent(name: "Render:ItemBagRenderTemplate", template: 'components/Render/ItemBagRenderTemplate.html.twig')]
-final class ItemBagRenderTemplate implements InteractableTemplateInterface
+#[AsTwigComponent(name: "Render:ItemBagSlotRenderTemplate", template: 'components/Render/ItemBagSlotRenderTemplate.html.twig')]
+final class ItemBagSlotRenderTemplate implements InteractableTemplateInterface
 {
     public GameObject $item;
     public RenderComponent $render;
