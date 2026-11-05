@@ -6,9 +6,6 @@ use App\Engine\Item\ItemActionEngine;
 use App\Entity\Data\Player;
 use App\GameElement\Equipment\Component\EquipmentComponent;
 use App\GameElement\Equipment\EquipmentEngine;
-use App\GameElement\Item\Component\ItemBagComponent;
-use App\GameElement\Item\Component\ItemInBagSlotComponent;
-use App\GameElement\Item\Repository\ItemInBagSlotRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use PennyPHP\Core\Entity\GameObject;
@@ -25,22 +22,8 @@ class ItemBagController extends AbstractController
         private readonly ItemActionEngine        $itemActionEngine,
         private readonly EquipmentEngine         $equipmentEngine,
         private readonly EntityManagerInterface  $entityManager,
-        private readonly ItemInBagSlotRepository $itemInBagSlotRepository,
     )
     {
-    }
-
-    #[Route('/content/{id}', name: 'app_itemBag_content')]
-    public function content(ItemBagComponent $itemBag): Response
-    {
-        $inBagComponents = $this->itemInBagSlotRepository->findInBag($itemBag);
-        $items = array_map(function(ItemInBagSlotComponent $inBagSlotComponent) {
-            return $inBagSlotComponent->getGameObject();
-        }, $inBagComponents);
-        return $this->render('item_bag/content.frame.html.twig', [
-            'bag' => $itemBag,
-            'items' => $items,
-        ]);
     }
 
     #[Route('/item/drop/{id}', name: 'app_item_drop')]

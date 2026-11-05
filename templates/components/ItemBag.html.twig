@@ -1,4 +1,6 @@
-<div{{ attributes }}>
+<div {{ attributes.defaults(
+    stimulus_action('live', '$render', 'server.item_bag_changed_' ~ this.bagId ~ '@document')
+) }}>
     <div class="card">
         <div class="card-header bg-info">
             <div class="position-absolute top-0 end-0">
@@ -14,7 +16,10 @@
                 </turbo-frame>
             </div>
         </div>
-        <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ this.bag.id }}" src="{{ path('app_itemBag_content', {id: bag.id}) }}" loading="lazy">
+        <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ this.bag.id }}">
+            {% for item in this.items %}
+                {{ component('Render:ItemBagSlotRenderTemplate', {item: item}) }}
+            {% endfor %}
         </turbo-frame>
     </div>
 </div>

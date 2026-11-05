@@ -3,34 +3,60 @@
 namespace App\Twig\Components;
 
 use App\GameElement\Item\Component\ItemBagComponent;
+use App\GameElement\Item\Component\ItemInBagSlotComponent;
 use App\GameElement\Item\ItemBagEngine;
+use App\GameElement\Item\Repository\ItemInBagSlotRepository;
+use PennyPHP\Core\Engine\GameObjectEngine;
 use PennyPHP\Core\Entity\GameObject;
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use PennyPHP\Core\GameObjectInterface;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsTwigComponent]
+#[AsLiveComponent]
 final class ItemBag
 {
-    public GameObject $player;
-    public ItemBagComponent $bag;
+    use DefaultActionTrait;
+
+    #[LiveProp]
+    public ?string $playerId = null;
+
+    private ?ItemBagComponent $bag = null;
 
     public function __construct(
-        private readonly ItemBagEngine $bagEngine
+        private readonly ItemBagEngine           $bagEngine,
+        private readonly GameObjectEngine        $gameObjectEngine,
+        private readonly ItemInBagSlotRepository $itemInBagSlotRepository,
     )
     {}
 
-    public function mount(GameObject $player): void
+    public function mount(GameObjectInterface $player): void
     {
-        $this->player = $player;
-        $this->bag = $player->getComponent(ItemBagComponent::class);
+        $this->playerId = $player->getId();
     }
 
-    public function getBagEngine(): ItemBagEngine
+    public function getBag(): ItemBagComponent
     {
-        return $this->bagEngine;
+        return $this->bag ?: $this->bag = $this->gameObjectEngine->get($this->playerId)->getComponent(ItemBagComponent::class);
+    }
+
+    /** Id used by ItemInBagSlotComponent::bagId and by ItemBagChangedEvent */
+    public function getBagId(): string
+    {
+        return $this->getBag()->getGameObject()->getId();
+    }
+
+    /** @return GameObject[] */
+    public function getItems(): array
+    {
+        return array_map(
+            fn(ItemInBagSlotComponent $slot) => $slot->getGameObject(),
+            $this->itemInBagSlotRepository->findInBag($this->getBag()),
+        );
     }
 
     public function getFullness(): float
     {
-        return $this->bagEngine->getFullness($this->bag);
+        return $this->bagEngine->getFullness($this->getBag());
     }
 }
