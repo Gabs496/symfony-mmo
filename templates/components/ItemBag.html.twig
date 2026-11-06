@@ -1,6 +1,5 @@
-<div {{ attributes.defaults(
-    live_render_on(this.changedEvent)
-) }}>
+<div {{ attributes }}>
+    <div {{ custom_turbo_stream_listen(this.streamTopic) }}></div>
     <div class="card">
         <div class="card-header bg-info">
             <div class="position-absolute top-0 end-0">
@@ -11,12 +10,12 @@
             </div>
             {{ 'backpack'|trans|capitalize }}
             <div>
-                <div class="progress">
-                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{ this.fullness*100 }}%;"></div>
+                <div class="progress" id="item_bag_fullness_{{ this.bagId }}">
+                    {{ include('parts/item_bag_fullness.html.twig', {fullness: this.fullness}) }}
                 </div>
             </div>
         </div>
-        <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ this.bag.id }}">
+        <turbo-frame class="card-body d-flex flex-wrap" id="item_bag_content_{{ this.bagId }}">
             {% for item in this.items %}
                 {{ component('Render:ItemBagSlotRenderTemplate', {item: item}) }}
             {% endfor %}

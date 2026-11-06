@@ -43,7 +43,7 @@ class AppExtension extends AbstractExtension
         $stimulusExtension = new StimulusTwigExtension($this->stimulusHelper);
         return $stimulusExtension->renderStimulusController(
             'custom_turbo_stream',
-            ['hub' => $this->hub->getPublicUrl(), 'topic' => $topic, 'token' => $this->hub->getFactory()->create([$topic], [$topic])]
+            ['hub' => $this->hub->getPublicUrl(), 'topic' => $topic]
         );
     }
 

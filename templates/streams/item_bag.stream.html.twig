@@ -1,0 +1,29 @@
+{# Rendered by App\Stream\ItemBagStream: one block per action #}
+
+{% block append %}
+    <turbo-stream action="append" target="item_bag_content_{{ bagId }}">
+        <template>
+            {{ component('Render:ItemBagSlotRenderTemplate', {item: item}) }}
+        </template>
+    </turbo-stream>
+{% endblock %}
+
+{% block update %}
+    <turbo-stream action="replace" target="item-instance-{{ id }}" method="morph">
+        <template>
+            {{ component('Render:ItemBagSlotRenderTemplate', {item: item}) }}
+        </template>
+    </turbo-stream>
+{% endblock %}
+
+{% block remove %}
+    <turbo-stream action="remove" target="item-instance-{{ id }}"></turbo-stream>
+{% endblock %}
+
+{% block fullness %}
+    <turbo-stream action="update" target="item_bag_fullness_{{ bagId }}">
+        <template>
+            {{ include('parts/item_bag_fullness.html.twig', {fullness: fullness}) }}
+        </template>
+    </turbo-stream>
+{% endblock %}

@@ -3,17 +3,15 @@ import { connectStreamSource, disconnectStreamSource } from "@hotwired/turbo";
 
 export default class extends Controller {
     static values = {
-        token: String,
         hub: String,
         topic: String
     };
 
     connect() {
+        // withCredentials sends the "mercureAuthorization" cookie (see App\Security\MercureSubscriptionListener),
+        // required to receive private updates. EventSource cannot send an Authorization header.
         this.eventSource = new EventSource(this.hubValue + '?topic=' + encodeURIComponent(this.topicValue), {
-            withCredentials: false,
-            headers: {
-                'Authorization': 'Bearer ' + this.tokenValue,
-            }
+            withCredentials: true,
         });
         connectStreamSource(this.eventSource);
     }

@@ -4,9 +4,9 @@ namespace App\Twig\Components;
 
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\Component\ItemInBagSlotComponent;
-use App\GameElement\Item\Event\ItemBagChangedEvent;
 use App\GameElement\Item\ItemBagEngine;
 use App\GameElement\Item\Repository\ItemInBagSlotRepository;
+use App\Stream\ItemBagStream;
 use PennyPHP\Core\Engine\GameObjectEngine;
 use PennyPHP\Core\Entity\GameObject;
 use PennyPHP\Core\GameObjectInterface;
@@ -41,15 +41,15 @@ final class ItemBag
         return $this->bag ?: $this->bag = $this->gameObjectEngine->get($this->playerId)->getComponent(ItemBagComponent::class);
     }
 
-    /** Id used by ItemInBagSlotComponent::bagId and by ItemBagChangedEvent */
+    /** Id of the bag owner: the value stored in ItemInBagSlotComponent::bagId and used for the stream topic */
     public function getBagId(): string
     {
         return $this->getBag()->getGameObject()->getId();
     }
 
-    public function getChangedEvent(): ItemBagChangedEvent
+    public function getStreamTopic(): string
     {
-        return new ItemBagChangedEvent($this->getBagId());
+        return ItemBagStream::getTopic($this->getBagId());
     }
 
     /** @return GameObject[] */
