@@ -31,7 +31,7 @@ readonly class Streamer
         $this->mercure->publish(new Update(
             $stream->getTopics(),
             $template,
-            true
+            !$stream instanceof PublicStreamInterface,
         ));
     }
 

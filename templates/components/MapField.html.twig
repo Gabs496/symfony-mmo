@@ -1,9 +1,8 @@
-<div {{ attributes.defaults(
-    live_render_on(this.changedEvent)
-) }}>
-    {% for inMapComponent in this.inMapComponents %}
-        <div id="map_object_{{ inMapComponent.gameObject.id }}" class="animate__animated animate__zoomIn animate__faster">
-            {{ component("Render:MapRenderTemplate", {gameObject: inMapComponent.gameObject}) }}
-        </div>
-    {% endfor %}
+<div {{ attributes }}>
+    <div {{ custom_turbo_stream_listen(this.streamTopic) }}></div>
+    <div id="map_field_objects">
+        {% for inMapComponent in this.inMapComponents %}
+            {{ include('parts/map_object.html.twig', {gameObject: inMapComponent.gameObject}) }}
+        {% endfor %}
+    </div>
 </div>

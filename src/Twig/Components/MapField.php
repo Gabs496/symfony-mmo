@@ -5,10 +5,9 @@ namespace App\Twig\Components;
 use App\Entity\Data\Player;
 use App\GameElement\Map\Component\InMapComponent;
 use App\GameElement\Map\Component\MapComponent;
-use App\GameElement\Map\Event\MapFieldChangedEvent;
 use App\GameElement\Map\Repository\InMapRepository;
 use App\Repository\Data\PlayerCharacterRepository;
-use App\Stream\Streamer;
+use App\Stream\MapObjectStream;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -25,7 +24,6 @@ final class MapField
     public function __construct(
         private readonly InMapRepository           $inMapRepository,
         private readonly PlayerCharacterRepository $playerCharacterRepository,
-        private readonly Streamer                  $streamer,
     )
     {
     }
@@ -40,9 +38,9 @@ final class MapField
         return $this->getPlayer()->getMap();
     }
 
-    public function getChangedEvent(): MapFieldChangedEvent
+    public function getStreamTopic(): string
     {
-        return new MapFieldChangedEvent($this->getMapId());
+        return MapObjectStream::getTopic($this->getMapId());
     }
 
     /** @return MapComponent[] */
