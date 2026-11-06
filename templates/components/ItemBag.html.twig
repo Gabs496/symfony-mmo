@@ -1,5 +1,5 @@
 <div {{ attributes.defaults(
-    stimulus_action('live', '$render', 'server.item_bag_changed_' ~ this.bagId ~ '@document')
+    live_render_on(this.changedEvent)
 ) }}>
     <div class="card">
         <div class="card-header bg-info">

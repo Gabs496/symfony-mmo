@@ -4,6 +4,7 @@ namespace App\Twig\Components;
 
 use App\GameElement\Item\Component\ItemBagComponent;
 use App\GameElement\Item\Component\ItemInBagSlotComponent;
+use App\GameElement\Item\Event\ItemBagChangedEvent;
 use App\GameElement\Item\ItemBagEngine;
 use App\GameElement\Item\Repository\ItemInBagSlotRepository;
 use PennyPHP\Core\Engine\GameObjectEngine;
@@ -44,6 +45,11 @@ final class ItemBag
     public function getBagId(): string
     {
         return $this->getBag()->getGameObject()->getId();
+    }
+
+    public function getChangedEvent(): ItemBagChangedEvent
+    {
+        return new ItemBagChangedEvent($this->getBagId());
     }
 
     /** @return GameObject[] */
