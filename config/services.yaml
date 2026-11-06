@@ -19,6 +19,14 @@ services:
     App\:
         resource: '../src/'
 
+    # Sessions stored in MySQL WITHOUT locking: the native file handler locks the session for the whole
+    # request, which serializes all concurrent requests of the same user (e.g. Live Component re-renders).
+    # Trade-off: concurrent writes to the session are "last write wins".
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments:
+            - '%env(DATABASE_URL)%'
+            - { lock_mode: !php/const Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_NONE }
+
     Symfony\UX\StimulusBundle\Helper\StimulusHelper:
         alias: 'stimulus.helper'
 

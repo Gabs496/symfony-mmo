@@ -49,3 +49,4 @@ services:
       - ./:/var/www/html
       - ./environment/.env.dev.local:/var/www/html/.env.dev.local
       - ./environment/php-fpm/php.ini-production:/usr/local/etc/php/php.ini
+      - ./environment/php-fpm/zz-pool.conf:/usr/local/etc/php-fpm.d/zz-pool.conf
