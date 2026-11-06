@@ -1,7 +1,7 @@
 framework:
     messenger:
         # Failed messages (after retries) are stored here: inspect with `bin/console messenger:failed:show -vv`
-        failure_transport: failed
+        #failure_transport: failed
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
