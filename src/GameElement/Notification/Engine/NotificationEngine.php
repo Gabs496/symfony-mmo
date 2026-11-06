@@ -2,7 +2,6 @@
 
 namespace App\GameElement\Notification\Engine;
 
-use App\Entity\Data\Player;
 use App\Stream\PlayerNotificationStream;
 use App\Stream\Streamer;
 
